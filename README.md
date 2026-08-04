@@ -76,7 +76,7 @@ Use the dashboard for the current daily and weekly picture, the calendar for dat
 
 ### Prerequisites
 
-- Node.js 20 or newer
+- Node.js 20.9.0 or newer
 - pnpm
 
 ### Installation
