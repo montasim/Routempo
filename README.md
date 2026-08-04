@@ -13,8 +13,6 @@
 
 RoutineFlow helps people define recurring behaviors, generate a reliable daily plan, record what actually happened, and inspect the gap between intention and execution. It combines routine scheduling, completion logs, analytics, and data export in one responsive web application.
 
-[Open the live app](https://theroutineflow.netlify.app)
-
 **[Start tracking](https://theroutineflow.netlify.app) · [Review the OpenAPI contract](./docs/api/openapi-v1.yaml) · [Report an issue](https://github.com/montasim/routine-flow-web/issues)**
 
 > **Project status:** RoutineFlow is an actively developed web application. The public deployment is suitable for evaluation; review the limitations below before relying on it as the only record of important routines.
@@ -55,7 +53,7 @@ Occurrence generation is server-owned: the application persists a forward-lookin
 4. Review consistency in the dashboard, calendar, and analytics views.
 5. Export your records when you need an external copy or want to analyze them elsewhere.
 
-RoutineFlow measures recorded behavior; it does not guarantee habit formation or replace medical, mental-health, or professional advice. Reminder delivery depends on the configured deployment services, and local development may use fallback storage and authentication behavior that should not be used as production configuration.
+RoutineFlow measures recorded behavior; it does not guarantee habit formation or replace medical, mental-health, or professional advice. Reminder preferences are stored, but this README does not claim that notification delivery is implemented. Local development may use fallback storage and authentication behavior that should not be used as production configuration.
 
 ### Review progress and export data
 
@@ -91,6 +89,10 @@ pnpm install --frozen-lockfile
 Review [`.env.example`](./.env.example), then create `.env.local` with the values needed for your environment. Local development can use the built-in development storage and authentication defaults; production requires real database and signing credentials.
 
 ```bash
+cp .env.example .env.local
+```
+
+```bash
 pnpm dev
 ```
 
@@ -107,7 +109,8 @@ The environment template documents every supported variable. The main groups are
 | Email OTP | `RESEND_API_KEY`, `OTP_FROM_EMAIL` |
 | Google sign-in | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` |
 | API and redirects | `CORS_ALLOWED_ORIGINS`, `ALLOWED_REDIRECT_URIS` |
-| Scheduled jobs | `SCHEDULED_JOB_SECRET`, `INNGEST_SIGNING_KEY` |
+| Cron authorization | `SCHEDULED_JOB_SECRET` |
+| Reserved background-job placeholder | `INNGEST_SIGNING_KEY` (not currently read by the application) |
 
 Do not commit `.env.local` or real credentials.
 
@@ -132,7 +135,7 @@ Do not commit `.env.local` or real credentials.
 
 ## Deployment
 
-The production application is deployed at [theroutineflow.netlify.app](https://theroutineflow.netlify.app). A production deployment must provide persistent MongoDB storage, secure authentication secrets, the canonical site URL, and whichever email/OAuth services are enabled. Scheduled-job secrets are required only when those jobs are configured.
+The production application is deployed at [theroutineflow.netlify.app](https://theroutineflow.netlify.app). A production deployment must provide persistent MongoDB storage, secure authentication secrets, the canonical site URL, and whichever email/OAuth services are enabled. `SCHEDULED_JOB_SECRET` is required when calling the cron endpoint; setting the reserved Inngest placeholder does not enable an Inngest route.
 
 Run the same pre-deployment gates used for contribution review:
 
