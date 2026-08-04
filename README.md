@@ -1,21 +1,128 @@
-# Next.js template
+<p align="center">
+  <img src="./public/wordmark.svg" alt="RoutineFlow" width="360">
+</p>
 
-This is a Next.js template with shadcn/ui.
+<p align="center">
+  A behavior and routine tracking system for turning daily intentions into measurable consistency.
+</p>
 
-## Adding components
+<p align="center">
+  <a href="https://theroutineflow.netlify.app"><img alt="Live demo" src="https://img.shields.io/badge/Live_demo-Netlify-00C7B7?logo=netlify&logoColor=white"></a>
+  <img alt="Next.js 16" src="https://img.shields.io/badge/Next.js-16-000000?logo=nextdotjs">
+  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white">
+  <a href="https://www.supportkori.com/montasim"><img alt="Support on SupportKori" src="https://img.shields.io/badge/Support-SupportKori-FFDD00"></a>
+</p>
 
-To add components to your app, run the following command:
+RoutineFlow helps people define recurring behaviors, generate a reliable daily plan, record what actually happened, and inspect the gap between intention and execution. It combines routine scheduling, completion logs, analytics, and data export in one responsive web application.
+
+[Open the live app](https://theroutineflow.netlify.app)
+
+## Features
+
+- Create routines with categories, schedules, priorities, and reminder settings.
+- Generate and maintain a rolling seven-day window of routine occurrences.
+- Complete or skip occurrences and keep an auditable behavior log.
+- Review daily and weekly progress through dashboards, calendars, and analytics.
+- Export routine data for analysis outside the application.
+- Sign in with email OTP or Google OAuth when the corresponding providers are configured.
+- Use the versioned REST API documented by the OpenAPI contract.
+
+## How it works
+
+```text
+Next.js web app
+      │
+      ├── /api/v1/* ──► routine, occurrence, analytics, export, and auth services
+      │
+      ├── Better Auth ─► email OTP and optional Google OAuth
+      │
+      └── storage ─────► MongoDB in production / local file-backed data in development
+```
+
+Occurrence generation is server-owned: the application persists a forward-looking window, then completion and skip actions create the records used by the analytics views.
+
+## Tech stack
+
+| Area | Technology |
+| --- | --- |
+| Application | Next.js 16, React 19, TypeScript |
+| UI | Tailwind CSS, Radix UI, shadcn/ui |
+| Data and forms | TanStack Query, Zustand, React Hook Form, Zod |
+| Authentication | Better Auth, Resend, optional Google OAuth |
+| Persistence | MongoDB with a local development fallback |
+| Analytics and export | Recharts, SheetJS |
+| Quality | ESLint, Prettier, Vitest, Testing Library, Playwright |
+
+## Getting started
+
+### Prerequisites
+
+- Node.js 20 or newer
+- pnpm
+
+### Installation
 
 ```bash
-npx shadcn@latest add button
+git clone https://github.com/montasim/routine-flow-web.git
+cd routine-flow-web
+pnpm install --frozen-lockfile
 ```
 
-This will place the ui components in the `components` directory.
+Review [`.env.example`](./.env.example), then create `.env.local` with the values needed for your environment. Local development can use the built-in development storage and authentication defaults; production requires real database and signing credentials.
 
-## Using components
-
-To use the components in your app, import them as follows:
-
-```tsx
-import { Button } from "@/components/ui/button";
+```bash
+pnpm dev
 ```
+
+Open <http://localhost:3000>. When email delivery is not configured locally, the development OTP is `123456`.
+
+## Configuration
+
+The environment template documents every supported variable. The main groups are:
+
+| Purpose | Variables |
+| --- | --- |
+| Database | `MONGODB_URI` |
+| Auth and canonical URL | `AUTH_SECRET`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `NEXT_PUBLIC_SITE_URL` |
+| Email OTP | `RESEND_API_KEY`, `OTP_FROM_EMAIL` |
+| Google sign-in | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` |
+| API and redirects | `CORS_ALLOWED_ORIGINS`, `ALLOWED_REDIRECT_URIS` |
+| Scheduled jobs | `SCHEDULED_JOB_SECRET`, `INNGEST_SIGNING_KEY` |
+
+Do not commit `.env.local` or real credentials.
+
+## Available commands
+
+| Command | Purpose |
+| --- | --- |
+| `pnpm dev` | Start the development server |
+| `pnpm build` | Create a production build |
+| `pnpm start` | Run the production server |
+| `pnpm lint` | Run ESLint |
+| `pnpm typecheck` | Check TypeScript without emitting files |
+| `pnpm test` | Run the Vitest suite |
+| `pnpm format` | Format TypeScript and TSX files |
+
+## API and project documentation
+
+- [OpenAPI v1 contract](./docs/api/openapi-v1.yaml)
+- [Product requirements](./docs/requiremnts.md)
+- [Technology decisions](./docs/tech-stack.md)
+- [Design system](./docs/design_system/readme.md)
+
+## Contributing
+
+Issues and focused pull requests are welcome. Before opening a pull request:
+
+```bash
+pnpm lint
+pnpm typecheck
+pnpm test
+pnpm build
+```
+
+Please describe the problem being solved, keep changes scoped, and include screenshots for user-interface changes.
+
+## Support
+
+If RoutineFlow is useful to you, you can support its continued development through [SupportKori](https://www.supportkori.com/montasim).
