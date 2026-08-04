@@ -8,14 +8,14 @@
 
 <p align="center">
   <a href="https://theroutineflow.netlify.app"><img alt="Live demo" src="https://img.shields.io/badge/Live_demo-Netlify-00C7B7?logo=netlify&logoColor=white"></a>
-  <img alt="Next.js 16" src="https://img.shields.io/badge/Next.js-16-000000?logo=nextdotjs">
-  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white">
   <a href="https://www.supportkori.com/montasim"><img alt="Support on SupportKori" src="https://img.shields.io/badge/Support-SupportKori-FFDD00"></a>
 </p>
 
 RoutineFlow helps people define recurring behaviors, generate a reliable daily plan, record what actually happened, and inspect the gap between intention and execution. It combines routine scheduling, completion logs, analytics, and data export in one responsive web application.
 
 [Open the live app](https://theroutineflow.netlify.app)
+
+> **Project status:** RoutineFlow is an actively developed web application. The public deployment is suitable for evaluation; review the limitations below before relying on it as the only record of important routines.
 
 ## Features
 
@@ -40,6 +40,16 @@ Next.js web app
 ```
 
 Occurrence generation is server-owned: the application persists a forward-looking window, then completion and skip actions create the records used by the analytics views.
+
+## Core workflow
+
+1. Create an account or sign in with an enabled authentication method.
+2. Add a routine with its category, schedule, priority, and reminder preference.
+3. Use the daily view to complete or skip generated occurrences.
+4. Review consistency in the dashboard, calendar, and analytics views.
+5. Export your records when you need an external copy or want to analyze them elsewhere.
+
+RoutineFlow measures recorded behavior; it does not guarantee habit formation or replace medical, mental-health, or professional advice. Reminder delivery depends on the configured deployment services, and local development may use fallback storage and authentication behavior that should not be used as production configuration.
 
 ## Tech stack
 
@@ -110,6 +120,19 @@ Do not commit `.env.local` or real credentials.
 - [Technology decisions](./docs/tech-stack.md)
 - [Design system](./docs/design_system/readme.md)
 
+## Deployment
+
+The production application is deployed at [theroutineflow.netlify.app](https://theroutineflow.netlify.app). A production deployment must provide persistent MongoDB storage, secure authentication secrets, the canonical site URL, and whichever email/OAuth services are enabled. Scheduled-job secrets are required only when those jobs are configured.
+
+Run the same pre-deployment gates used for contribution review:
+
+```bash
+pnpm lint
+pnpm typecheck
+pnpm test
+pnpm build
+```
+
 ## Contributing
 
 Issues and focused pull requests are welcome. Before opening a pull request:
@@ -123,6 +146,12 @@ pnpm build
 
 Please describe the problem being solved, keep changes scoped, and include screenshots for user-interface changes.
 
+Use [GitHub Issues](https://github.com/montasim/routine-flow-web/issues) for reproducible bugs and feature proposals. Do not include credentials, authentication tokens, or private routine data in public reports.
+
 ## Support
 
 If RoutineFlow is useful to you, you can support its continued development through [SupportKori](https://www.supportkori.com/montasim).
+
+## License status
+
+No open-source license file is currently included. Source visibility alone does not grant permission to copy, modify, or redistribute this project.
