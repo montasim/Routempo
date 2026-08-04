@@ -15,7 +15,13 @@ RoutineFlow helps people define recurring behaviors, generate a reliable daily p
 
 [Open the live app](https://theroutineflow.netlify.app)
 
+**[Start tracking](https://theroutineflow.netlify.app) · [Review the OpenAPI contract](./docs/api/openapi-v1.yaml) · [Report an issue](https://github.com/montasim/routine-flow-web/issues)**
+
 > **Project status:** RoutineFlow is an actively developed web application. The public deployment is suitable for evaluation; review the limitations below before relying on it as the only record of important routines.
+
+## Why RoutineFlow?
+
+Habit apps often reduce progress to a streak without preserving what was planned, what actually happened, or how behavior changes across a week. RoutineFlow models scheduled occurrences separately from routines, records completion and skip decisions, and turns those records into calendars, analytics, and exports. That makes the product useful both for daily action and for reviewing drift between intention and execution.
 
 ## Features
 
@@ -50,6 +56,10 @@ Occurrence generation is server-owned: the application persists a forward-lookin
 5. Export your records when you need an external copy or want to analyze them elsewhere.
 
 RoutineFlow measures recorded behavior; it does not guarantee habit formation or replace medical, mental-health, or professional advice. Reminder delivery depends on the configured deployment services, and local development may use fallback storage and authentication behavior that should not be used as production configuration.
+
+### Review progress and export data
+
+Use the dashboard for the current daily and weekly picture, the calendar for date-oriented history, and analytics for longer patterns. Export data before moving environments or whenever you need an independent copy; the hosted application should not be treated as the only backup of important personal records.
 
 ## Tech stack
 
@@ -133,6 +143,25 @@ pnpm test
 pnpm build
 ```
 
+## Project status, privacy, and limitations
+
+- RoutineFlow is under active development; interfaces, API behavior, and stored-data shape may change.
+- Production persistence requires MongoDB. The local file-backed fallback is a development convenience, not a production database.
+- Email OTP, Google sign-in, reminders, and scheduled work depend on the corresponding providers and secrets being configured.
+- Analytics describe only the occurrences recorded in RoutineFlow and cannot infer unrecorded behavior.
+- Routine data may be personal. Protect production authentication, database access, logs, backups, and export files accordingly.
+- The repository currently has no dedicated security policy, support guide, code of conduct, or license file.
+- No repository-owned production screenshot is currently available; the verified live deployment is the primary visual proof.
+
+## Documentation
+
+- [OpenAPI v1 contract](./docs/api/openapi-v1.yaml)
+- [Product requirements](./docs/requiremnts.md)
+- [Technology decisions](./docs/tech-stack.md)
+- [Design-system guide](./docs/design_system/readme.md)
+- [Web UI kit](./docs/design_system/ui_kits/web/README.md)
+- [Mobile UI kit](./docs/design_system/ui_kits/mobile/README.md)
+
 ## Contributing
 
 Issues and focused pull requests are welcome. Before opening a pull request:
@@ -146,11 +175,21 @@ pnpm build
 
 Please describe the problem being solved, keep changes scoped, and include screenshots for user-interface changes.
 
+## Support and security
+
 Use [GitHub Issues](https://github.com/montasim/routine-flow-web/issues) for reproducible bugs and feature proposals. Do not include credentials, authentication tokens, or private routine data in public reports.
 
-## Support
+There is no private security-reporting policy in the repository yet. Contact the maintainer through the profile below before publicly disclosing a suspected vulnerability.
+
+## Funding
 
 If RoutineFlow is useful to you, you can support its continued development through [SupportKori](https://www.supportkori.com/montasim).
+
+Bug reports, workflow feedback, documentation improvements, and code contributions are equally valuable ways to help.
+
+## Author
+
+Built and maintained by [Montasim](https://github.com/montasim).
 
 ## License status
 
