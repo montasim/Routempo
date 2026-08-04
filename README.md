@@ -37,6 +37,7 @@ Habit apps often reduce progress to a streak without preserving what was planned
 Next.js web app
       │
       ├── /api/v1/* ──► routine, occurrence, analytics, export, and auth services
+      ├── /api/inngest ► Inngest function registration and invocation
       │
       ├── Better Auth ─► email OTP and optional Google OAuth
       │
@@ -110,7 +111,7 @@ The environment template documents every supported variable. The main groups are
 | Google sign-in | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` |
 | API and redirects | `CORS_ALLOWED_ORIGINS`, `ALLOWED_REDIRECT_URIS` |
 | Cron authorization | `SCHEDULED_JOB_SECRET` |
-| Reserved background-job placeholder | `INNGEST_SIGNING_KEY` (not currently read by the application) |
+| Inngest function authentication | `INNGEST_SIGNING_KEY` |
 
 Do not commit `.env.local` or real credentials.
 
@@ -133,9 +134,27 @@ Do not commit `.env.local` or real credentials.
 - [Technology decisions](./docs/tech-stack.md)
 - [Design system](./docs/design_system/readme.md)
 
+## Background maintenance
+
+RoutineFlow exposes two distinct maintenance paths:
+
+- `POST /api/v1/cron` performs the current database maintenance for every user: it generates the forward occurrence window, marks missed occurrences, and records the run. Requests must send `Authorization: Bearer <SCHEDULED_JOB_SECRET>`.
+- `/api/inngest` is the Inngest SDK serve endpoint. Its `GET`, `POST`, and `PUT` handlers expose and invoke the app `routineflow-web-v2`, which currently registers `routineflow/occurrences.generate` and `routineflow/occurrences.detect-missed` event functions.
+
+The two registered Inngest functions currently acknowledge their trigger events; they do **not** call the occurrence-generation or missed-detection services yet. Registering the Inngest app therefore does not replace the cron endpoint's maintenance behavior.
+
+For production Inngest use:
+
+1. Set `INNGEST_SIGNING_KEY` from the target Inngest environment. Keep it secret and out of source control.
+2. Deploy the application with the public serve URL `https://your-domain.example/api/inngest`.
+3. Sync that URL in Inngest after deploying or changing function configuration.
+4. Confirm both functions appear under app ID `routineflow-web-v2` before sending events.
+
+The signing key authenticates Inngest communication with the serve endpoint. The repository does not currently send Inngest events itself and does not require an event key. The local Inngest Dev Server can be used without a signing key. See the official [Inngest app-sync guide](https://www.inngest.com/docs/apps) and [`serve()` endpoint reference](https://www.inngest.com/docs/reference/typescript/serve).
+
 ## Deployment
 
-The production application is deployed at [theroutineflow.netlify.app](https://theroutineflow.netlify.app). A production deployment must provide persistent MongoDB storage, secure authentication secrets, the canonical site URL, and whichever email/OAuth services are enabled. `SCHEDULED_JOB_SECRET` is required when calling the cron endpoint; setting the reserved Inngest placeholder does not enable an Inngest route.
+The production application is deployed at [theroutineflow.netlify.app](https://theroutineflow.netlify.app). A production deployment must provide persistent MongoDB storage, secure authentication secrets, the canonical site URL, and whichever email/OAuth services are enabled. Set `SCHEDULED_JOB_SECRET` when the cron endpoint will be called. Set `INNGEST_SIGNING_KEY` and sync the deployed `/api/inngest` URL when using Inngest Cloud.
 
 Run the same pre-deployment gates used for contribution review:
 
@@ -150,7 +169,8 @@ pnpm build
 
 - RoutineFlow is under active development; interfaces, API behavior, and stored-data shape may change.
 - Production persistence requires MongoDB. The local file-backed fallback is a development convenience, not a production database.
-- Email OTP, Google sign-in, reminders, and scheduled work depend on the corresponding providers and secrets being configured.
+- Email OTP, Google sign-in, and scheduled work depend on the corresponding providers and secrets being configured.
+- Inngest's currently registered functions acknowledge events but do not perform the maintenance implemented by `/api/v1/cron`.
 - Analytics describe only the occurrences recorded in RoutineFlow and cannot infer unrecorded behavior.
 - Routine data may be personal. Protect production authentication, database access, logs, backups, and export files accordingly.
 - The repository currently has no dedicated security policy, support guide, code of conduct, or license file.
