@@ -8,14 +8,18 @@
 
 <p align="center">
   <a href="https://theroutineflow.netlify.app"><img alt="Live demo" src="https://img.shields.io/badge/Live_demo-Netlify-00C7B7?logo=netlify&logoColor=white"></a>
-  <img alt="Next.js 16" src="https://img.shields.io/badge/Next.js-16-000000?logo=nextdotjs">
-  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white">
   <a href="https://www.supportkori.com/montasim"><img alt="Support on SupportKori" src="https://img.shields.io/badge/Support-SupportKori-FFDD00"></a>
 </p>
 
 RoutineFlow helps people define recurring behaviors, generate a reliable daily plan, record what actually happened, and inspect the gap between intention and execution. It combines routine scheduling, completion logs, analytics, and data export in one responsive web application.
 
-[Open the live app](https://theroutineflow.netlify.app)
+**[Start tracking](https://theroutineflow.netlify.app) · [Review the OpenAPI contract](./docs/api/openapi-v1.yaml) · [Report an issue](https://github.com/montasim/routine-flow-web/issues)**
+
+> **Project status:** RoutineFlow is an actively developed web application. The public deployment is suitable for evaluation; review the limitations below before relying on it as the only record of important routines.
+
+## Why RoutineFlow?
+
+Habit apps often reduce progress to a streak without preserving what was planned, what actually happened, or how behavior changes across a week. RoutineFlow models scheduled occurrences separately from routines, records completion and skip decisions, and turns those records into calendars, analytics, and exports. That makes the product useful both for daily action and for reviewing drift between intention and execution.
 
 ## Features
 
@@ -33,6 +37,7 @@ RoutineFlow helps people define recurring behaviors, generate a reliable daily p
 Next.js web app
       │
       ├── /api/v1/* ──► routine, occurrence, analytics, export, and auth services
+      ├── /api/inngest ► Inngest function registration and invocation
       │
       ├── Better Auth ─► email OTP and optional Google OAuth
       │
@@ -40,6 +45,20 @@ Next.js web app
 ```
 
 Occurrence generation is server-owned: the application persists a forward-looking window, then completion and skip actions create the records used by the analytics views.
+
+## Core workflow
+
+1. Create an account or sign in with an enabled authentication method.
+2. Add a routine with its category, schedule, priority, and reminder preference.
+3. Use the daily view to complete or skip generated occurrences.
+4. Review consistency in the dashboard, calendar, and analytics views.
+5. Export your records when you need an external copy or want to analyze them elsewhere.
+
+RoutineFlow measures recorded behavior; it does not guarantee habit formation or replace medical, mental-health, or professional advice. Reminder preferences are stored, but this README does not claim that notification delivery is implemented. Local development may use fallback storage and authentication behavior that should not be used as production configuration.
+
+### Review progress and export data
+
+Use the dashboard for the current daily and weekly picture, the calendar for date-oriented history, and analytics for longer patterns. Export data before moving environments or whenever you need an independent copy; the hosted application should not be treated as the only backup of important personal records.
 
 ## Tech stack
 
@@ -57,7 +76,7 @@ Occurrence generation is server-owned: the application persists a forward-lookin
 
 ### Prerequisites
 
-- Node.js 20 or newer
+- Node.js 20.9.0 or newer
 - pnpm
 
 ### Installation
@@ -69,6 +88,10 @@ pnpm install --frozen-lockfile
 ```
 
 Review [`.env.example`](./.env.example), then create `.env.local` with the values needed for your environment. Local development can use the built-in development storage and authentication defaults; production requires real database and signing credentials.
+
+```bash
+cp .env.example .env.local
+```
 
 ```bash
 pnpm dev
@@ -87,7 +110,8 @@ The environment template documents every supported variable. The main groups are
 | Email OTP | `RESEND_API_KEY`, `OTP_FROM_EMAIL` |
 | Google sign-in | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` |
 | API and redirects | `CORS_ALLOWED_ORIGINS`, `ALLOWED_REDIRECT_URIS` |
-| Scheduled jobs | `SCHEDULED_JOB_SECRET`, `INNGEST_SIGNING_KEY` |
+| Cron authorization | `SCHEDULED_JOB_SECRET` |
+| Inngest function authentication | `INNGEST_SIGNING_KEY` |
 
 Do not commit `.env.local` or real credentials.
 
@@ -110,6 +134,57 @@ Do not commit `.env.local` or real credentials.
 - [Technology decisions](./docs/tech-stack.md)
 - [Design system](./docs/design_system/readme.md)
 
+## Background maintenance
+
+RoutineFlow exposes two distinct maintenance paths:
+
+- `POST /api/v1/cron` performs the current database maintenance for every user: it generates the forward occurrence window, marks missed occurrences, and records the run. Requests must send `Authorization: Bearer <SCHEDULED_JOB_SECRET>`.
+- `/api/inngest` is the Inngest SDK serve endpoint. Its `GET`, `POST`, and `PUT` handlers expose and invoke the app `routineflow-web-v2`, which currently registers `routineflow/occurrences.generate` and `routineflow/occurrences.detect-missed` event functions.
+
+The two registered Inngest functions currently acknowledge their trigger events; they do **not** call the occurrence-generation or missed-detection services yet. Registering the Inngest app therefore does not replace the cron endpoint's maintenance behavior.
+
+For production Inngest use:
+
+1. Set `INNGEST_SIGNING_KEY` from the target Inngest environment. Keep it secret and out of source control.
+2. Deploy the application with the public serve URL `https://your-domain.example/api/inngest`.
+3. Sync that URL in Inngest after deploying or changing function configuration.
+4. Confirm both functions appear under app ID `routineflow-web-v2` before sending events.
+
+The signing key authenticates Inngest communication with the serve endpoint. The repository does not currently send Inngest events itself and does not require an event key. The local Inngest Dev Server can be used without a signing key. See the official [Inngest app-sync guide](https://www.inngest.com/docs/apps) and [`serve()` endpoint reference](https://www.inngest.com/docs/reference/typescript/serve).
+
+## Deployment
+
+The production application is deployed at [theroutineflow.netlify.app](https://theroutineflow.netlify.app). A production deployment must provide persistent MongoDB storage, secure authentication secrets, the canonical site URL, and whichever email/OAuth services are enabled. Set `SCHEDULED_JOB_SECRET` when the cron endpoint will be called. Set `INNGEST_SIGNING_KEY` and sync the deployed `/api/inngest` URL when using Inngest Cloud.
+
+Run the same pre-deployment gates used for contribution review:
+
+```bash
+pnpm lint
+pnpm typecheck
+pnpm test
+pnpm build
+```
+
+## Project status, privacy, and limitations
+
+- RoutineFlow is under active development; interfaces, API behavior, and stored-data shape may change.
+- Production persistence requires MongoDB. The local file-backed fallback is a development convenience, not a production database.
+- Email OTP, Google sign-in, and scheduled work depend on the corresponding providers and secrets being configured.
+- Inngest's currently registered functions acknowledge events but do not perform the maintenance implemented by `/api/v1/cron`.
+- Analytics describe only the occurrences recorded in RoutineFlow and cannot infer unrecorded behavior.
+- Routine data may be personal. Protect production authentication, database access, logs, backups, and export files accordingly.
+- The repository currently has no dedicated security policy, support guide, code of conduct, or license file.
+- No repository-owned production screenshot is currently available; the verified live deployment is the primary visual proof.
+
+## Documentation
+
+- [OpenAPI v1 contract](./docs/api/openapi-v1.yaml)
+- [Product requirements](./docs/requiremnts.md)
+- [Technology decisions](./docs/tech-stack.md)
+- [Design-system guide](./docs/design_system/readme.md)
+- [Web UI kit](./docs/design_system/ui_kits/web/README.md)
+- [Mobile UI kit](./docs/design_system/ui_kits/mobile/README.md)
+
 ## Contributing
 
 Issues and focused pull requests are welcome. Before opening a pull request:
@@ -123,6 +198,22 @@ pnpm build
 
 Please describe the problem being solved, keep changes scoped, and include screenshots for user-interface changes.
 
-## Support
+## Support and security
+
+Use [GitHub Issues](https://github.com/montasim/routine-flow-web/issues) for reproducible bugs and feature proposals. Do not include credentials, authentication tokens, or private routine data in public reports.
+
+There is no private security-reporting policy in the repository yet. Contact the maintainer through the profile below before publicly disclosing a suspected vulnerability.
+
+## Funding
 
 If RoutineFlow is useful to you, you can support its continued development through [SupportKori](https://www.supportkori.com/montasim).
+
+Bug reports, workflow feedback, documentation improvements, and code contributions are equally valuable ways to help.
+
+## Author
+
+Built and maintained by [Montasim](https://github.com/montasim).
+
+## License status
+
+No open-source license file is currently included. Source visibility alone does not grant permission to copy, modify, or redistribute this project.
