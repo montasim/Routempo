@@ -34,6 +34,6 @@ The prototype follows the repository's Routempo design system:
 - A balanced green-gray neutral scale for surfaces and readable deep ink text
 - An accessible forest-green scale from soft tints through deep action states
 - Regular body text, medium controls, and semibold headings instead of heavy bold defaults
-- A restrained display scale: 30–36px dashboard headings, 44px page titles, and a 64px maximum in Focus mode
+- A restrained display scale: 26–31px dashboard headings, 37px page titles, and a 64px maximum in Focus mode
 - Completed green, Skipped amber, and Missed red reserved for semantic feedback
 - A 4px spacing grid, 10px controls, 14px panels, hairline borders, and restrained shadows
