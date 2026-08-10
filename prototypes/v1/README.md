@@ -11,17 +11,18 @@ Open `index.html` directly, or serve the repository root and visit:
 
 Use the floating switcher or the left and right arrow keys to compare variants. Routine completion, skipping, adding a routine, theme switching, and responsive layouts are interactive. All state is in memory and resets when the page reloads.
 
-Each variant includes five working, URL-addressable pages:
+Each variant includes six working, URL-addressable pages:
 
 - `&page=login` for Google sign-in
 - `&page=today` for completing or skipping today's routines
 - `&page=plan` for the weekly schedule and recurring-routine controls
 - `&page=insights` for completion patterns and activity history
+- `&page=logs` for the read-only, auditable behavior ledger
 - `&page=settings` for profile, reminders, notifications, appearance, account controls, and feedback examples
 
 For example: `index.html?variant=A&page=plan`.
 
-The login page uses a single simulated Google sign-in action. The Settings page includes explicit controls for previewing success and error toasts and a confirmation alert. Confirmation is required before skipping or pausing a routine, changing timezone, signing out, or clearing activity. Frequent and reversible actions stay one-click.
+The login page uses a single simulated Google sign-in action. The Logs page records only finalized occurrences and exposes immutable event IDs, timestamps, timezone and routine snapshots, actor/source metadata, filtering, and expandable evidence details. The Settings page includes explicit controls for previewing success and error toasts and a confirmation alert. Confirmation is required before skipping or pausing a routine, changing timezone, or signing out. Frequent and reversible actions stay one-click.
 
 This is prototype code. It is intentionally separate from the production Next.js app.
 

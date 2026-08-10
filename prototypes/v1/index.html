@@ -250,6 +250,8 @@
         planView: "week",
         selectedDay: 0,
         insightRange: "7",
+        logFilter: "all",
+        expandedLog: null,
         settings: {
           name: "Montasim Ahmed",
           timezone: "Asia/Dhaka",
@@ -266,7 +268,7 @@
 
       function currentPage() {
         const value = new URLSearchParams(location.search).get("page")?.toLowerCase()
-        return ["login", "today", "plan", "insights", "settings"].includes(value) ? value : "today"
+        return ["login", "today", "plan", "insights", "logs", "settings"].includes(value) ? value : "today"
       }
 
       function pendingRoutines() {
@@ -386,6 +388,7 @@
               ${sideNavItem("home", "Today", "today")}
               ${sideNavItem("calendar-days", "Plan", "plan")}
               ${sideNavItem("chart-no-axes-column-increasing", "Insights", "insights")}
+              ${sideNavItem("scroll-text", "Logs", "logs")}
               ${sideNavItem("settings", "Settings", "settings")}
             </nav>
             <div class="mt-8 px-3">
@@ -599,7 +602,7 @@
       }
 
       function renderSecondaryPage(shell, page) {
-        const content = page === "plan" ? renderPlanContent() : page === "insights" ? renderInsightsContent() : renderSettingsContent()
+        const content = page === "plan" ? renderPlanContent() : page === "insights" ? renderInsightsContent() : page === "logs" ? renderLogsContent() : renderSettingsContent()
         if (shell === "sidebar") {
           return `
             <div class="view-enter min-h-[100dvh] bg-paper-50 dark:bg-paper-50">
@@ -623,7 +626,7 @@
             <header class="sticky top-0 z-20 border-b border-paper-200 bg-paper-0">
               <div class="mx-auto flex min-h-[72px] max-w-[1320px] flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3 md:px-8">
                 ${brand()}
-                <nav class="order-3 flex w-full gap-1 sm:order-none sm:w-auto" aria-label="Primary navigation">${topNavItem("Today", "today")} ${topNavItem("Plan", "plan")} ${topNavItem("Insights", "insights")} ${topNavItem("Settings", "settings")}</nav>
+                <nav class="order-3 flex w-full gap-1 sm:order-none sm:w-auto" aria-label="Primary navigation">${topNavItem("Today", "today")} ${topNavItem("Plan", "plan")} ${topNavItem("Insights", "insights")} ${topNavItem("Logs", "logs")} ${topNavItem("Settings", "settings")}</nav>
                 <div class="relative ml-auto flex items-center gap-2">${themeButton()} ${avatarButton()} ${accountMenu()}</div>
               </div>
             </header>
@@ -637,8 +640,9 @@
           ["Today", "today"],
           ["Plan", "plan"],
           ["Insights", "insights"],
+          ["Logs", "logs"],
           ["Settings", "settings"],
-        ].map(([label, page]) => `<button onclick="navigatePage('${page}')" class="flex-1 rounded-xl px-3 py-2 text-sm font-semibold ${currentPage() === page ? "bg-signal-50 text-signal-700 dark:bg-signal-50 dark:text-signal-300" : "text-ink-500 dark:text-ink-400"}">${label}</button>`).join("")
+        ].map(([label, page]) => `<button onclick="navigatePage('${page}')" class="flex-1 rounded-xl px-2 py-2 text-xs font-semibold sm:px-3 sm:text-sm ${currentPage() === page ? "bg-signal-50 text-signal-700 dark:bg-signal-50 dark:text-signal-300" : "text-ink-500 dark:text-ink-400"}">${label}</button>`).join("")
       }
 
       function renderPlanContent() {
@@ -724,6 +728,107 @@
         `
       }
 
+      function behaviorLogs() {
+        const today = state.routines
+          .filter((routine) => ["completed", "skipped"].includes(routine.status))
+          .map((routine, index) => ({
+            id: `EVT-20260810-${String(routine.id).padStart(3, "0")}`,
+            date: "Aug 10, 2026",
+            eventTime: routine.id === 1 ? "7:42 AM" : "Just now",
+            recordedAt: routine.id === 1 ? "2026-08-10T01:42:18.412Z" : "2026-08-10T06:18:04.921Z",
+            title: routine.title,
+            category: routine.category,
+            scheduled: routine.time,
+            actual: routine.status === "completed" ? (routine.id === 1 ? "7:42 AM" : "Just now") : "Not completed",
+            variance: routine.status === "completed" ? (routine.id === 1 ? "+12 min" : "On action") : "Skipped",
+            status: routine.status,
+            source: "Web app",
+            actor: "Montasim Ahmed",
+            timezone: "Asia/Dhaka (UTC+6)",
+            snapshot: `${routine.category} / Daily / ${routine.note}`,
+            sequence: index + 7,
+          }))
+
+        return [
+          ...today,
+          { id: "EVT-20260809-006", date: "Aug 9, 2026", eventTime: "9:48 PM", recordedAt: "2026-08-09T15:48:33.107Z", title: "Read before bed", category: "Mind", scheduled: "9:30 PM", actual: "9:48 PM", variance: "+18 min", status: "completed", source: "Web app", actor: "Montasim Ahmed", timezone: "Asia/Dhaka (UTC+6)", snapshot: "Mind / Daily / 15 minutes", sequence: 6 },
+          { id: "EVT-20260809-005", date: "Aug 9, 2026", eventTime: "1:04 PM", recordedAt: "2026-08-09T07:04:09.884Z", title: "Walk outside", category: "Movement", scheduled: "1:00 PM", actual: "Not completed", variance: "Skipped", status: "skipped", source: "Web app", actor: "Montasim Ahmed", timezone: "Asia/Dhaka (UTC+6)", snapshot: "Movement / Daily / 20 minutes", sequence: 5 },
+          { id: "EVT-20260809-004", date: "Aug 9, 2026", eventTime: "10:00 AM", recordedAt: "2026-08-09T04:00:00.000Z", title: "Take vitamins", category: "Health", scheduled: "9:00 AM", actual: "No completion", variance: "+60 min cutoff", status: "missed", source: "System rule", actor: "Routempo scheduler", timezone: "Asia/Dhaka (UTC+6)", snapshot: "Health / Daily / After breakfast", sequence: 4 },
+          { id: "EVT-20260809-003", date: "Aug 9, 2026", eventTime: "7:35 AM", recordedAt: "2026-08-09T01:35:41.265Z", title: "Morning stretch", category: "Movement", scheduled: "7:30 AM", actual: "7:35 AM", variance: "+5 min", status: "completed", source: "Web app", actor: "Montasim Ahmed", timezone: "Asia/Dhaka (UTC+6)", snapshot: "Movement / Daily / 10 minutes", sequence: 3 },
+        ]
+      }
+
+      function logStatusMeta(status) {
+        if (status === "completed") return { label: "Completed", icon: "circle-check", classes: "bg-completed-100 text-completed-600" }
+        if (status === "skipped") return { label: "Skipped", icon: "fast-forward", classes: "bg-skipped-100 text-skipped-700 dark:bg-skipped-500/10 dark:text-skipped-500" }
+        return { label: "Missed", icon: "circle-x", classes: "bg-missed-100 text-missed-700 dark:bg-missed-500/10 dark:text-missed-500" }
+      }
+
+      function renderLogsContent() {
+        const logs = behaviorLogs()
+        const visibleLogs = state.logFilter === "all" ? logs : logs.filter((entry) => entry.status === state.logFilter)
+        const counts = Object.fromEntries(["completed", "skipped", "missed"].map((status) => [status, logs.filter((entry) => entry.status === status).length]))
+        return `
+          <section>
+            <div class="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p class="text-sm font-medium text-signal-600 dark:text-signal-300">Evidence, not estimates</p>
+                <h1 class="mt-2 text-3xl font-bold md:text-5xl">Behavior log</h1>
+                <p class="mt-3 max-w-2xl text-base text-ink-500 dark:text-ink-400">A chronological, read-only record of every finalized routine occurrence and how it was recorded.</p>
+              </div>
+              <button onclick="showDemoToast('export')" class="inline-flex h-11 shrink-0 items-center justify-center gap-2 self-start rounded-xl border border-paper-300 bg-paper-0 px-4 text-sm font-semibold text-ink-700 hover:bg-paper-50 active:scale-[.97] dark:border-paper-300 dark:bg-paper-0 dark:text-ink-700 dark:hover:bg-paper-100 sm:self-auto">${icon("download", "h-4 w-4")} Export audit log</button>
+            </div>
+
+            <div class="mt-8 flex items-start gap-3 rounded-2xl border border-signal-200 bg-signal-50 p-4 text-signal-700 dark:border-signal-200 dark:bg-signal-50 dark:text-signal-300">
+              ${icon("shield-check", "mt-0.5 h-5 w-5 shrink-0")}
+              <div><p class="text-sm font-semibold">Audit integrity is preserved</p><p class="mt-1 text-sm leading-6 opacity-80">Entries are created only when an occurrence is completed, skipped, or marked missed. Routine edits never rewrite historical snapshots.</p></div>
+            </div>
+
+            <div class="mt-6 grid gap-3 sm:grid-cols-4">
+              ${auditMetric(logs.length, "Finalized records", "All visible events", "scroll-text")}
+              ${auditMetric(counts.completed, "Completed", "Recorded execution", "circle-check", "completed")}
+              ${auditMetric(counts.skipped, "Skipped", "Explicitly deferred", "fast-forward", "skipped")}
+              ${auditMetric(counts.missed, "Missed", "Closed by rule", "circle-x", "missed")}
+            </div>
+
+            <div class="mt-6 overflow-hidden rounded-2xl border border-paper-200 bg-paper-0 dark:border-paper-200 dark:bg-paper-0">
+              <div class="flex flex-col gap-4 border-b border-paper-200 p-4 sm:flex-row sm:items-center sm:justify-between md:p-5 dark:border-paper-200">
+                <div><h2 class="font-bold">Recorded events</h2><p class="mt-1 text-sm text-ink-500 dark:text-ink-400">Newest first. Times reflect the timezone captured with each event.</p></div>
+                <div class="flex flex-wrap gap-1 rounded-xl bg-paper-100 p-1 dark:bg-paper-100" role="tablist" aria-label="Filter behavior logs">
+                  ${["all", "completed", "skipped", "missed"].map((status) => `<button onclick="setLogFilter('${status}')" class="rounded-lg px-3 py-2 text-xs font-semibold capitalize ${state.logFilter === status ? "bg-paper-0 text-ink shadow-sm dark:bg-paper-0" : "text-ink-500 dark:text-ink-400"}" role="tab" aria-selected="${state.logFilter === status}">${status}</button>`).join("")}
+                </div>
+              </div>
+              <div aria-live="polite">
+                ${visibleLogs.length ? visibleLogs.map((entry) => renderAuditLogRow(entry)).join("") : `<div class="p-10 text-center"><div class="mx-auto grid h-11 w-11 place-items-center rounded-xl bg-paper-100 text-ink-400">${icon("search-x", "h-5 w-5")}</div><h3 class="mt-4 font-semibold">No ${state.logFilter} records</h3><p class="mt-1 text-sm text-ink-500">Choose another outcome to review the audit trail.</p></div>`}
+              </div>
+            </div>
+          </section>
+        `
+      }
+
+      function auditMetric(value, label, note, iconName, tone = "neutral") {
+        const toneClasses = tone === "completed" ? "bg-completed-100 text-completed-600" : tone === "skipped" ? "bg-skipped-100 text-skipped-700 dark:bg-skipped-500/10 dark:text-skipped-500" : tone === "missed" ? "bg-missed-100 text-missed-700 dark:bg-missed-500/10 dark:text-missed-500" : "bg-paper-100 text-ink-500"
+        return `<div class="rounded-2xl border border-paper-200 bg-paper-0 p-4 dark:border-paper-200 dark:bg-paper-0"><div class="flex items-center justify-between gap-3"><span class="grid h-9 w-9 place-items-center rounded-xl ${toneClasses}">${icon(iconName, "h-4 w-4")}</span><span data-measure class="text-2xl font-semibold">${value}</span></div><p class="mt-4 text-sm font-semibold">${label}</p><p class="mt-1 text-xs text-ink-500 dark:text-ink-400">${note}</p></div>`
+      }
+
+      function renderAuditLogRow(entry) {
+        const status = logStatusMeta(entry.status)
+        const expanded = state.expandedLog === entry.id
+        return `
+          <article class="border-b border-paper-200 last:border-0 dark:border-paper-200">
+            <button onclick="toggleLogDetails('${entry.id}')" class="grid w-full gap-4 p-4 text-left hover:bg-paper-50 md:grid-cols-[140px_minmax(180px,1fr)_110px_120px_118px_24px] md:items-center md:p-5 dark:hover:bg-paper-100" aria-expanded="${expanded}">
+              <span><span class="block font-mono text-xs font-medium text-ink-700 dark:text-ink-700">${entry.date}</span><span class="mt-1 block font-mono text-[11px] text-ink-400">${entry.eventTime}</span></span>
+              <span class="min-w-0"><span class="block truncate text-sm font-semibold">${entry.title}</span><span class="mt-1 block text-xs text-ink-500 dark:text-ink-400">${entry.category}</span></span>
+              <span><span class="block text-[11px] text-ink-400 md:hidden">Scheduled</span><span class="font-mono text-xs text-ink-700 dark:text-ink-700">${entry.scheduled}</span></span>
+              <span><span class="block text-[11px] text-ink-400 md:hidden">Actual</span><span class="font-mono text-xs text-ink-700 dark:text-ink-700">${entry.actual}</span><span class="mt-1 block text-[11px] text-ink-400">${entry.variance}</span></span>
+              <span class="inline-flex w-fit items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold ${status.classes}">${icon(status.icon, "h-3.5 w-3.5")} ${status.label}</span>
+              ${icon(expanded ? "chevron-up" : "chevron-down", "h-4 w-4 text-ink-400")}
+            </button>
+            ${expanded ? `<div class="border-t border-paper-200 bg-paper-50 px-4 py-5 md:px-5 dark:border-paper-200 dark:bg-paper-100"><dl class="grid gap-x-6 gap-y-4 sm:grid-cols-2 lg:grid-cols-4"><div><dt class="text-[11px] font-medium uppercase tracking-[0.08em] text-ink-400">Event ID</dt><dd class="mt-1.5 font-mono text-xs text-ink-700 dark:text-ink-700">${entry.id}</dd></div><div><dt class="text-[11px] font-medium uppercase tracking-[0.08em] text-ink-400">Recorded at</dt><dd class="mt-1.5 font-mono text-xs text-ink-700 dark:text-ink-700">${entry.recordedAt}</dd></div><div><dt class="text-[11px] font-medium uppercase tracking-[0.08em] text-ink-400">Actor and source</dt><dd class="mt-1.5 text-xs text-ink-700 dark:text-ink-700">${entry.actor} / ${entry.source}</dd></div><div><dt class="text-[11px] font-medium uppercase tracking-[0.08em] text-ink-400">Timezone snapshot</dt><dd class="mt-1.5 text-xs text-ink-700 dark:text-ink-700">${entry.timezone}</dd></div><div class="sm:col-span-2 lg:col-span-4"><dt class="text-[11px] font-medium uppercase tracking-[0.08em] text-ink-400">Routine snapshot</dt><dd class="mt-1.5 text-xs text-ink-700 dark:text-ink-700">${entry.snapshot}</dd></div></dl></div>` : ""}
+          </article>
+        `
+      }
+
       function renderSettingsContent() {
         return `
           <section>
@@ -749,10 +854,9 @@
                 </div>
 
                 <div class="rounded-2xl border border-paper-200 bg-paper-0 dark:border-paper-200 dark:bg-paper-0">
-                  <div class="border-b border-paper-200 p-5 dark:border-paper-200"><h2 class="font-bold">Data and account</h2><p class="mt-1 text-sm text-ink-500 dark:text-ink-400">Export your data or clear prototype activity.</p></div>
+                  <div class="border-b border-paper-200 p-5 dark:border-paper-200"><h2 class="font-bold">Data and account</h2><p class="mt-1 text-sm text-ink-500 dark:text-ink-400">Export your routines and auditable behavior history.</p></div>
                   <div class="flex flex-col gap-3 p-5 sm:flex-row">
                     <button onclick="showDemoToast('export')" class="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-paper-300 px-4 text-sm font-semibold hover:bg-paper-50 dark:border-paper-200 dark:hover:bg-paper-100">${icon("download", "h-4 w-4")} Export data</button>
-                    <button onclick="openConfirmation('reset')" class="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-missed-100 px-4 text-sm font-semibold text-missed-600 hover:bg-missed-100 dark:border-missed-500/20 dark:text-missed-500 dark:hover:bg-missed-500/10">${icon("trash-2", "h-4 w-4")} Clear activity</button>
                   </div>
                 </div>
               </div>
@@ -990,6 +1094,17 @@
         render()
       }
 
+      function setLogFilter(status) {
+        state.logFilter = status
+        state.expandedLog = null
+        render()
+      }
+
+      function toggleLogDetails(id) {
+        state.expandedLog = state.expandedLog === id ? null : id
+        render()
+      }
+
       function saveSettings(event) {
         event.preventDefault()
         const nextSettings = {
@@ -1029,9 +1144,7 @@
       }
 
       function openConfirmation(action) {
-        if (action === "reset") {
-          state.modal = { type: "confirm", action, tone: "danger", title: "Clear activity history?", body: "This resets completed and skipped routines in the prototype. Your routine schedule will stay intact.", label: "Clear activity" }
-        } else if (action === "signout") {
+        if (action === "signout") {
           state.menuOpen = false
           state.modal = { type: "confirm", action, tone: "danger", title: "Sign out of Routempo?", body: "You will need to sign in again to view and update your routines.", label: "Sign out" }
         } else {
@@ -1058,10 +1171,7 @@
         const action = state.modal?.action
         const routineId = state.modal?.routineId
         state.modal = null
-        if (action === "reset") {
-          state.routines.forEach((routine) => { routine.status = "pending" })
-          showToast("Activity history cleared.", "success")
-        } else if (action === "pause") {
+        if (action === "pause") {
           const routine = state.routines.find((item) => item.id === routineId)
           routine.enabled = false
           showToast(`${routine.title} paused.`, "info")
