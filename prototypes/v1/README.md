@@ -1,6 +1,6 @@
-# RoutineFlow workflow prototype v1
+# Routempo workflow prototype v1
 
-Throwaway HTML prototype for answering one question: which daily workflow makes RoutineFlow immediately understandable?
+Throwaway HTML prototype for answering one question: which daily workflow makes Routempo immediately understandable?
 
 Open `index.html` directly, or serve the repository root and visit:
 
@@ -27,7 +27,7 @@ This is prototype code. It is intentionally separate from the production Next.js
 
 ## Visual system
 
-The prototype follows the repository's RoutineFlow design system:
+The prototype follows the repository's Routempo design system:
 
 - Manrope for headings and interface text, with DM Mono reserved for times and measured values
 - A balanced green-gray neutral scale for surfaces and readable deep ink text

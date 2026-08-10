@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Throwaway RoutineFlow workflow prototype with three switchable UI directions."
+      content="Throwaway Routempo workflow prototype with three switchable UI directions."
     />
-    <title>RoutineFlow workflow prototype</title>
+    <title>Routempo workflow prototype</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -224,7 +224,7 @@
   <body class="min-h-[100dvh] bg-mist font-sans text-ink antialiased">
     <!--
       PROTOTYPE ONLY. No persistence and no production integration.
-      Question: Which workflow makes RoutineFlow immediately understandable?
+      Question: Which workflow makes Routempo immediately understandable?
       Three variants of the daily workflow, switchable via ?variant=A, B, or C.
     -->
     <div id="app"></div>
@@ -297,9 +297,9 @@
 
       function brand(compact = false) {
         return `
-          <a href="?variant=${currentVariant()}&page=today" class="inline-flex items-center gap-2.5 rounded-xl" aria-label="RoutineFlow home">
+          <a href="?variant=${currentVariant()}&page=today" class="inline-flex items-center gap-2.5 rounded-xl" aria-label="Routempo home">
             <img src="../../public/logo.svg" alt="" class="h-8 w-8" />
-            ${compact ? "" : `<span class="font-display text-[18px] font-bold tracking-[-0.02em]">Routine<span class="text-signal-600 dark:text-signal-300">Flow</span></span>`}
+            ${compact ? "" : `<span class="font-display text-[18px] font-bold tracking-[-0.02em]">Rou<span class="text-signal-600 dark:text-signal-300">tempo</span></span>`}
           </a>
         `
       }
@@ -311,12 +311,12 @@
               <section class="relative hidden overflow-hidden bg-auth-panel p-10 text-white lg:flex lg:flex-col lg:justify-between xl:p-14">
                 <div class="flex items-center gap-2.5">
                   <img src="../../public/logo.svg" alt="" class="h-9 w-9 rounded-xl bg-white p-1.5" />
-                  <span class="font-display text-lg font-semibold">RoutineFlow</span>
+                  <span class="font-display text-lg font-semibold">Routempo</span>
                 </div>
                 <div class="max-w-xl py-14">
                   <p class="font-mono text-xs font-medium uppercase tracking-[0.12em] text-white/65">A calmer daily rhythm</p>
                   <h1 class="mt-5 max-w-lg text-4xl font-semibold tracking-[-0.03em] text-white xl:text-5xl">Know what comes next. Record what actually happened.</h1>
-                  <p class="mt-5 max-w-md text-base leading-7 text-white/70">RoutineFlow keeps your schedule, reminders, and progress in one place without turning your day into another dashboard to manage.</p>
+                  <p class="mt-5 max-w-md text-base leading-7 text-white/70">Routempo keeps your schedule, reminders, and progress in one place without turning your day into another dashboard to manage.</p>
                 </div>
                 <div class="grid grid-cols-3 gap-3 border-t border-white/15 pt-6 text-sm text-white/70">
                   <div><span class="block font-mono text-lg font-medium text-white">01</span><span class="mt-1 block">Plan simply</span></div>
@@ -332,13 +332,13 @@
                 </div>
                 <div class="my-auto w-full max-w-[420px] self-center py-10">
                   <div class="grid h-11 w-11 place-items-center rounded-xl bg-signal-50 text-signal-600 dark:bg-signal-50 dark:text-signal-300">${icon("shield-check", "h-5 w-5")}</div>
-                  <p class="mt-6 text-sm font-medium text-signal-600 dark:text-signal-300">Welcome to RoutineFlow</p>
+                  <p class="mt-6 text-sm font-medium text-signal-600 dark:text-signal-300">Welcome to Routempo</p>
                   <h1 class="mt-3 text-3xl font-semibold tracking-[-0.025em]">Sign in to continue</h1>
                   <p class="mt-3 text-sm leading-6 text-ink-500 dark:text-ink-400">Use your Google account to securely access today’s routines, plan, and progress.</p>
                   <button onclick="signInWithGoogle()" class="mt-8 inline-flex h-12 w-full items-center justify-center gap-3 rounded-xl border border-paper-300 bg-paper-0 px-5 text-sm font-medium text-ink-800 shadow-sm hover:bg-paper-50 active:scale-[.99] dark:border-paper-300 dark:bg-paper-100 dark:text-ink-700 dark:hover:bg-paper-200">${icon("chrome", "h-[18px] w-[18px]")} Continue with Google</button>
                   <div class="mt-6 flex items-start gap-3 rounded-xl bg-paper-50 p-4 dark:bg-paper-100">
                     ${icon("lock-keyhole", "mt-0.5 h-4 w-4 shrink-0 text-signal-600 dark:text-signal-300")}
-                    <p class="text-xs leading-5 text-ink-500 dark:text-ink-400">RoutineFlow uses Google only to verify your identity. The prototype does not send or store account data.</p>
+                    <p class="text-xs leading-5 text-ink-500 dark:text-ink-400">Routempo uses Google only to verify your identity. The prototype does not send or store account data.</p>
                   </div>
                 </div>
                 <p class="text-center text-xs leading-5 text-ink-400">By continuing, you agree to the prototype terms and privacy notice.</p>
@@ -526,7 +526,7 @@
                 <div>
                   <button onclick="prototypeOnly('A date picker would open here.')" class="inline-flex items-center gap-2 rounded-lg text-sm font-semibold text-ink-500 hover:text-signal-600">${icon("calendar-days", "h-4 w-4")} Monday, August 10 ${icon("chevron-down", "h-4 w-4")}</button>
                   <h1 class="mt-3 text-4xl font-bold tracking-[-0.04em] md:text-5xl">Your day, in order.</h1>
-                  <p class="mt-3 max-w-xl text-base text-ink-500 dark:text-ink-400">Follow the timeline. RoutineFlow handles reminders and records what you finish.</p>
+                  <p class="mt-3 max-w-xl text-base text-ink-500 dark:text-ink-400">Follow the timeline. Routempo handles reminders and records what you finish.</p>
                 </div>
                 <button onclick="openAddRoutine()" class="inline-flex h-11 items-center justify-center gap-2 self-start rounded-xl bg-action px-4 text-sm font-semibold text-white hover:bg-action-hover active:scale-[.97] md:self-auto">${icon("plus", "h-4 w-4")} Add routine</button>
               </div>
@@ -743,7 +743,7 @@
                 </form>
 
                 <div class="rounded-2xl border border-paper-200 bg-paper-0 dark:border-paper-200 dark:bg-paper-0">
-                  <div class="border-b border-paper-200 p-5 dark:border-paper-200"><h2 class="font-bold">Notifications</h2><p class="mt-1 text-sm text-ink-500 dark:text-ink-400">Choose what RoutineFlow sends you.</p></div>
+                  <div class="border-b border-paper-200 p-5 dark:border-paper-200"><h2 class="font-bold">Notifications</h2><p class="mt-1 text-sm text-ink-500 dark:text-ink-400">Choose what Routempo sends you.</p></div>
                   ${settingsSwitch("notifications", "Routine reminders", "Get notified before scheduled routines.", state.settings.notifications)}
                   ${settingsSwitch("weeklySummary", "Weekly summary", "Receive a short review every Monday.", state.settings.weeklySummary)}
                 </div>
@@ -1033,7 +1033,7 @@
           state.modal = { type: "confirm", action, tone: "danger", title: "Clear activity history?", body: "This resets completed and skipped routines in the prototype. Your routine schedule will stay intact.", label: "Clear activity" }
         } else if (action === "signout") {
           state.menuOpen = false
-          state.modal = { type: "confirm", action, tone: "danger", title: "Sign out of RoutineFlow?", body: "You will need to sign in again to view and update your routines.", label: "Sign out" }
+          state.modal = { type: "confirm", action, tone: "danger", title: "Sign out of Routempo?", body: "You will need to sign in again to view and update your routines.", label: "Sign out" }
         } else {
           state.modal = { type: "confirm", action, tone: "default", title: "Apply these changes?", body: "Review the action before continuing. Nothing changes until you confirm.", label: "Confirm changes" }
         }
