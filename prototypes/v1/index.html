@@ -244,6 +244,9 @@
         toast: null,
         modal: null,
         menuOpen: false,
+        authStep: "email",
+        authEmail: "",
+        authError: "",
         planView: "week",
         selectedDay: 0,
         insightRange: "7",
@@ -263,7 +266,7 @@
 
       function currentPage() {
         const value = new URLSearchParams(location.search).get("page")?.toLowerCase()
-        return ["today", "plan", "insights", "settings"].includes(value) ? value : "today"
+        return ["login", "today", "plan", "insights", "settings"].includes(value) ? value : "today"
       }
 
       function pendingRoutines() {
@@ -283,7 +286,7 @@
         const variant = currentVariant()
         document.getElementById("app").innerHTML = `
           <main class="min-h-[100dvh] pb-28">
-            ${variants[variant].render()}
+            ${currentPage() === "login" ? renderLogin() : variants[variant].render()}
           </main>
           ${renderSwitcher(variant)}
           ${renderModal()}
@@ -298,6 +301,68 @@
             <img src="../../public/logo.svg" alt="" class="h-8 w-8" />
             ${compact ? "" : `<span class="font-display text-[18px] font-bold tracking-[-0.02em]">Routine<span class="text-signal-600 dark:text-signal-300">Flow</span></span>`}
           </a>
+        `
+      }
+
+      function renderLogin() {
+        const isOtp = state.authStep === "otp"
+        return `
+          <div class="view-enter min-h-[100dvh] bg-paper-50 px-4 py-4 dark:bg-paper-50 sm:px-6 sm:py-6">
+            <div class="mx-auto grid min-h-[calc(100dvh-2rem)] max-w-[1180px] overflow-hidden rounded-2xl border border-paper-200 bg-paper-0 shadow-soft dark:border-paper-200 dark:bg-paper-0 sm:min-h-[calc(100dvh-3rem)] lg:grid-cols-[minmax(0,1.05fr)_minmax(420px,.95fr)]">
+              <section class="relative hidden overflow-hidden bg-inverse p-10 text-on-inverse lg:flex lg:flex-col lg:justify-between xl:p-14">
+                <div class="flex items-center gap-2.5">
+                  <img src="../../public/logo.svg" alt="" class="h-9 w-9 rounded-xl bg-white p-1.5" />
+                  <span class="font-display text-lg font-semibold">RoutineFlow</span>
+                </div>
+                <div class="max-w-xl py-14">
+                  <p class="font-mono text-xs font-medium uppercase tracking-[0.12em] text-white/65">A calmer daily rhythm</p>
+                  <h1 class="mt-5 max-w-lg text-4xl font-semibold tracking-[-0.03em] text-white xl:text-5xl">Know what comes next. Record what actually happened.</h1>
+                  <p class="mt-5 max-w-md text-base leading-7 text-white/70">RoutineFlow keeps your schedule, reminders, and progress in one place without turning your day into another dashboard to manage.</p>
+                </div>
+                <div class="grid grid-cols-3 gap-3 border-t border-white/15 pt-6 text-sm text-white/70">
+                  <div><span class="block font-mono text-lg font-medium text-white">01</span><span class="mt-1 block">Plan simply</span></div>
+                  <div><span class="block font-mono text-lg font-medium text-white">02</span><span class="mt-1 block">Act on time</span></div>
+                  <div><span class="block font-mono text-lg font-medium text-white">03</span><span class="mt-1 block">Learn gently</span></div>
+                </div>
+              </section>
+
+              <section class="relative flex min-h-[620px] flex-col px-5 py-6 sm:px-10 sm:py-9 lg:px-14 xl:px-20">
+                <div class="flex items-center justify-between">
+                  <div class="lg:hidden">${brand()}</div>
+                  <div class="ml-auto">${themeButton()}</div>
+                </div>
+                <div class="my-auto w-full max-w-[420px] self-center py-10">
+                  ${isOtp ? `
+                    <button onclick="returnToEmail()" class="inline-flex items-center gap-2 text-sm font-medium text-ink-500 hover:text-signal-600 dark:text-ink-400 dark:hover:text-signal-300">${icon("arrow-left", "h-4 w-4")} Use another email</button>
+                    <div class="mt-8 grid h-11 w-11 place-items-center rounded-xl bg-signal-50 text-signal-600 dark:bg-signal-50 dark:text-signal-300">${icon("mail-check", "h-5 w-5")}</div>
+                    <h1 class="mt-5 text-3xl font-semibold tracking-[-0.025em]">Check your email</h1>
+                    <p class="mt-3 text-sm leading-6 text-ink-500 dark:text-ink-400">Enter the six-digit code sent to <span class="font-medium text-ink-800 dark:text-ink-700">${state.authEmail}</span>.</p>
+                    <form class="mt-7" onsubmit="verifyLoginCode(event); return false">
+                      <label for="login-code" class="text-sm font-medium text-ink-700 dark:text-ink-700">Verification code</label>
+                      <input id="login-code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="123456" class="mt-2 h-12 w-full rounded-xl border border-paper-300 bg-paper-0 px-4 font-mono text-lg tracking-[0.28em] text-ink-900 placeholder:text-ink-400 focus:border-signal-600 dark:border-paper-300 dark:bg-paper-100" aria-describedby="login-help login-error" />
+                      <p id="login-help" class="mt-2 text-xs text-ink-500 dark:text-ink-400">Prototype: enter any six digits.</p>
+                      ${state.authError ? `<p id="login-error" role="alert" class="mt-2 text-sm text-missed-600 dark:text-missed-500">${state.authError}</p>` : ""}
+                      <button type="submit" class="mt-5 inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-action px-5 text-sm font-semibold text-white hover:bg-action-hover active:scale-[.99]">Continue ${icon("arrow-right", "h-4 w-4")}</button>
+                    </form>
+                    <button onclick="resendLoginCode()" class="mt-5 w-full text-center text-sm font-medium text-signal-600 hover:text-signal-700 dark:text-signal-300">Send a new code</button>
+                  ` : `
+                    <p class="text-sm font-medium text-signal-600 dark:text-signal-300">Welcome to RoutineFlow</p>
+                    <h1 class="mt-3 text-3xl font-semibold tracking-[-0.025em]">Sign in to continue</h1>
+                    <p class="mt-3 text-sm leading-6 text-ink-500 dark:text-ink-400">Use your email to access today’s routines, plan, and progress.</p>
+                    <form class="mt-7" onsubmit="requestLoginCode(event); return false" novalidate>
+                      <label for="login-email" class="text-sm font-medium text-ink-700 dark:text-ink-700">Email address</label>
+                      <input id="login-email" type="email" autocomplete="email" value="${state.authEmail}" placeholder="you@example.com" class="mt-2 h-12 w-full rounded-xl border border-paper-300 bg-paper-0 px-4 text-sm text-ink-900 placeholder:text-ink-400 focus:border-signal-600 dark:border-paper-300 dark:bg-paper-100" aria-describedby="login-error" />
+                      ${state.authError ? `<p id="login-error" role="alert" class="mt-2 text-sm text-missed-600 dark:text-missed-500">${state.authError}</p>` : ""}
+                      <button type="submit" class="mt-5 inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-action px-5 text-sm font-semibold text-white hover:bg-action-hover active:scale-[.99]">Email me a code ${icon("arrow-right", "h-4 w-4")}</button>
+                    </form>
+                    <div class="my-6 flex items-center gap-3"><span class="h-px flex-1 bg-paper-200"></span><span class="text-xs text-ink-400">or</span><span class="h-px flex-1 bg-paper-200"></span></div>
+                    <button onclick="signInWithGoogle()" class="inline-flex h-12 w-full items-center justify-center gap-3 rounded-xl border border-paper-300 bg-paper-0 px-5 text-sm font-medium text-ink-800 hover:bg-paper-50 active:scale-[.99] dark:border-paper-300 dark:bg-paper-100 dark:text-ink-700 dark:hover:bg-paper-200">${icon("chrome", "h-[18px] w-[18px]")} Continue with Google</button>
+                  `}
+                </div>
+                <p class="text-center text-xs leading-5 text-ink-400">Prototype only. No account data is sent or stored.</p>
+              </section>
+            </div>
+          </div>
         `
       }
 
@@ -894,6 +959,56 @@
         render()
       }
 
+      function requestLoginCode(event) {
+        event.preventDefault()
+        const email = document.getElementById("login-email").value.trim()
+        if (!/^\S+@\S+\.\S+$/.test(email)) {
+          state.authError = "Enter a valid email address."
+          render()
+          setTimeout(() => document.getElementById("login-email")?.focus(), 0)
+          return
+        }
+        state.authEmail = email
+        state.authError = ""
+        state.authStep = "otp"
+        showToast(`Code sent to ${email}.`, "info")
+        setTimeout(() => {
+          render()
+          document.getElementById("login-code")?.focus()
+        }, 0)
+      }
+
+      function verifyLoginCode(event) {
+        event.preventDefault()
+        const code = document.getElementById("login-code").value.trim()
+        if (!/^\d{6}$/.test(code)) {
+          state.authError = "Enter the complete six-digit code."
+          render()
+          setTimeout(() => document.getElementById("login-code")?.focus(), 0)
+          return
+        }
+        state.authError = ""
+        showToast("Signed in successfully.", "success")
+        setTimeout(() => navigatePage("today"), 0)
+      }
+
+      function resendLoginCode() {
+        state.authError = ""
+        showToast(`A new code was sent to ${state.authEmail}.`, "info")
+      }
+
+      function returnToEmail() {
+        state.authStep = "email"
+        state.authError = ""
+        render()
+        setTimeout(() => document.getElementById("login-email")?.focus(), 0)
+      }
+
+      function signInWithGoogle() {
+        showToast("Google sign-in completed in the prototype.", "success")
+        navigatePage("today")
+      }
+
       function toggleMenu() {
         state.menuOpen = !state.menuOpen
         render()
@@ -1018,7 +1133,10 @@
           state.pendingSettings = null
           showToast("Timezone and schedule updated.", "success")
         } else if (action === "signout") {
-          showToast("Sign-out confirmed. Session stays open in this prototype.", "info")
+          state.authStep = "email"
+          state.authError = ""
+          showToast("Signed out successfully.", "info")
+          navigatePage("login")
         } else {
           showToast("Changes confirmed.", "success")
         }

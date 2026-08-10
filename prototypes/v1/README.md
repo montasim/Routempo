@@ -7,11 +7,13 @@ Open `index.html` directly, or serve the repository root and visit:
 - `prototypes/v1/index.html?variant=A` for Guided home
 - `prototypes/v1/index.html?variant=B` for Day timeline
 - `prototypes/v1/index.html?variant=C` for Focus mode
+- `prototypes/v1/index.html?variant=A&page=login` for the shared login flow
 
 Use the floating switcher or the left and right arrow keys to compare variants. Routine completion, skipping, adding a routine, theme switching, and responsive layouts are interactive. All state is in memory and resets when the page reloads.
 
-Each variant includes four working, URL-addressable pages:
+Each variant includes five working, URL-addressable pages:
 
+- `&page=login` for email OTP or Google sign-in
 - `&page=today` for completing or skipping today's routines
 - `&page=plan` for the weekly schedule and recurring-routine controls
 - `&page=insights` for completion patterns and activity history
@@ -19,7 +21,7 @@ Each variant includes four working, URL-addressable pages:
 
 For example: `index.html?variant=A&page=plan`.
 
-The Settings page includes explicit controls for previewing success and error toasts and a confirmation alert. Confirmation is required before skipping or pausing a routine, changing timezone, signing out, or clearing activity. Frequent and reversible actions stay one-click.
+The login page includes email validation, a six-digit OTP step, resend behavior, and a simulated Google sign-in. The Settings page includes explicit controls for previewing success and error toasts and a confirmation alert. Confirmation is required before skipping or pausing a routine, changing timezone, signing out, or clearing activity. Frequent and reversible actions stay one-click.
 
 This is prototype code. It is intentionally separate from the production Next.js app.
 
