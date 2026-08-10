@@ -1,0 +1,1116 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Throwaway RoutineFlow workflow prototype with three switchable UI directions."
+    />
+    <title>RoutineFlow workflow prototype</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              ink: {
+                DEFAULT: "var(--ink-900)",
+                900: "var(--ink-900)",
+                800: "var(--ink-800)",
+                700: "var(--ink-700)",
+                500: "var(--ink-500)",
+                400: "var(--ink-400)",
+              },
+              mist: "var(--paper-50)",
+              paper: {
+                0: "var(--paper-0)",
+                50: "var(--paper-50)",
+                100: "var(--paper-100)",
+                200: "var(--paper-200)",
+                300: "var(--paper-300)",
+                400: "var(--paper-400)",
+              },
+              signal: {
+                50: "var(--signal-50)",
+                100: "var(--signal-100)",
+                200: "var(--signal-200)",
+                300: "var(--signal-300)",
+                500: "var(--signal-500)",
+                600: "var(--signal-600)",
+                700: "var(--signal-700)",
+                800: "var(--signal-800)",
+                900: "var(--signal-900)",
+              },
+              completed: {
+                100: "var(--completed-100)",
+                500: "var(--completed-500)",
+                600: "var(--completed-600)",
+              },
+              missed: {
+                100: "var(--missed-100)",
+                500: "var(--missed-500)",
+                600: "var(--missed-600)",
+                700: "var(--missed-700)",
+              },
+              skipped: {
+                100: "var(--skipped-100)",
+                500: "var(--skipped-500)",
+                600: "var(--skipped-600)",
+                700: "var(--skipped-700)",
+              },
+              action: {
+                DEFAULT: "var(--interactive)",
+                hover: "var(--interactive-hover)",
+              },
+              inverse: "var(--surface-inverse)",
+              "on-inverse": "var(--text-inverse)",
+            },
+            boxShadow: {
+              soft: "var(--shadow-md)",
+              float: "var(--shadow-pop)",
+            },
+            fontFamily: {
+              sans: ["Manrope", "system-ui", "sans-serif"],
+              display: ["Manrope", "system-ui", "sans-serif"],
+              mono: ["DM Mono", "ui-monospace", "monospace"],
+            },
+            fontSize: {
+              "2xs": ["0.6875rem", { lineHeight: "1.4" }],
+              xs: ["0.75rem", { lineHeight: "1.5" }],
+              sm: ["0.8125rem", { lineHeight: "1.5" }],
+              base: ["0.9375rem", { lineHeight: "1.5" }],
+              lg: ["1.0625rem", { lineHeight: "1.45" }],
+              xl: ["1.375rem", { lineHeight: "1.28" }],
+              "2xl": ["1.625rem", { lineHeight: "1.22" }],
+              "3xl": ["1.875rem", { lineHeight: "1.15" }],
+              "4xl": ["2.25rem", { lineHeight: "1.1" }],
+              "5xl": ["2.75rem", { lineHeight: "1.05" }],
+            },
+          },
+        },
+      }
+    </script>
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <style>
+      :root {
+        color-scheme: light;
+        --paper-0: #ffffff;
+        --paper-50: #f8faf9;
+        --paper-100: #f1f5f2;
+        --paper-200: #e2e8e4;
+        --paper-300: #cbd5ce;
+        --paper-400: #94a39a;
+        --ink-900: #17201a;
+        --ink-800: #27352c;
+        --ink-700: #405047;
+        --ink-500: #647269;
+        --ink-400: #87938b;
+        --signal-50: #f0fdf4;
+        --signal-100: #dcfce7;
+        --signal-200: #bbf7d0;
+        --signal-300: #86efac;
+        --signal-400: #4ade80;
+        --signal-500: #22c55e;
+        --signal-600: #15803d;
+        --signal-700: #166534;
+        --signal-800: #14532d;
+        --signal-900: #0f3d24;
+        --completed-100: #e4f4ec;
+        --completed-500: #25b36b;
+        --completed-600: #1f9d5b;
+        --missed-100: #fbe7e8;
+        --missed-500: #e5484d;
+        --missed-600: #d83a3f;
+        --missed-700: #b9272d;
+        --skipped-100: #fbf0dd;
+        --skipped-500: #e8a13a;
+        --skipped-600: #cf8a26;
+        --skipped-700: #a96b18;
+        --surface-inverse: #14532d;
+        --text-inverse: #ffffff;
+        --interactive: #15803d;
+        --interactive-hover: #166534;
+        --shadow-md: 0 4px 10px -2px rgb(23 32 26 / .08), 0 2px 4px -2px rgb(23 32 26 / .05);
+        --shadow-pop: 0 18px 44px -10px rgb(23 32 26 / .20);
+      }
+      .dark {
+        color-scheme: dark;
+        --paper-0: #171d18;
+        --paper-50: #101511;
+        --paper-100: #202821;
+        --paper-200: #2b352d;
+        --paper-300: #3a463d;
+        --paper-400: #647067;
+        --ink-900: #f2f6f2;
+        --ink-800: #e2e9e3;
+        --ink-700: #cad4cc;
+        --ink-500: #a7b7aa;
+        --ink-400: #839187;
+        --signal-50: #26382b;
+        --signal-100: #294333;
+        --signal-200: #345b3e;
+        --signal-300: #72c58c;
+        --signal-400: #4ade80;
+        --signal-500: #4fae6b;
+        --signal-600: #72c58c;
+        --signal-700: #a8d8b5;
+        --signal-800: #c6ead0;
+        --signal-900: #e5f6ea;
+        --completed-100: #173528;
+        --completed-500: #38bd79;
+        --completed-600: #55ce8d;
+        --missed-100: #421f24;
+        --missed-500: #ef6468;
+        --missed-600: #ff7b7f;
+        --missed-700: #ff989b;
+        --skipped-100: #3b2d18;
+        --skipped-500: #e9aa50;
+        --skipped-600: #f1ba69;
+        --skipped-700: #f6ca87;
+        --surface-inverse: #dfeee2;
+        --text-inverse: #17261c;
+        --interactive: #15803d;
+        --interactive-hover: #166534;
+        --shadow-md: 0 4px 12px -2px rgb(0 0 0 / .30);
+        --shadow-pop: 0 18px 44px -10px rgb(0 0 0 / .56);
+      }
+      * { -webkit-tap-highlight-color: transparent; }
+      body { font-family: "Manrope", system-ui, sans-serif; font-size: 15px; line-height: 1.55; text-rendering: optimizeLegibility; }
+      h1, h2, h3, .font-display { font-family: "Manrope", system-ui, sans-serif; font-weight: 600; }
+      h1 { line-height: 1.1; letter-spacing: -.025em; }
+      h2, h3 { line-height: 1.25; letter-spacing: -.015em; }
+      .font-bold { font-weight: 600 !important; }
+      button.font-bold, button.font-semibold { font-weight: 500 !important; }
+      button, a, input, select { outline: none; font-family: inherit; }
+      button { font-weight: 500; }
+      button, a { transition-duration: 140ms; transition-timing-function: cubic-bezier(.2, 0, 0, 1); }
+      input, select { color: var(--ink-900); }
+      ::selection { background: var(--signal-100); color: var(--ink-900); }
+      [class*="rounded-xl"] { border-radius: 10px !important; }
+      [class*="rounded-2xl"] { border-radius: 14px !important; }
+      [class*="rounded-lg"] { border-radius: 6px !important; }
+      .tabular-nums, [data-measure] { font-family: "DM Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+      button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible {
+        box-shadow: 0 0 0 3px rgb(21 128 61 / .24);
+      }
+      .view-enter { animation: view-enter .24s ease-out; }
+      .toast-enter { animation: toast-enter .28s ease-out; }
+      @keyframes view-enter {
+        from { opacity: 0; transform: translateY(8px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      @keyframes toast-enter {
+        from { opacity: 0; transform: translate(-50%, 10px); }
+        to { opacity: 1; transform: translate(-50%, 0); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+          animation-duration: .01ms !important;
+          animation-iteration-count: 1 !important;
+          scroll-behavior: auto !important;
+          transition-duration: .01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body class="min-h-[100dvh] bg-mist font-sans text-ink antialiased">
+    <!--
+      PROTOTYPE ONLY. No persistence and no production integration.
+      Question: Which workflow makes RoutineFlow immediately understandable?
+      Three variants of the daily workflow, switchable via ?variant=A, B, or C.
+    -->
+    <div id="app"></div>
+
+    <script>
+      const variants = {
+        A: { name: "Guided home", render: renderGuidedHome },
+        B: { name: "Day timeline", render: renderDayTimeline },
+        C: { name: "Focus mode", render: renderFocusMode },
+      }
+
+      const state = {
+        theme: window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light",
+        routines: [
+          { id: 1, time: "7:30 AM", title: "Morning stretch", note: "10 minutes", category: "Movement", status: "completed" },
+          { id: 2, time: "9:00 AM", title: "Take vitamins", note: "After breakfast", category: "Health", status: "pending" },
+          { id: 3, time: "1:00 PM", title: "Walk outside", note: "20 minutes", category: "Movement", status: "pending" },
+          { id: 4, time: "9:30 PM", title: "Read before bed", note: "15 minutes", category: "Mind", status: "pending" },
+        ],
+        toast: null,
+        modal: null,
+        menuOpen: false,
+        planView: "week",
+        selectedDay: 0,
+        insightRange: "7",
+        settings: {
+          name: "Montasim Ahmed",
+          timezone: "Asia/Dhaka",
+          reminder: "10",
+          notifications: true,
+          weeklySummary: true,
+        },
+      }
+
+      function currentVariant() {
+        const value = new URLSearchParams(location.search).get("variant")?.toUpperCase()
+        return variants[value] ? value : "A"
+      }
+
+      function currentPage() {
+        const value = new URLSearchParams(location.search).get("page")?.toLowerCase()
+        return ["today", "plan", "insights", "settings"].includes(value) ? value : "today"
+      }
+
+      function pendingRoutines() {
+        return state.routines.filter((routine) => routine.status === "pending")
+      }
+
+      function completedCount() {
+        return state.routines.filter((routine) => routine.status === "completed").length
+      }
+
+      function icon(name, className = "h-5 w-5") {
+        return `<i data-lucide="${name}" class="${className}" aria-hidden="true"></i>`
+      }
+
+      function render() {
+        document.documentElement.classList.toggle("dark", state.theme === "dark")
+        const variant = currentVariant()
+        document.getElementById("app").innerHTML = `
+          <main class="min-h-[100dvh] pb-28">
+            ${variants[variant].render()}
+          </main>
+          ${renderSwitcher(variant)}
+          ${renderModal()}
+          ${renderToast()}
+        `
+        lucide.createIcons({ attrs: { "stroke-width": 1.8 } })
+      }
+
+      function brand(compact = false) {
+        return `
+          <a href="?variant=${currentVariant()}&page=today" class="inline-flex items-center gap-2.5 rounded-xl" aria-label="RoutineFlow home">
+            <img src="../../public/logo.svg" alt="" class="h-8 w-8" />
+            ${compact ? "" : `<span class="font-display text-[18px] font-bold tracking-[-0.02em]">Routine<span class="text-signal-600 dark:text-signal-300">Flow</span></span>`}
+          </a>
+        `
+      }
+
+      function themeButton() {
+        const nextLabel = state.theme === "dark" ? "Use light theme" : "Use dark theme"
+        return `
+          <button onclick="toggleTheme()" class="grid h-10 w-10 place-items-center rounded-xl border border-black/10 bg-paper-0 text-ink-700 transition hover:bg-paper-50 active:scale-[.97] dark:border-paper-200 dark:bg-paper-0 dark:text-ink-400 dark:hover:bg-paper-100" aria-label="${nextLabel}" title="${nextLabel}">
+            ${icon(state.theme === "dark" ? "sun" : "moon", "h-[18px] w-[18px]")}
+          </button>
+        `
+      }
+
+      function avatarButton() {
+        return `
+          <button onclick="toggleMenu()" class="grid h-10 w-10 place-items-center rounded-full bg-signal-100 text-sm font-bold text-signal-700 transition active:scale-[.97] dark:bg-signal-50 dark:text-signal-300" aria-label="Open account menu" aria-expanded="${state.menuOpen}">MA</button>
+        `
+      }
+
+      function accountMenu(position = "right-0 top-12") {
+        if (!state.menuOpen) return ""
+        return `
+          <div class="absolute ${position} z-30 w-60 rounded-2xl border border-black/10 bg-paper-0 p-2 shadow-soft dark:border-paper-200 dark:bg-paper-100">
+            <div class="px-3 py-2">
+              <p class="text-sm font-semibold">Montasim Ahmed</p>
+              <p class="mt-0.5 truncate text-xs text-ink-500 dark:text-ink-400">montasim@example.com</p>
+            </div>
+            <div class="my-1 h-px bg-black/5 dark:bg-paper-100"></div>
+            <button onclick="navigatePage('settings')" class="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm hover:bg-paper-100 dark:hover:bg-paper-100">${icon("settings", "h-4 w-4")} Settings</button>
+            <button onclick="openConfirmation('signout')" class="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm hover:bg-paper-100 dark:hover:bg-paper-100">${icon("log-out", "h-4 w-4")} Sign out</button>
+          </div>
+        `
+      }
+
+      function desktopSidebar() {
+        return `
+          <aside class="sticky top-0 hidden h-[100dvh] w-[232px] shrink-0 border-r border-paper-200 bg-paper-0 px-4 py-6 lg:flex lg:flex-col">
+            <div class="px-2">${brand()}</div>
+            <nav class="mt-9 space-y-1" aria-label="Primary navigation">
+              ${sideNavItem("home", "Today", "today")}
+              ${sideNavItem("calendar-days", "Plan", "plan")}
+              ${sideNavItem("chart-no-axes-column-increasing", "Insights", "insights")}
+              ${sideNavItem("settings", "Settings", "settings")}
+            </nav>
+            <div class="mt-8 px-3">
+              <p class="text-xs font-semibold text-ink-400 dark:text-ink-500">Today</p>
+              <div class="mt-3 flex gap-1.5" aria-label="${completedCount()} of ${state.routines.length} routines completed">
+                ${state.routines.map((routine) => `<span class="h-1.5 flex-1 rounded-full ${routine.status === "completed" ? "bg-completed-500" : routine.status === "skipped" ? "bg-skipped-500" : "bg-paper-200"}"></span>`).join("")}
+              </div>
+              <p data-measure class="mt-2 text-xs text-ink-500">${completedCount()} of ${state.routines.length} complete</p>
+            </div>
+            <div class="relative mt-auto">
+              <button onclick="toggleMenu()" class="flex w-full items-center gap-3 rounded-2xl p-2.5 text-left transition hover:bg-paper-100 active:scale-[.97]" aria-expanded="${state.menuOpen}">
+                <span class="grid h-9 w-9 place-items-center rounded-full bg-signal-100 text-xs font-bold text-signal-700 dark:bg-signal-50 dark:text-signal-300">MA</span>
+                <span class="min-w-0 flex-1"><span class="block truncate text-sm font-semibold">Montasim</span><span class="block text-xs text-ink-500 dark:text-ink-400">Settings and account</span></span>
+                ${icon("chevrons-up-down", "h-4 w-4 text-ink-400")}
+              </button>
+              ${accountMenu("bottom-14 left-0")}
+            </div>
+          </aside>
+        `
+      }
+
+      function renderGuidedHome() {
+        if (currentPage() !== "today") return renderSecondaryPage("sidebar", currentPage())
+        const next = pendingRoutines()[0]
+        const upcoming = pendingRoutines().slice(1)
+        return `
+          <div class="view-enter min-h-[100dvh] bg-paper-50 dark:bg-paper-50">
+            <div class="mx-auto flex min-h-[100dvh] max-w-[1440px]">
+              ${desktopSidebar()}
+
+              <section class="min-w-0 flex-1">
+                <header class="flex min-h-20 flex-wrap items-center justify-between gap-y-2 border-b border-paper-200 bg-paper-0 px-5 py-3 md:px-10">
+                  <div class="flex items-center gap-3 lg:hidden">${brand()} </div>
+                  <p class="hidden text-sm font-medium text-ink-500 lg:block dark:text-ink-400">Monday, August 10</p>
+                  <div class="relative flex items-center gap-2">${themeButton()} ${avatarButton()} ${accountMenu()}</div>
+                  <nav class="flex w-full gap-1 lg:hidden" aria-label="Primary navigation">${compactNav()}</nav>
+                </header>
+
+                <div class="mx-auto max-w-[1040px] px-5 py-8 md:px-10 md:py-12">
+                  <div class="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+                    <div>
+                      <p class="text-sm font-semibold text-ink-500">Good morning, Montasim</p>
+                      <h1 class="mt-2 text-3xl font-bold tracking-[-0.025em] md:text-4xl">Here is what needs your attention.</h1>
+                    </div>
+                    <button onclick="openAddRoutine()" class="inline-flex h-11 shrink-0 items-center justify-center gap-2 self-start rounded-xl bg-action px-4 text-sm font-semibold text-white transition hover:bg-action-hover active:scale-[.97] sm:self-auto">
+                      ${icon("plus", "h-4 w-4")} Add routine
+                    </button>
+                  </div>
+
+                  ${next ? `
+                    <section class="mt-8 overflow-hidden rounded-2xl bg-inverse text-on-inverse shadow-soft">
+                      <div class="grid gap-7 p-6 md:grid-cols-[1fr_auto] md:items-end md:p-8">
+                        <div>
+                          <div class="flex items-center gap-2 font-mono text-sm font-medium opacity-70">
+                            ${icon("clock-3", "h-4 w-4")} Up next at ${next.time}
+                          </div>
+                          <h2 class="mt-4 text-3xl font-bold tracking-[-0.03em] md:text-4xl">${next.title}</h2>
+                          <p class="mt-2 text-sm opacity-70">${next.note}. Reminder is already set.</p>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                          <button onclick="askSkip(${next.id})" class="h-11 rounded-xl border border-current/25 px-4 text-sm font-semibold transition hover:bg-current/10 active:scale-[.97]">Skip today</button>
+                          <button onclick="completeRoutine(${next.id})" class="inline-flex h-11 items-center gap-2 rounded-xl bg-action px-5 text-sm font-bold text-white transition hover:bg-action-hover active:scale-[.97]">
+                            ${icon("check", "h-4 w-4")} Mark complete
+                          </button>
+                        </div>
+                      </div>
+                    </section>
+                  ` : renderAllDone()}
+
+                  <div class="mt-8 grid gap-6 xl:grid-cols-[1fr_320px]">
+                    <section>
+                      <div class="mb-3 flex items-center justify-between">
+                        <h2 class="text-lg font-bold">Later today</h2>
+                        <button onclick="navigatePage('plan')" class="rounded-lg px-2 py-1 text-sm font-semibold text-signal-600 hover:bg-signal-50 dark:text-signal-300 dark:hover:bg-paper-100">View plan</button>
+                      </div>
+                      <div class="overflow-hidden rounded-2xl border border-paper-200 bg-paper-0 dark:border-paper-200 dark:bg-paper-0">
+                        ${upcoming.length ? upcoming.map((routine) => routineRow(routine)).join("") : `<p class="p-6 text-sm text-ink-500 dark:text-ink-400">Nothing else is scheduled today.</p>`}
+                      </div>
+                    </section>
+
+                    <aside class="rounded-2xl border border-paper-200 bg-paper-0 p-5 dark:border-paper-200 dark:bg-paper-0">
+                      <div class="flex items-start justify-between gap-4">
+                        <div>
+                          <p class="text-sm font-bold">Your week</p>
+                          <p class="mt-1 text-sm text-ink-500 dark:text-ink-400">A quick check, not a report.</p>
+                        </div>
+                        <span data-measure class="text-2xl font-semibold text-completed-600">81%</span>
+                      </div>
+                      <div class="mt-6 grid grid-cols-7 gap-2 text-center">
+                        ${["M", "T", "W", "T", "F", "S", "S"].map((day, index) => `<div><span class="font-mono text-[11px] font-medium text-ink-400">${day}</span><span class="mx-auto mt-2 grid h-7 w-7 place-items-center rounded-lg text-xs font-bold ${index < 6 ? "bg-completed-100 text-completed-600" : "bg-paper-100 text-ink-400"}">${index < 6 ? icon("check", "h-3.5 w-3.5") : ""}</span></div>`).join("")}
+                      </div>
+                      <button onclick="navigatePage('insights')" class="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-signal-600 dark:text-signal-300">See what is working ${icon("arrow-right", "h-4 w-4")}</button>
+                    </aside>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </div>
+        `
+      }
+
+      function sideNavItem(iconName, label, page) {
+        const active = currentPage() === page
+        return `
+          <button onclick="navigatePage('${page}')" class="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition active:scale-[.97] ${active ? "bg-signal-50 text-signal-700 dark:bg-signal-50 dark:text-signal-300" : "text-ink-700 hover:bg-paper-100 dark:text-ink-400 dark:hover:bg-paper-100"}">
+            ${icon(iconName, "h-[18px] w-[18px]")} ${label}
+          </button>
+        `
+      }
+
+      function routineRow(routine) {
+        return `
+          <div class="flex items-center gap-4 border-b border-paper-200 p-4 last:border-0 dark:border-paper-200">
+            <span class="w-[72px] shrink-0 font-mono text-sm font-medium tabular-nums text-ink-500">${routine.time}</span>
+            <span class="min-w-0 flex-1"><span class="block truncate text-sm font-bold">${routine.title}</span><span class="mt-0.5 block text-xs text-ink-500 dark:text-ink-400">${routine.note}</span></span>
+            <button onclick="completeRoutine(${routine.id})" class="grid h-9 w-9 shrink-0 place-items-center rounded-xl border border-paper-200 text-ink-400 transition hover:border-completed-500 hover:bg-completed-100 hover:text-completed-600 active:scale-[.97]" aria-label="Mark ${routine.title} complete">${icon("check", "h-4 w-4")}</button>
+          </div>
+        `
+      }
+
+      function renderDayTimeline() {
+        if (currentPage() !== "today") return renderSecondaryPage("sidebar", currentPage())
+        return `
+          <div class="view-enter min-h-[100dvh] bg-paper-50 dark:bg-paper-50">
+            <div class="mx-auto flex min-h-[100dvh] max-w-[1440px]">
+              ${desktopSidebar()}
+              <section class="min-w-0 flex-1">
+                <header class="sticky top-0 z-20 border-b border-paper-200 bg-paper-0">
+                  <div class="flex min-h-[72px] flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3 md:px-8">
+                    <div class="lg:hidden">${brand()}</div>
+                    <nav class="order-3 flex w-full items-center gap-1 lg:hidden" aria-label="Primary navigation">${compactNav()}</nav>
+                    <div class="relative ml-auto flex items-center gap-2">${themeButton()} ${avatarButton()} ${accountMenu()}</div>
+                  </div>
+                </header>
+
+                <div class="mx-auto max-w-[1120px] px-4 py-8 md:px-8 md:py-12">
+              <div class="flex flex-col gap-5 border-b border-paper-200 pb-8 md:flex-row md:items-end md:justify-between dark:border-paper-200">
+                <div>
+                  <button onclick="prototypeOnly('A date picker would open here.')" class="inline-flex items-center gap-2 rounded-lg text-sm font-semibold text-ink-500 hover:text-signal-600">${icon("calendar-days", "h-4 w-4")} Monday, August 10 ${icon("chevron-down", "h-4 w-4")}</button>
+                  <h1 class="mt-3 text-4xl font-bold tracking-[-0.04em] md:text-5xl">Your day, in order.</h1>
+                  <p class="mt-3 max-w-xl text-base text-ink-500 dark:text-ink-400">Follow the timeline. RoutineFlow handles reminders and records what you finish.</p>
+                </div>
+                <button onclick="openAddRoutine()" class="inline-flex h-11 items-center justify-center gap-2 self-start rounded-xl bg-action px-4 text-sm font-semibold text-white hover:bg-action-hover active:scale-[.97] md:self-auto">${icon("plus", "h-4 w-4")} Add routine</button>
+              </div>
+
+              <div class="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_340px]">
+                <section aria-label="Today's routine timeline">
+                  <div class="relative ml-3 border-l-2 border-paper-200 pl-7 dark:border-paper-200 md:ml-6 md:pl-10">
+                    ${state.routines.map((routine) => timelineItem(routine)).join("")}
+                  </div>
+                </section>
+
+                <aside class="lg:sticky lg:top-28 lg:self-start">
+                  <div class="rounded-2xl bg-completed-100 p-6">
+                    <div class="flex items-center justify-between">
+                      <h2 class="font-bold">Today so far</h2>
+                      <span data-measure class="text-sm font-medium text-completed-600">${completedCount()} of ${state.routines.length}</span>
+                    </div>
+                    <p class="mt-3 text-sm leading-6 text-ink-500 dark:text-ink-500">Complete a routine when you do it. The actual time is saved automatically.</p>
+                    <div class="mt-5 flex gap-2">
+                      ${state.routines.map((routine) => `<span class="h-2 flex-1 rounded-full ${routine.status === "completed" ? "bg-completed-600" : routine.status === "skipped" ? "bg-skipped-1000" : "bg-paper-0"}"></span>`).join("")}
+                    </div>
+                  </div>
+                  <div class="mt-4 rounded-2xl border border-paper-200 bg-paper-0 p-6 dark:border-paper-200 dark:bg-paper-0">
+                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-paper-100 text-ink-700">${icon("bell-ring", "h-5 w-5")}</div>
+                    <h2 class="mt-4 font-bold">No need to keep checking.</h2>
+                    <p class="mt-2 text-sm leading-6 text-ink-500 dark:text-ink-400">We will remind you 10 minutes before each routine.</p>
+                    <button onclick="prototypeOnly('Reminder settings would open here.')" class="mt-4 text-sm font-semibold text-signal-600 dark:text-signal-300">Change reminders</button>
+                  </div>
+                </aside>
+              </div>
+                </div>
+              </section>
+            </div>
+          </div>
+        `
+      }
+
+      function topNavItem(label, page) {
+        const active = currentPage() === page
+        return `<button onclick="navigatePage('${page}')" class="rounded-xl px-3 py-2 text-sm font-semibold ${active ? "bg-signal-50 text-signal-700" : "text-ink-500 hover:bg-paper-100 hover:text-ink"}">${label}</button>`
+      }
+
+      function timelineItem(routine) {
+        const isDone = routine.status === "completed"
+        const isSkipped = routine.status === "skipped"
+        const isNext = routine.id === pendingRoutines()[0]?.id
+        return `
+          <article class="relative pb-7 last:pb-0">
+            <span class="absolute -left-[37px] top-5 grid h-4 w-4 place-items-center rounded-full border-2 md:-left-[49px] ${isDone ? "border-completed-600 bg-completed-600 text-white" : isSkipped ? "border-skipped-1000 bg-skipped-1000" : isNext ? "border-signal-600 bg-paper-0" : "border-paper-300 bg-paper-50"}">${isDone ? icon("check", "h-2.5 w-2.5") : ""}</span>
+            <div class="rounded-2xl border p-5 transition md:p-6 ${isNext ? "border-signal-500 bg-paper-0 shadow-soft" : "border-paper-200 bg-paper-0"} ${isDone || isSkipped ? "opacity-60" : ""}">
+              <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
+                <div class="w-24 shrink-0">
+                  <p class="font-mono text-sm font-medium tabular-nums ${isNext ? "text-signal-600" : "text-ink-500"}">${routine.time}</p>
+                  ${isNext ? `<p class="mt-1 text-xs font-semibold text-signal-600 dark:text-signal-300">Up next</p>` : ""}
+                </div>
+                <div class="min-w-0 flex-1">
+                  <h2 class="text-lg font-bold ${isDone || isSkipped ? "line-through" : ""}">${routine.title}</h2>
+                  <p class="mt-1 text-sm text-ink-500 dark:text-ink-400">${routine.note} <span class="mx-1 text-ink-400 dark:text-ink-700">/</span> ${routine.category}</p>
+                </div>
+                ${isDone ? `<span class="inline-flex items-center gap-1.5 text-sm font-semibold text-completed-600">${icon("circle-check", "h-4 w-4")} Done</span>` : isSkipped ? `<span class="text-sm font-semibold text-skipped-600 dark:text-skipped-500">Skipped</span>` : `
+                  <div class="flex gap-2">
+                    <button onclick="askSkip(${routine.id})" class="h-10 rounded-xl border border-paper-200 px-3 text-sm font-semibold text-ink-700 hover:bg-paper-50 active:scale-[.97] dark:border-paper-200 dark:text-ink-400 dark:hover:bg-paper-100">Skip</button>
+                    <button onclick="completeRoutine(${routine.id})" class="inline-flex h-10 items-center gap-2 rounded-xl bg-action px-4 text-sm font-semibold text-white hover:bg-action-hover active:scale-[.97]">${icon("check", "h-4 w-4")} Complete</button>
+                  </div>
+                `}
+              </div>
+            </div>
+          </article>
+        `
+      }
+
+      function renderSecondaryPage(shell, page) {
+        const content = page === "plan" ? renderPlanContent() : page === "insights" ? renderInsightsContent() : renderSettingsContent()
+        if (shell === "sidebar") {
+          return `
+            <div class="view-enter min-h-[100dvh] bg-paper-50 dark:bg-paper-50">
+              <div class="mx-auto flex min-h-[100dvh] max-w-[1440px]">
+                ${desktopSidebar()}
+                <section class="min-w-0 flex-1">
+                  <header class="sticky top-0 z-20 border-b border-paper-200 bg-paper-0 px-5 py-4 md:px-10">
+                    <div class="flex items-center justify-between gap-3"><div class="lg:hidden">${brand()}</div><p class="hidden text-sm font-medium text-ink-500 lg:block dark:text-ink-400">Monday, August 10</p><div class="relative flex items-center gap-2">${themeButton()} ${avatarButton()} ${accountMenu()}</div></div>
+                    <nav class="mt-3 flex gap-1 lg:hidden" aria-label="Primary navigation">${compactNav()}</nav>
+                  </header>
+                  <div class="mx-auto max-w-[1080px] px-5 py-8 md:px-10 md:py-12">${content}</div>
+                </section>
+              </div>
+            </div>
+          `
+        }
+
+        const minimal = shell === "minimal"
+        return `
+          <div class="view-enter min-h-[100dvh] ${minimal ? "bg-paper-50 dark:bg-paper-50" : "bg-paper-50 dark:bg-paper-50"}">
+            <header class="sticky top-0 z-20 border-b border-paper-200 bg-paper-0">
+              <div class="mx-auto flex min-h-[72px] max-w-[1320px] flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3 md:px-8">
+                ${brand()}
+                <nav class="order-3 flex w-full gap-1 sm:order-none sm:w-auto" aria-label="Primary navigation">${topNavItem("Today", "today")} ${topNavItem("Plan", "plan")} ${topNavItem("Insights", "insights")} ${topNavItem("Settings", "settings")}</nav>
+                <div class="relative ml-auto flex items-center gap-2">${themeButton()} ${avatarButton()} ${accountMenu()}</div>
+              </div>
+            </header>
+            <div class="mx-auto max-w-[1120px] px-4 py-8 md:px-8 md:py-12">${content}</div>
+          </div>
+        `
+      }
+
+      function compactNav() {
+        return [
+          ["Today", "today"],
+          ["Plan", "plan"],
+          ["Insights", "insights"],
+          ["Settings", "settings"],
+        ].map(([label, page]) => `<button onclick="navigatePage('${page}')" class="flex-1 rounded-xl px-3 py-2 text-sm font-semibold ${currentPage() === page ? "bg-signal-50 text-signal-700 dark:bg-signal-50 dark:text-signal-300" : "text-ink-500 dark:text-ink-400"}">${label}</button>`).join("")
+      }
+
+      function renderPlanContent() {
+        const days = [
+          ["Mon", "10"], ["Tue", "11"], ["Wed", "12"], ["Thu", "13"], ["Fri", "14"], ["Sat", "15"], ["Sun", "16"],
+        ]
+        return `
+          <section>
+            <div class="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+              <div><h1 class="text-3xl font-bold md:text-5xl">Plan your routines.</h1><p class="mt-3 max-w-2xl text-base text-ink-500">See your schedule and manage recurring routines in one place.</p></div>
+              <button onclick="openAddRoutine()" class="inline-flex h-11 shrink-0 items-center justify-center gap-2 self-start rounded-xl bg-action px-4 text-sm font-semibold text-white hover:bg-action-hover active:scale-[.97] sm:self-auto">${icon("plus", "h-4 w-4")} Add routine</button>
+            </div>
+
+            <div class="mt-8 inline-flex rounded-xl bg-paper-100 p-1 dark:bg-paper-0" role="tablist" aria-label="Plan view">
+              <button onclick="setPlanView('week')" class="rounded-lg px-4 py-2 text-sm font-semibold ${state.planView === "week" ? "bg-paper-0 shadow-sm dark:bg-paper-100" : "text-ink-500 dark:text-ink-400"}" role="tab" aria-selected="${state.planView === "week"}">This week</button>
+              <button onclick="setPlanView('routines')" class="rounded-lg px-4 py-2 text-sm font-semibold ${state.planView === "routines" ? "bg-paper-0 shadow-sm dark:bg-paper-100" : "text-ink-500 dark:text-ink-400"}" role="tab" aria-selected="${state.planView === "routines"}">All routines</button>
+            </div>
+
+            ${state.planView === "week" ? `
+              <div class="mt-6 grid grid-cols-7 gap-2">
+                ${days.map(([day, date], index) => `<button onclick="selectDay(${index})" class="rounded-xl border px-1 py-3 text-center transition active:scale-[.97] ${state.selectedDay === index ? "border-signal-600 bg-action text-white" : "border-paper-200 bg-paper-0 hover:border-signal-300"}"><span class="block font-mono text-[11px] font-medium ${state.selectedDay === index ? "text-white/75" : "text-ink-400"}">${day}</span><span class="mt-1 block font-mono text-base font-semibold">${date}</span></button>`).join("")}
+              </div>
+              <div class="mt-5 overflow-hidden rounded-2xl border border-paper-200 bg-paper-0 dark:border-paper-200 dark:bg-paper-0">
+                <div class="flex items-center justify-between border-b border-paper-200 p-5 dark:border-paper-200"><div><h2 class="font-bold">${days[state.selectedDay][0]}, August ${days[state.selectedDay][1]}</h2><p class="mt-1 text-sm text-ink-500 dark:text-ink-400">${state.selectedDay === 0 ? `${state.routines.length} routines scheduled` : "No routines scheduled"}</p></div>${state.selectedDay !== 0 ? `<button onclick="openAddRoutine()" class="text-sm font-semibold text-signal-600 dark:text-signal-300">Add one</button>` : ""}</div>
+                ${state.selectedDay === 0 ? state.routines.map((routine) => planRoutineRow(routine)).join("") : `<div class="p-10 text-center"><div class="mx-auto grid h-11 w-11 place-items-center rounded-xl bg-signal-50 text-signal-600 dark:bg-signal-50">${icon("calendar-plus", "h-5 w-5")}</div><h3 class="mt-4 font-bold">This day is open.</h3><p class="mt-1 text-sm text-ink-500 dark:text-ink-400">Add a routine only if it helps your week.</p></div>`}
+              </div>
+            ` : `
+              <div class="mt-6 overflow-hidden rounded-2xl border border-paper-200 bg-paper-0 dark:border-paper-200 dark:bg-paper-0">
+                <div class="border-b border-paper-200 p-5 dark:border-paper-200"><h2 class="font-bold">Recurring routines</h2><p class="mt-1 text-sm text-ink-500 dark:text-ink-400">Turn a routine off without deleting its history.</p></div>
+                ${state.routines.map((routine) => manageRoutineRow(routine)).join("")}
+              </div>
+            `}
+          </section>
+        `
+      }
+
+      function planRoutineRow(routine) {
+        return `<div class="flex items-center gap-4 border-b border-paper-200 p-4 last:border-0"><span class="w-[74px] shrink-0 font-mono text-sm font-medium text-ink-500">${routine.time}</span><span class="min-w-0 flex-1"><span class="block truncate text-sm font-bold">${routine.title}</span><span class="mt-0.5 block text-xs text-ink-500">${routine.category} / Every day</span></span><button onclick="prototypeOnly('Reminder set for ${routine.title}.')" class="grid h-9 w-9 place-items-center rounded-xl text-ink-400 hover:bg-signal-50 hover:text-signal-600" aria-label="View reminder for ${routine.title}">${icon("bell", "h-4 w-4")}</button></div>`
+      }
+
+      function manageRoutineRow(routine) {
+        const enabled = routine.enabled !== false
+        return `<div class="flex items-center gap-4 border-b border-paper-200 p-4 last:border-0 dark:border-paper-200 ${enabled ? "" : "opacity-55"}"><div class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-signal-50 text-signal-600 dark:bg-signal-50 dark:text-signal-300">${icon(routine.category === "Movement" ? "footprints" : routine.category === "Health" ? "heart-pulse" : "book-open", "h-5 w-5")}</div><span class="min-w-0 flex-1"><span class="block truncate text-sm font-bold">${routine.title}</span><span class="mt-0.5 block text-xs text-ink-500 dark:text-ink-400">Every day at ${routine.time}</span></span><button onclick="${enabled ? `openPauseConfirmation(${routine.id})` : `toggleRoutineEnabled(${routine.id})`}" class="relative h-7 w-12 shrink-0 rounded-full transition ${enabled ? "bg-action" : "bg-paper-300 dark:bg-paper-400"}" role="switch" aria-checked="${enabled}" aria-label="${enabled ? "Pause" : "Resume"} ${routine.title}"><span class="absolute top-1 h-5 w-5 rounded-full bg-white shadow transition ${enabled ? "left-6" : "left-1"}"></span></button></div>`
+      }
+
+      function renderInsightsContent() {
+        const done = completedCount()
+        const rate = Math.round((done / state.routines.length) * 100)
+        const chart = state.insightRange === "7" ? [62, 78, 55, 82, 70, 92, Math.max(rate, 12)] : [58, 66, 71, 64, 79, 74, Math.max(rate, 12)]
+        return `
+          <section>
+            <div class="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+              <div><h1 class="text-3xl font-bold md:text-5xl">Review your patterns.</h1><p class="mt-3 max-w-2xl text-base text-ink-500">Simple patterns from your completed routines. No scores to chase.</p></div>
+              <label class="grid gap-1.5 self-start"><span class="text-xs font-semibold text-ink-500 dark:text-ink-400">Time range</span><select onchange="setInsightRange(this.value)" class="h-11 rounded-xl border border-paper-300 bg-paper-0 px-3 text-sm font-semibold dark:border-paper-200 dark:bg-paper-100"><option value="7" ${state.insightRange === "7" ? "selected" : ""}>Last 7 days</option><option value="30" ${state.insightRange === "30" ? "selected" : ""}>Last 30 days</option></select></label>
+            </div>
+
+            <div class="mt-8 grid gap-4 sm:grid-cols-3">
+              ${insightMetric(`${rate}%`, "Completed", "Finished as planned", "completed")}
+              ${insightMetric(done ? "Morning" : "Not yet", "Strongest time", done ? "Most reliable before noon" : "Complete routines to learn")}
+              ${insightMetric(`${state.routines.length - done}`, "Still open", "Scheduled for today", "pending")}
+            </div>
+
+            <div class="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(280px,.6fr)]">
+              <div class="rounded-2xl border border-paper-200 bg-paper-0 p-5 md:p-6 dark:border-paper-200 dark:bg-paper-0">
+                <div><h2 class="font-bold">Completion pattern</h2><p class="mt-1 text-sm text-ink-500 dark:text-ink-400">Sample history plus your live prototype actions.</p></div>
+                <div class="mt-8 flex h-48 items-end gap-3" aria-label="Weekly completion chart">
+                  ${chart.map((value, index) => `<div class="flex h-full flex-1 flex-col justify-end gap-2"><div class="rounded-t-lg bg-completed-500" style="height:${value}%" title="${value}%"></div><span class="text-center font-mono text-[11px] font-medium text-ink-400">${["M", "T", "W", "T", "F", "S", "S"][index]}</span></div>`).join("")}
+                </div>
+              </div>
+              <aside class="rounded-2xl bg-inverse p-6 text-on-inverse">
+                <div class="grid h-11 w-11 place-items-center rounded-xl bg-current/10">${icon("lightbulb", "h-5 w-5")}</div>
+                <h2 class="mt-5 text-xl font-bold">Morning routines are easier to keep.</h2>
+                <p class="mt-3 text-sm leading-6 opacity-70">Your early routines are completed more often. Consider moving one important habit before lunch.</p>
+                <button onclick="navigatePage('plan')" class="mt-6 inline-flex items-center gap-2 text-sm font-bold">Adjust your plan ${icon("arrow-right", "h-4 w-4")}</button>
+              </aside>
+            </div>
+
+            <div class="mt-6 rounded-2xl border border-paper-200 bg-paper-0 dark:border-paper-200 dark:bg-paper-0">
+              <div class="p-5"><h2 class="font-bold">Today’s activity</h2><p class="mt-1 text-sm text-ink-500 dark:text-ink-400">Updates as you use the prototype.</p></div>
+              ${state.routines.map((routine) => `<div class="flex items-center gap-3 border-t border-paper-200 px-5 py-3.5"><span class="grid h-8 w-8 place-items-center rounded-lg ${routine.status === "completed" ? "bg-completed-100 text-completed-600" : routine.status === "skipped" ? "bg-skipped-100 text-skipped-600 dark:bg-skipped-500/10" : "bg-paper-100 text-ink-400"}">${icon(routine.status === "completed" ? "check" : routine.status === "skipped" ? "forward" : "clock-3", "h-4 w-4")}</span><span class="min-w-0 flex-1 text-sm font-semibold">${routine.title}</span><span class="text-xs font-semibold text-ink-500">${routine.status === "completed" ? "Completed" : routine.status === "skipped" ? "Skipped" : "Scheduled"}</span></div>`).join("")}
+            </div>
+          </section>
+        `
+      }
+
+      function renderSettingsContent() {
+        return `
+          <section>
+            <div><h1 class="text-3xl font-bold md:text-5xl">Settings</h1><p class="mt-3 max-w-2xl text-base text-ink-500">Manage your account, reminders, and interface preferences.</p></div>
+
+            <div class="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+              <div class="space-y-6">
+                <form onsubmit="saveSettings(event)" class="rounded-2xl border border-paper-200 bg-paper-0 dark:border-paper-200 dark:bg-paper-0">
+                  <div class="border-b border-paper-200 p-5 dark:border-paper-200"><h2 class="font-bold">Profile</h2><p class="mt-1 text-sm text-ink-500 dark:text-ink-400">How your account appears.</p></div>
+                  <div class="grid gap-5 p-5 sm:grid-cols-2">
+                    <label class="grid gap-2"><span class="text-sm font-semibold">Name</span><input id="settings-name" value="${state.settings.name}" class="h-11 rounded-xl border border-paper-300 bg-paper-0 px-3 text-sm dark:border-paper-200 dark:bg-paper-100" /></label>
+                    <label class="grid gap-2"><span class="text-sm font-semibold">Email</span><input value="montasim@example.com" disabled class="h-11 rounded-xl border border-paper-300 bg-paper-50 px-3 text-sm text-ink-500 disabled:cursor-not-allowed dark:border-paper-200 dark:bg-paper-100 dark:text-ink-400" /><span class="text-xs text-ink-500 dark:text-ink-400">Contact support to change your email.</span></label>
+                    <label class="grid gap-2"><span class="text-sm font-semibold">Timezone</span><select id="settings-timezone" class="h-11 rounded-xl border border-paper-300 bg-paper-0 px-3 text-sm dark:border-paper-200 dark:bg-paper-100"><option ${state.settings.timezone === "Asia/Dhaka" ? "selected" : ""}>Asia/Dhaka</option><option ${state.settings.timezone === "Asia/Kolkata" ? "selected" : ""}>Asia/Kolkata</option><option ${state.settings.timezone === "Europe/London" ? "selected" : ""}>Europe/London</option></select></label>
+                    <label class="grid gap-2"><span class="text-sm font-semibold">Default reminder</span><select id="settings-reminder" class="h-11 rounded-xl border border-paper-300 bg-paper-0 px-3 text-sm dark:border-paper-200 dark:bg-paper-100"><option value="0" ${state.settings.reminder === "0" ? "selected" : ""}>At scheduled time</option><option value="5" ${state.settings.reminder === "5" ? "selected" : ""}>5 minutes before</option><option value="10" ${state.settings.reminder === "10" ? "selected" : ""}>10 minutes before</option><option value="30" ${state.settings.reminder === "30" ? "selected" : ""}>30 minutes before</option></select></label>
+                  </div>
+                  <div class="flex justify-end border-t border-paper-200 p-4 dark:border-paper-200"><button type="submit" class="inline-flex h-10 items-center gap-2 rounded-xl bg-action px-4 text-sm font-semibold text-white hover:bg-action-hover active:scale-[.97]">${icon("check", "h-4 w-4")} Save changes</button></div>
+                </form>
+
+                <div class="rounded-2xl border border-paper-200 bg-paper-0 dark:border-paper-200 dark:bg-paper-0">
+                  <div class="border-b border-paper-200 p-5 dark:border-paper-200"><h2 class="font-bold">Notifications</h2><p class="mt-1 text-sm text-ink-500 dark:text-ink-400">Choose what RoutineFlow sends you.</p></div>
+                  ${settingsSwitch("notifications", "Routine reminders", "Get notified before scheduled routines.", state.settings.notifications)}
+                  ${settingsSwitch("weeklySummary", "Weekly summary", "Receive a short review every Monday.", state.settings.weeklySummary)}
+                </div>
+
+                <div class="rounded-2xl border border-paper-200 bg-paper-0 dark:border-paper-200 dark:bg-paper-0">
+                  <div class="border-b border-paper-200 p-5 dark:border-paper-200"><h2 class="font-bold">Data and account</h2><p class="mt-1 text-sm text-ink-500 dark:text-ink-400">Export your data or clear prototype activity.</p></div>
+                  <div class="flex flex-col gap-3 p-5 sm:flex-row">
+                    <button onclick="showDemoToast('export')" class="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-paper-300 px-4 text-sm font-semibold hover:bg-paper-50 dark:border-paper-200 dark:hover:bg-paper-100">${icon("download", "h-4 w-4")} Export data</button>
+                    <button onclick="openConfirmation('reset')" class="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-missed-100 px-4 text-sm font-semibold text-missed-600 hover:bg-missed-100 dark:border-missed-500/20 dark:text-missed-500 dark:hover:bg-missed-500/10">${icon("trash-2", "h-4 w-4")} Clear activity</button>
+                  </div>
+                </div>
+              </div>
+
+              <aside class="space-y-6">
+                <div class="rounded-2xl border border-paper-200 bg-paper-0 p-5 dark:border-paper-200 dark:bg-paper-0">
+                  <h2 class="font-bold">Appearance</h2><p class="mt-1 text-sm text-ink-500 dark:text-ink-400">Switch themes instantly.</p>
+                  <button onclick="toggleTheme()" class="mt-5 flex w-full items-center justify-between rounded-xl bg-paper-100 p-3 text-left dark:bg-paper-100"><span class="flex items-center gap-3 text-sm font-semibold">${icon(state.theme === "dark" ? "moon" : "sun", "h-5 w-5 text-signal-600 dark:text-signal-300")} ${state.theme === "dark" ? "Dark theme" : "Light theme"}</span><span class="text-xs font-semibold text-ink-500 dark:text-ink-400">Change</span></button>
+                </div>
+
+                <div class="rounded-2xl bg-signal-50 p-5 dark:bg-signal-50">
+                  <h2 class="font-bold">Feedback examples</h2><p class="mt-1 text-sm leading-6 text-ink-500 dark:text-ink-500">Preview the system messages used throughout the app.</p>
+                  <div class="mt-5 grid gap-2">
+                    <button onclick="showDemoToast('success')" class="h-10 rounded-xl bg-paper-0 px-3 text-left text-sm font-semibold text-signal-700 hover:bg-signal-50 dark:bg-paper-0 dark:text-signal-300">Show success toast</button>
+                    <button onclick="showDemoToast('error')" class="h-10 rounded-xl bg-paper-0 px-3 text-left text-sm font-semibold text-missed-600 hover:bg-missed-100 dark:bg-paper-0 dark:text-missed-500">Show error toast</button>
+                    <button onclick="openConfirmation('demo')" class="h-10 rounded-xl bg-paper-0 px-3 text-left text-sm font-semibold hover:bg-paper-50 dark:bg-paper-0 dark:hover:bg-paper-100">Show confirmation</button>
+                  </div>
+                </div>
+
+                <div class="rounded-2xl border border-paper-200 bg-paper-0 p-5 dark:border-paper-200 dark:bg-paper-0"><h2 class="font-bold">Signed in as</h2><div class="mt-4 flex items-center gap-3"><span class="grid h-10 w-10 place-items-center rounded-full bg-signal-100 text-sm font-bold text-signal-700 dark:bg-signal-50 dark:text-signal-300">MA</span><div class="min-w-0"><p class="truncate text-sm font-semibold">${state.settings.name}</p><p class="truncate text-xs text-ink-500 dark:text-ink-400">montasim@example.com</p></div></div><button onclick="openConfirmation('signout')" class="mt-5 text-sm font-semibold text-missed-600 dark:text-missed-500">Sign out</button></div>
+              </aside>
+            </div>
+          </section>
+        `
+      }
+
+      function settingsSwitch(key, label, description, checked) {
+        return `<div class="flex items-center gap-4 border-b border-paper-200 p-5 last:border-0 dark:border-paper-200"><span class="min-w-0 flex-1"><span class="block text-sm font-bold">${label}</span><span class="mt-1 block text-sm text-ink-500 dark:text-ink-400">${description}</span></span><button onclick="toggleSetting('${key}')" class="relative h-7 w-12 shrink-0 rounded-full transition ${checked ? "bg-action" : "bg-paper-300 dark:bg-paper-400"}" role="switch" aria-checked="${checked}" aria-label="Toggle ${label}"><span class="absolute top-1 h-5 w-5 rounded-full bg-white shadow transition ${checked ? "left-6" : "left-1"}"></span></button></div>`
+      }
+
+      function insightMetric(value, label, note, tone = "neutral") {
+        const valueTone = tone === "completed" ? "text-completed-600" : tone === "pending" ? "text-ink-500" : "text-ink"
+        return `<div class="rounded-2xl border border-paper-200 bg-paper-0 p-5"><p data-measure class="text-3xl font-semibold ${valueTone}">${value}</p><p class="mt-3 text-sm font-bold">${label}</p><p class="mt-1 text-xs text-ink-500">${note}</p></div>`
+      }
+
+      function renderFocusMode() {
+        if (currentPage() !== "today") return renderSecondaryPage("sidebar", currentPage())
+        const next = pendingRoutines()[0]
+        const remaining = pendingRoutines().length
+        return `
+          <div class="view-enter min-h-[100dvh] bg-paper-50 dark:bg-paper-50">
+            <div class="mx-auto flex min-h-[100dvh] max-w-[1440px]">
+              ${desktopSidebar()}
+              <section class="flex min-w-0 flex-1 flex-col">
+                <header class="relative flex min-h-[72px] flex-wrap items-center justify-between gap-y-2 border-b border-paper-200 bg-paper-0 px-5 py-3 md:px-8">
+                  <div class="lg:hidden">${brand()}</div>
+                  <div class="relative flex items-center gap-2 lg:ml-auto">
+                    ${themeButton()} ${avatarButton()} ${accountMenu()}
+                  </div>
+                  <nav class="flex w-full items-center gap-1 lg:hidden" aria-label="Primary navigation">${compactNav()}</nav>
+                </header>
+
+                <main class="flex flex-1 items-center justify-center px-5 py-8">
+              <div class="w-full max-w-[780px]">
+                ${next ? `
+                  <div class="text-center">
+                    <p class="text-sm font-semibold text-ink-500">Now</p>
+                    <p data-measure class="mt-2 text-sm text-ink-500">Scheduled for ${next.time}</p>
+                    <h1 class="mt-6 text-[clamp(2.25rem,5vw,4rem)] font-bold leading-[1.04] tracking-[-0.035em]">${next.title}</h1>
+                    <p class="mx-auto mt-5 max-w-md text-lg text-ink-500 dark:text-ink-400">${next.note}. Tap complete when you finish.</p>
+                    <div class="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                      <button onclick="completeRoutine(${next.id})" class="inline-flex h-14 min-w-[210px] items-center justify-center gap-2 rounded-xl bg-action px-7 text-base font-bold text-white shadow-soft transition hover:bg-action-hover active:scale-[.97]">${icon("check", "h-5 w-5")} I did it</button>
+                      <button onclick="askSkip(${next.id})" class="h-14 rounded-xl px-6 text-sm font-semibold text-ink-500 hover:bg-paper-100 active:scale-[.97]">Skip for today</button>
+                    </div>
+                  </div>
+                ` : renderAllDone(true)}
+              </div>
+                </main>
+
+                <footer class="px-5 pb-28 md:px-8">
+              <div class="mx-auto flex max-w-[920px] items-center gap-4 rounded-2xl border border-paper-200 bg-paper-0 p-4">
+                <div class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-signal-50 text-signal-600 dark:bg-signal-50 dark:text-signal-300">${icon(remaining > 1 ? "arrow-right" : "sparkles", "h-5 w-5")}</div>
+                <div class="min-w-0 flex-1">
+                  <p class="text-xs font-semibold text-ink-400">After this</p>
+                  <p class="mt-0.5 truncate text-sm font-bold">${pendingRoutines()[1] ? `${pendingRoutines()[1].title} at ${pendingRoutines()[1].time}` : "Your routine list is clear"}</p>
+                </div>
+                <button onclick="openAddRoutine()" class="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-paper-200 text-ink-500 hover:bg-paper-0 active:scale-[.97] dark:border-paper-200 dark:text-ink-400 dark:hover:bg-paper-100" aria-label="Add routine">${icon("plus", "h-4 w-4")}</button>
+              </div>
+                </footer>
+              </section>
+            </div>
+          </div>
+        `
+      }
+
+      function renderAllDone(centered = false) {
+        return `
+          <section class="${centered ? "text-center" : "mt-8"}">
+            <div class="rounded-2xl bg-completed-100 p-8 text-completed-600">
+              <div class="${centered ? "mx-auto" : ""} grid h-12 w-12 place-items-center rounded-2xl bg-white/70 dark:bg-paper-100">${icon("party-popper", "h-6 w-6")}</div>
+              <h1 class="mt-5 text-3xl font-bold tracking-[-0.03em]">You are done for today.</h1>
+              <p class="mt-2 text-sm opacity-75">Everything scheduled has been recorded.</p>
+            </div>
+          </section>
+        `
+      }
+
+      function renderSwitcher(variant) {
+        const keys = Object.keys(variants)
+        return `
+          <aside class="fixed bottom-4 left-1/2 z-40 w-[calc(100%-24px)] max-w-[520px] -translate-x-1/2 rounded-2xl bg-[#17201a] p-2 text-white shadow-float" aria-label="Prototype variant switcher">
+            <div class="flex items-center gap-2">
+              <button onclick="cycleVariant(-1)" class="grid h-10 w-10 shrink-0 place-items-center rounded-xl text-white/70 hover:bg-white/10 hover:text-white active:scale-[.97]" aria-label="Previous variant">${icon("arrow-left", "h-4 w-4")}</button>
+              <div class="min-w-0 flex-1 text-center">
+                <p class="truncate text-sm font-bold">${variant}: ${variants[variant].name}</p>
+                <p class="mt-0.5 text-[11px] text-white/50">Prototype state: ${pendingRoutines().length} remaining</p>
+              </div>
+              <div class="hidden gap-1 sm:flex">
+                ${keys.map((key) => `<button onclick="setVariant('${key}')" class="grid h-8 w-8 place-items-center rounded-lg text-xs font-bold ${variant === key ? "bg-paper-0 text-[#17201a]" : "text-white/60 hover:bg-white/10 hover:text-white"}" aria-label="Open variant ${key}" aria-current="${variant === key ? "true" : "false"}">${key}</button>`).join("")}
+              </div>
+              <button onclick="cycleVariant(1)" class="grid h-10 w-10 shrink-0 place-items-center rounded-xl text-white/70 hover:bg-white/10 hover:text-white active:scale-[.97]" aria-label="Next variant">${icon("arrow-right", "h-4 w-4")}</button>
+            </div>
+          </aside>
+        `
+      }
+
+      function renderToast() {
+        if (!state.toast) return ""
+        const tone = state.toast.tone || "success"
+        const toneClass = tone === "error" ? "border-missed-500" : tone === "info" ? "border-signal-500" : "border-completed-500"
+        const iconTone = tone === "error" ? "text-missed-500" : tone === "info" ? "text-signal-300" : "text-completed-500"
+        const iconName = tone === "error" ? "circle-alert" : tone === "info" ? "info" : "circle-check"
+        return `<div role="status" class="toast-enter fixed left-1/2 top-5 z-50 flex w-[calc(100%-24px)] max-w-sm -translate-x-1/2 items-center gap-3 rounded-xl border bg-[#17201a] ${toneClass} px-4 py-3 text-sm font-semibold text-white shadow-float"><span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-white/10 ${iconTone}">${icon(iconName, "h-4 w-4")}</span><span class="min-w-0 flex-1">${state.toast.message}</span><button onclick="dismissToast()" class="grid h-7 w-7 shrink-0 place-items-center rounded-lg text-white/60 hover:bg-white/10 hover:text-white" aria-label="Dismiss notification">${icon("x", "h-4 w-4")}</button></div>`
+      }
+
+      function renderModal() {
+        if (!state.modal) return ""
+        if (state.modal.type === "skip") {
+          const routine = state.routines.find((item) => item.id === state.modal.id)
+          return `
+            <div class="fixed inset-0 z-50 grid place-items-center bg-black/35 p-4 backdrop-blur-sm" role="presentation" onclick="closeModal(event)">
+              <section role="alertdialog" aria-modal="true" aria-labelledby="skip-title" class="w-full max-w-md rounded-2xl bg-paper-0 p-6 shadow-float dark:bg-paper-100">
+                <div class="grid h-11 w-11 place-items-center rounded-xl bg-skipped-100 text-skipped-700 dark:bg-skipped-500/10 dark:text-amber-300">${icon("forward", "h-5 w-5")}</div>
+                <h2 id="skip-title" class="mt-5 text-xl font-bold">Skip ${routine.title} today?</h2>
+                <p class="mt-2 text-sm leading-6 text-ink-500 dark:text-ink-400">It will be recorded as skipped. Your schedule will stay the same.</p>
+                <div class="mt-6 flex justify-end gap-2">
+                  <button onclick="dismissModal()" class="h-10 rounded-xl px-4 text-sm font-semibold text-ink-700 hover:bg-paper-100 dark:text-ink-400 dark:hover:bg-paper-100">Keep it</button>
+                  <button onclick="skipRoutine(${routine.id})" class="h-10 rounded-xl bg-skipped-600 px-4 text-sm font-semibold text-white hover:bg-skipped-700">Skip today</button>
+                </div>
+              </section>
+            </div>
+          `
+        }
+        if (state.modal.type === "confirm") {
+          const danger = state.modal.tone === "danger"
+          return `
+            <div class="fixed inset-0 z-50 grid place-items-center bg-black/35 p-4 backdrop-blur-sm" role="presentation" onclick="closeModal(event)">
+              <section role="alertdialog" aria-modal="true" aria-labelledby="confirm-title" aria-describedby="confirm-description" class="w-full max-w-md rounded-2xl bg-paper-0 p-6 shadow-float dark:bg-paper-100">
+                <div class="grid h-11 w-11 place-items-center rounded-xl ${danger ? "bg-missed-100 text-missed-600 dark:bg-missed-500/10 dark:text-missed-500" : "bg-signal-50 text-signal-700 dark:bg-signal-50 dark:text-signal-300"}">${icon(danger ? "triangle-alert" : "circle-help", "h-5 w-5")}</div>
+                <h2 id="confirm-title" class="mt-5 text-xl font-bold">${state.modal.title}</h2>
+                <p id="confirm-description" class="mt-2 text-sm leading-6 text-ink-500 dark:text-ink-400">${state.modal.body}</p>
+                <div class="mt-6 flex justify-end gap-2">
+                  <button onclick="dismissModal()" class="h-10 rounded-xl px-4 text-sm font-semibold text-ink-700 hover:bg-paper-100 dark:text-ink-400 dark:hover:bg-paper-100">Cancel</button>
+                  <button onclick="confirmAction()" class="h-10 rounded-xl px-4 text-sm font-semibold text-white ${danger ? "bg-missed-600 hover:bg-missed-700" : "bg-action hover:bg-action-hover"}">${state.modal.label}</button>
+                </div>
+              </section>
+            </div>
+          `
+        }
+        return `
+          <div class="fixed inset-0 z-50 grid place-items-center bg-black/35 p-4 backdrop-blur-sm" role="presentation" onclick="closeModal(event)">
+            <section role="dialog" aria-modal="true" aria-labelledby="add-title" class="w-full max-w-lg rounded-2xl bg-paper-0 p-6 shadow-float dark:bg-paper-100">
+              <div class="flex items-start justify-between gap-4">
+                <div><h2 id="add-title" class="text-2xl font-bold tracking-[-0.025em]">Add a routine</h2><p class="mt-1 text-sm text-ink-500 dark:text-ink-400">Tell us what and when. You can change details later.</p></div>
+                <button onclick="dismissModal()" class="grid h-9 w-9 place-items-center rounded-xl text-ink-400 hover:bg-paper-100 hover:text-ink-800 dark:hover:bg-paper-100 dark:hover:text-white" aria-label="Close">${icon("x", "h-5 w-5")}</button>
+              </div>
+              <form class="mt-6 grid gap-5" onsubmit="addRoutine(event)">
+                <label class="grid gap-2"><span class="text-sm font-semibold">What do you want to do?</span><input id="routine-title" required autofocus placeholder="For example, drink water" class="h-12 rounded-xl border border-paper-300 bg-paper-0 px-3 text-base placeholder:text-ink-400 dark:border-paper-200 dark:bg-paper-100" /></label>
+                <div class="grid gap-4 sm:grid-cols-2">
+                  <label class="grid gap-2"><span class="text-sm font-semibold">What time?</span><input id="routine-time" required type="time" value="18:00" class="h-12 rounded-xl border border-paper-300 bg-paper-0 px-3 text-base dark:border-paper-200 dark:bg-paper-100" /></label>
+                  <label class="grid gap-2"><span class="text-sm font-semibold">How often?</span><select id="routine-repeat" class="h-12 rounded-xl border border-paper-300 bg-paper-0 px-3 text-base dark:border-paper-200 dark:bg-paper-100"><option>Every day</option><option>Weekdays</option><option>Once a week</option></select></label>
+                </div>
+                <div class="rounded-xl bg-signal-50 p-3 text-sm text-signal-700 dark:bg-signal-50 dark:text-signal-300">We will remind you 10 minutes before. You can change this in settings.</div>
+                <div class="flex justify-end gap-2 pt-1">
+                  <button type="button" onclick="dismissModal()" class="h-11 rounded-xl px-4 text-sm font-semibold text-ink-700 hover:bg-paper-100 dark:text-ink-400 dark:hover:bg-paper-100">Cancel</button>
+                  <button type="submit" class="inline-flex h-11 items-center gap-2 rounded-xl bg-action px-5 text-sm font-semibold text-white hover:bg-action-hover active:scale-[.97]">${icon("plus", "h-4 w-4")} Add routine</button>
+                </div>
+              </form>
+            </section>
+          </div>
+        `
+      }
+
+      function toggleTheme() {
+        state.theme = state.theme === "dark" ? "light" : "dark"
+        render()
+      }
+
+      function toggleMenu() {
+        state.menuOpen = !state.menuOpen
+        render()
+      }
+
+      function setVariant(key) {
+        const url = new URL(location.href)
+        url.searchParams.set("variant", key)
+        history.replaceState({}, "", url)
+        state.menuOpen = false
+        render()
+      }
+
+      function navigatePage(page) {
+        const url = new URL(location.href)
+        url.searchParams.set("page", page)
+        history.pushState({}, "", url)
+        state.menuOpen = false
+        render()
+        window.scrollTo({ top: 0, behavior: "smooth" })
+      }
+
+      function setPlanView(view) {
+        state.planView = view
+        render()
+      }
+
+      function selectDay(index) {
+        state.selectedDay = index
+        render()
+      }
+
+      function toggleRoutineEnabled(id) {
+        const routine = state.routines.find((item) => item.id === id)
+        routine.enabled = routine.enabled === false
+        showToast(`${routine.title} ${routine.enabled ? "resumed" : "paused"}.`)
+        render()
+      }
+
+      function setInsightRange(value) {
+        state.insightRange = value
+        render()
+      }
+
+      function saveSettings(event) {
+        event.preventDefault()
+        const nextSettings = {
+          name: document.getElementById("settings-name").value.trim() || state.settings.name,
+          timezone: document.getElementById("settings-timezone").value,
+          reminder: document.getElementById("settings-reminder").value,
+        }
+        if (nextSettings.timezone !== state.settings.timezone) {
+          state.pendingSettings = nextSettings
+          state.modal = {
+            type: "confirm",
+            action: "timezone",
+            tone: "default",
+            title: "Change your timezone?",
+            body: `Scheduled times will move from ${state.settings.timezone} to ${nextSettings.timezone}. Existing activity history will not change.`,
+            label: "Change timezone",
+          }
+          render()
+          return
+        }
+        Object.assign(state.settings, nextSettings)
+        showToast("Settings saved.", "success")
+        render()
+      }
+
+      function toggleSetting(key) {
+        state.settings[key] = !state.settings[key]
+        showToast(`${key === "notifications" ? "Routine reminders" : "Weekly summary"} ${state.settings[key] ? "enabled" : "disabled"}.`, "info")
+        render()
+      }
+
+      function showDemoToast(type) {
+        if (type === "error") showToast("We could not save that change. Try again.", "error")
+        else if (type === "export") showToast("Your export is being prepared.", "info")
+        else showToast("Your changes were saved.", "success")
+        render()
+      }
+
+      function openConfirmation(action) {
+        if (action === "reset") {
+          state.modal = { type: "confirm", action, tone: "danger", title: "Clear activity history?", body: "This resets completed and skipped routines in the prototype. Your routine schedule will stay intact.", label: "Clear activity" }
+        } else if (action === "signout") {
+          state.menuOpen = false
+          state.modal = { type: "confirm", action, tone: "danger", title: "Sign out of RoutineFlow?", body: "You will need to sign in again to view and update your routines.", label: "Sign out" }
+        } else {
+          state.modal = { type: "confirm", action, tone: "default", title: "Apply these changes?", body: "Review the action before continuing. Nothing changes until you confirm.", label: "Confirm changes" }
+        }
+        render()
+      }
+
+      function openPauseConfirmation(id) {
+        const routine = state.routines.find((item) => item.id === id)
+        state.modal = {
+          type: "confirm",
+          action: "pause",
+          routineId: id,
+          tone: "default",
+          title: `Pause ${routine.title}?`,
+          body: "Future reminders for this routine will stop. Its activity history will remain available.",
+          label: "Pause routine",
+        }
+        render()
+      }
+
+      function confirmAction() {
+        const action = state.modal?.action
+        const routineId = state.modal?.routineId
+        state.modal = null
+        if (action === "reset") {
+          state.routines.forEach((routine) => { routine.status = "pending" })
+          showToast("Activity history cleared.", "success")
+        } else if (action === "pause") {
+          const routine = state.routines.find((item) => item.id === routineId)
+          routine.enabled = false
+          showToast(`${routine.title} paused.`, "info")
+        } else if (action === "timezone") {
+          Object.assign(state.settings, state.pendingSettings)
+          state.pendingSettings = null
+          showToast("Timezone and schedule updated.", "success")
+        } else if (action === "signout") {
+          showToast("Sign-out confirmed. Session stays open in this prototype.", "info")
+        } else {
+          showToast("Changes confirmed.", "success")
+        }
+        render()
+      }
+
+      function cycleVariant(direction) {
+        const keys = Object.keys(variants)
+        const index = keys.indexOf(currentVariant())
+        setVariant(keys[(index + direction + keys.length) % keys.length])
+      }
+
+      function completeRoutine(id) {
+        const routine = state.routines.find((item) => item.id === id)
+        routine.status = "completed"
+        showToast(`${routine.title} completed.`)
+        render()
+      }
+
+      function askSkip(id) {
+        state.modal = { type: "skip", id }
+        render()
+      }
+
+      function skipRoutine(id) {
+        const routine = state.routines.find((item) => item.id === id)
+        routine.status = "skipped"
+        state.modal = null
+        showToast(`${routine.title} skipped for today.`)
+        render()
+      }
+
+      function openAddRoutine() {
+        state.modal = { type: "add" }
+        render()
+        setTimeout(() => document.getElementById("routine-title")?.focus(), 0)
+      }
+
+      function addRoutine(event) {
+        event.preventDefault()
+        const title = document.getElementById("routine-title").value.trim()
+        const rawTime = document.getElementById("routine-time").value
+        const [hours, minutes] = rawTime.split(":").map(Number)
+        const period = hours >= 12 ? "PM" : "AM"
+        const displayHours = hours % 12 || 12
+        state.routines.push({ id: Date.now(), time: `${displayHours}:${String(minutes).padStart(2, "0")} ${period}`, title, note: document.getElementById("routine-repeat").value, category: "Personal", status: "pending", enabled: true })
+        state.modal = null
+        showToast(`${title} added.`)
+        render()
+      }
+
+      function dismissModal() {
+        state.modal = null
+        render()
+      }
+
+      function closeModal(event) {
+        if (event.target === event.currentTarget) dismissModal()
+      }
+
+      function prototypeOnly(message) {
+        state.menuOpen = false
+        showToast(message)
+        render()
+      }
+
+      let toastTimer
+      function showToast(message, tone = "success") {
+        state.toast = { message, tone }
+        clearTimeout(toastTimer)
+        toastTimer = setTimeout(() => {
+          state.toast = null
+          render()
+        }, 2200)
+      }
+
+      function dismissToast() {
+        clearTimeout(toastTimer)
+        state.toast = null
+        render()
+      }
+
+      document.addEventListener("keydown", (event) => {
+        const tag = document.activeElement?.tagName
+        const isEditing = ["INPUT", "TEXTAREA", "SELECT"].includes(tag) || document.activeElement?.isContentEditable
+        if (event.key === "Escape" && state.modal) dismissModal()
+        if (!isEditing && !state.modal && event.key === "ArrowLeft") cycleVariant(-1)
+        if (!isEditing && !state.modal && event.key === "ArrowRight") cycleVariant(1)
+      })
+
+      window.addEventListener("popstate", render)
+      render()
+    </script>
+  </body>
+</html>
