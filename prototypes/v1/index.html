@@ -69,6 +69,7 @@
               },
               inverse: "var(--surface-inverse)",
               "on-inverse": "var(--text-inverse)",
+              "auth-panel": "var(--auth-panel)",
             },
             boxShadow: {
               soft: "var(--shadow-md)",
@@ -133,6 +134,7 @@
         --skipped-700: #a96b18;
         --surface-inverse: #14532d;
         --text-inverse: #ffffff;
+        --auth-panel: #14532d;
         --interactive: #15803d;
         --interactive-hover: #166534;
         --shadow-md: 0 4px 10px -2px rgb(23 32 26 / .08), 0 2px 4px -2px rgb(23 32 26 / .05);
@@ -174,6 +176,7 @@
         --skipped-700: #f6ca87;
         --surface-inverse: #dfeee2;
         --text-inverse: #17261c;
+        --auth-panel: #10251a;
         --interactive: #15803d;
         --interactive-hover: #166534;
         --shadow-md: 0 4px 12px -2px rgb(0 0 0 / .30);
@@ -305,7 +308,7 @@
         return `
           <div class="view-enter min-h-[100dvh] bg-paper-50 px-4 py-4 dark:bg-paper-50 sm:px-6 sm:py-6">
             <div class="mx-auto grid min-h-[calc(100dvh-2rem)] max-w-[1180px] overflow-hidden rounded-2xl border border-paper-200 bg-paper-0 shadow-soft dark:border-paper-200 dark:bg-paper-0 sm:min-h-[calc(100dvh-3rem)] lg:grid-cols-[minmax(0,1.05fr)_minmax(420px,.95fr)]">
-              <section class="relative hidden overflow-hidden bg-inverse p-10 text-on-inverse lg:flex lg:flex-col lg:justify-between xl:p-14">
+              <section class="relative hidden overflow-hidden bg-auth-panel p-10 text-white lg:flex lg:flex-col lg:justify-between xl:p-14">
                 <div class="flex items-center gap-2.5">
                   <img src="../../public/logo.svg" alt="" class="h-9 w-9 rounded-xl bg-white p-1.5" />
                   <span class="font-display text-lg font-semibold">RoutineFlow</span>
