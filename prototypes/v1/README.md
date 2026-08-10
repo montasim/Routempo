@@ -13,7 +13,7 @@ Use the floating switcher or the left and right arrow keys to compare variants. 
 
 Each variant includes five working, URL-addressable pages:
 
-- `&page=login` for email OTP or Google sign-in
+- `&page=login` for Google sign-in
 - `&page=today` for completing or skipping today's routines
 - `&page=plan` for the weekly schedule and recurring-routine controls
 - `&page=insights` for completion patterns and activity history
@@ -21,7 +21,7 @@ Each variant includes five working, URL-addressable pages:
 
 For example: `index.html?variant=A&page=plan`.
 
-The login page includes email validation, a six-digit OTP step, resend behavior, and a simulated Google sign-in. The Settings page includes explicit controls for previewing success and error toasts and a confirmation alert. Confirmation is required before skipping or pausing a routine, changing timezone, signing out, or clearing activity. Frequent and reversible actions stay one-click.
+The login page uses a single simulated Google sign-in action. The Settings page includes explicit controls for previewing success and error toasts and a confirmation alert. Confirmation is required before skipping or pausing a routine, changing timezone, signing out, or clearing activity. Frequent and reversible actions stay one-click.
 
 This is prototype code. It is intentionally separate from the production Next.js app.
 
