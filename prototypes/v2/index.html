@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Routempo v2 throwaway workflow prototype with three switchable Today variants."
+    />
+    <title>Routempo workflow prototype v2</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              canvas: "var(--canvas)",
+              surface: "var(--surface)",
+              soft: "var(--soft)",
+              line: "var(--line)",
+              ink: "var(--ink)",
+              muted: "var(--muted)",
+              brand: {
+                50: "var(--brand-50)",
+                100: "var(--brand-100)",
+                500: "var(--brand-500)",
+                600: "var(--brand-600)",
+                700: "var(--brand-700)",
+                900: "var(--brand-900)",
+              },
+              done: "var(--done)",
+              skipped: "var(--skipped)",
+              missed: "var(--missed)",
+            },
+            fontFamily: {
+              sans: ["Manrope", "system-ui", "sans-serif"],
+              mono: ["DM Mono", "ui-monospace", "monospace"],
+            },
+            boxShadow: {
+              soft: "0 8px 30px -18px rgb(20 45 31 / .28)",
+              float: "0 18px 50px -16px rgb(8 20 13 / .4)",
+            },
+          },
+        },
+      }
+    </script>
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <style>
+      :root {
+        color-scheme: light;
+        --canvas: #f6f8f6;
+        --surface: #ffffff;
+        --soft: #eef3ef;
+        --line: #dce4de;
+        --ink: #16231a;
+        --muted: #637168;
+        --brand-50: #edf9f0;
+        --brand-100: #daf2e0;
+        --brand-500: #2ca465;
+        --brand-600: #1d874f;
+        --brand-700: #176c41;
+        --brand-900: #123d27;
+        --done: #249b5c;
+        --skipped: #d48a22;
+        --missed: #d44a50;
+      }
+      .dark {
+        color-scheme: dark;
+        --canvas: #101511;
+        --surface: #171d18;
+        --soft: #202821;
+        --line: #2d382f;
+        --ink: #f0f5f1;
+        --muted: #a4b2a7;
+        --brand-50: #22352a;
+        --brand-100: #294333;
+        --brand-500: #50b878;
+        --brand-600: #69c68d;
+        --brand-700: #8bd5a7;
+        --brand-900: #dceee2;
+        --done: #48bd7b;
+        --skipped: #e6a849;
+        --missed: #ef696e;
+      }
+      * { -webkit-tap-highlight-color: transparent; }
+      body { font-family: Manrope, system-ui, sans-serif; }
+      button, a, input, select { outline: none; }
+      button, a { transition: background-color 140ms, color 140ms, border-color 140ms, transform 140ms; }
+      button:active, .press:active { transform: scale(.98); }
+      button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible {
+        box-shadow: 0 0 0 3px rgb(29 135 79 / .25);
+      }
+      .scrollbar-none { scrollbar-width: none; }
+      .scrollbar-none::-webkit-scrollbar { display: none; }
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; }
+      }
+    </style>
+  </head>
+  <body class="min-h-[100dvh] bg-canvas text-ink antialiased">
+    <!-- Three variants of the Today workflow, switchable via ?variant=A, B, or C. -->
+    <div id="app"></div>
+    <script>
+      const variants = {
+        A: { name: "Clear checklist", note: "Recommended: one chronological action pattern" },
+        B: { name: "Now and next", note: "One primary task with a compact queue" },
+        C: { name: "Daypart groups", note: "Morning, afternoon, and evening sections" },
+      }
+
+      const state = {
+        page: new URLSearchParams(location.search).get("page") || "today",
+        routineView: "schedule",
+        reviewView: "summary",
+        selectedDay: 3,
+        theme: "light",
+        modal: null,
+        toast: null,
+        undo: null,
+        connected: { google: true, microsoft: false },
+        settings: { reminders: true, summary: true },
+        routines: [
+          { id: 1, title: "Fajr salah", time: "4:55 AM", category: "Prayer", status: "completed", enabled: true, daypart: "Morning" },
+          { id: 2, title: "Morning walk", time: "5:30 AM", category: "Personal", status: "completed", enabled: true, daypart: "Morning" },
+          { id: 3, title: "Breakfast", time: "7:00 AM", category: "Food habit", status: "completed", enabled: true, daypart: "Morning" },
+          { id: 4, title: "German language study", time: "7:12 AM", category: "Learning", status: "completed", enabled: true, daypart: "Morning" },
+          { id: 5, title: "Asr salah", time: "5:15 PM", category: "Prayer", status: "pending", enabled: true, daypart: "Afternoon" },
+          { id: 6, title: "Magrib salah", time: "6:55 PM", category: "Prayer", status: "pending", enabled: true, daypart: "Evening" },
+          { id: 7, title: "Esha salah", time: "8:45 PM", category: "Prayer", status: "pending", enabled: true, daypart: "Evening" },
+          { id: 8, title: "Read for 20 minutes", time: "9:30 PM", category: "Learning", status: "skipped", enabled: true, daypart: "Evening" },
+          { id: 9, title: "Prepare tomorrow", time: "10:00 PM", category: "Personal", status: "pending", enabled: true, daypart: "Evening" },
+        ],
+      }
+
+      const days = [
+        { short: "Sa", day: 8, date: "2026-08-08", past: true },
+        { short: "Su", day: 9, date: "2026-08-09", past: true },
+        { short: "Mo", day: 10, date: "2026-08-10", past: true },
+        { short: "Tu", day: 11, date: "2026-08-11", today: true },
+        { short: "We", day: 12, date: "2026-08-12" },
+        { short: "Th", day: 13, date: "2026-08-13" },
+        { short: "Fr", day: 14, date: "2026-08-14" },
+      ]
+
+      function icon(name, classes = "h-5 w-5") {
+        return `<i data-lucide="${name}" class="${classes}" aria-hidden="true"></i>`
+      }
+
+      function currentVariant() {
+        const value = (new URLSearchParams(location.search).get("variant") || "A").toUpperCase()
+        return variants[value] ? value : "A"
+      }
+
+      function timeMinutes(value) {
+        const [, hourText, minuteText, period] = value.match(/(\d+):(\d+)\s(AM|PM)/) || []
+        const hour = Number(hourText || 0) % 12 + (period === "PM" ? 12 : 0)
+        return hour * 60 + Number(minuteText || 0)
+      }
+      function activeRoutines() { return state.routines.filter((routine) => routine.enabled).sort((left, right) => timeMinutes(left.time) - timeMinutes(right.time)) }
+      function completedCount() { return activeRoutines().filter((routine) => routine.status === "completed").length }
+      function skippedCount() { return activeRoutines().filter((routine) => routine.status === "skipped").length }
+      function pendingRoutines() { return activeRoutines().filter((routine) => routine.status === "pending") }
+      function progressRate() { return Math.round((completedCount() / activeRoutines().length) * 100) }
+
+      function render() {
+        document.documentElement.classList.toggle("dark", state.theme === "dark")
+        document.getElementById("app").innerHTML = `
+          ${renderShell()}
+          ${renderToast()}
+          ${renderModal()}
+          ${renderSwitcher()}
+        `
+        lucide.createIcons()
+      }
+
+      function renderShell() {
+        return `
+          <div class="min-h-[100dvh] lg:grid lg:grid-cols-[248px_minmax(0,1fr)]">
+            <aside class="hidden border-r border-line bg-surface lg:flex lg:min-h-[100dvh] lg:flex-col lg:p-5">
+              ${brand()}
+              <nav class="mt-10 grid gap-1" aria-label="Primary navigation">${navItems()}</nav>
+              <div class="mt-auto rounded-2xl bg-soft p-4">
+                <div class="flex items-center justify-between gap-3"><span class="text-xs font-semibold text-muted">Today</span><span class="font-mono text-xs">${completedCount()}/${activeRoutines().length}</span></div>
+                <div class="mt-3 flex gap-1" aria-label="${completedCount()} of ${activeRoutines().length} completed">
+                  ${activeRoutines().map((routine) => `<span class="h-1.5 flex-1 rounded-full ${routine.status === "completed" ? "bg-done" : routine.status === "skipped" ? "bg-skipped" : "bg-line"}"></span>`).join("")}
+                </div>
+                <p class="mt-3 text-xs leading-5 text-muted">${pendingRoutines().length} still open. Skipped routines stay in your plan.</p>
+              </div>
+            </aside>
+            <section class="min-w-0">
+              <header class="sticky top-0 z-20 border-b border-line bg-surface/95 backdrop-blur">
+                <div class="flex min-h-[68px] items-center gap-4 px-4 md:px-7">
+                  <div class="lg:hidden">${brand()}</div>
+                  <p class="hidden text-sm text-muted md:block lg:block">Tuesday, August 11</p>
+                  <div class="ml-auto flex items-center gap-2">
+                    <button onclick="toggleTheme()" class="grid h-10 w-10 place-items-center rounded-xl border border-line hover:bg-soft" aria-label="Toggle color theme">${icon(state.theme === "dark" ? "sun" : "moon", "h-4 w-4")}</button>
+                    <button class="grid h-10 w-10 place-items-center rounded-full bg-brand-100 text-sm font-semibold text-brand-700" aria-label="Open account menu">MA</button>
+                  </div>
+                </div>
+                <nav class="scrollbar-none flex gap-1 overflow-x-auto px-3 pb-2 lg:hidden" aria-label="Mobile navigation">${navItems(true)}</nav>
+              </header>
+              <main class="mx-auto w-full max-w-[1240px] px-4 py-7 pb-28 md:px-7 md:py-9">${renderPage()}</main>
+            </section>
+          </div>
+        `
+      }
+
+      function brand() {
+        return `<a href="#" onclick="navigate('today'); return false" class="inline-flex items-center gap-2.5 font-semibold"><span class="grid h-8 w-8 place-items-center rounded-lg bg-brand-700 text-white">${icon("flask-conical", "h-4 w-4")}</span><span>Routempo</span></a>`
+      }
+
+      function navItems(compact = false) {
+        const items = [
+          ["today", "Today", "circle-check-big"],
+          ["routines", "Routines", "calendar-days"],
+          ["review", "Review", "chart-no-axes-column-increasing"],
+          ["settings", "Settings", "settings"],
+        ]
+        return items.map(([page, label, iconName]) => `
+          <button onclick="navigate('${page}')" class="${compact ? "shrink-0 px-3 py-2 text-xs" : "flex w-full items-center gap-3 px-3 py-2.5 text-sm"} rounded-xl font-medium ${state.page === page ? "bg-brand-50 text-brand-700" : "text-muted hover:bg-soft hover:text-ink"}" ${state.page === page ? 'aria-current="page"' : ""}>
+            ${compact ? "" : icon(iconName, "h-[18px] w-[18px]")} ${label}
+          </button>
+        `).join("")
+      }
+
+      function renderPage() {
+        if (state.page === "routines") return renderRoutines()
+        if (state.page === "review") return renderReview()
+        if (state.page === "settings") return renderSettings()
+        return renderToday()
+      }
+
+      function pageHeader(title, description, action = "") {
+        return `<div class="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between"><div><h1 class="text-2xl font-semibold tracking-[-.025em] md:text-[2rem]">${title}</h1><p class="mt-1.5 max-w-2xl text-sm leading-6 text-muted">${description}</p></div>${action}</div>`
+      }
+
+      function addButton(label = "Add routine") {
+        return `<button onclick="openAdd()" class="inline-flex h-10 shrink-0 items-center justify-center gap-2 self-start rounded-xl bg-brand-600 px-4 text-sm font-semibold text-white hover:bg-brand-700">${icon("plus", "h-4 w-4")} ${label}</button>`
+      }
+
+      function renderToday() {
+        const variant = currentVariant()
+        const content = variant === "B" ? todayFocus() : variant === "C" ? todayGroups() : todayChecklist()
+        return `
+          ${pageHeader("Today", "Follow your schedule in time order. Complete or skip each routine as the day unfolds.", addButton())}
+          ${progressSummary()}
+          <section class="mt-6">${content}</section>
+        `
+      }
+
+      function progressSummary() {
+        return `
+          <section class="mt-7 grid gap-4 rounded-2xl border border-line bg-surface p-5 md:grid-cols-[1fr_auto] md:items-center md:p-6">
+            <div>
+              <div class="flex items-center gap-3"><span class="font-mono text-3xl font-medium text-brand-700">${completedCount()}/${activeRoutines().length}</span><span class="text-sm font-semibold">completed today</span></div>
+              <p class="mt-2 text-sm text-muted">${skippedCount()} skipped, ${pendingRoutines().length} still open. Your plan is unchanged.</p>
+            </div>
+            <div class="flex items-center gap-3 md:min-w-[280px]">
+              <div class="h-2 flex-1 overflow-hidden rounded-full bg-soft"><div class="h-full rounded-full bg-done" style="width:${progressRate()}%"></div></div>
+              <span class="font-mono text-sm font-medium">${progressRate()}%</span>
+            </div>
+          </section>
+        `
+      }
+
+      function todayChecklist() {
+        return `
+          <div class="overflow-hidden rounded-2xl border border-line bg-surface">
+            <div class="flex items-center justify-between border-b border-line px-5 py-4"><div><h2 class="font-semibold">Your schedule</h2><p class="mt-1 text-xs text-muted">One list, sorted by time</p></div><span class="rounded-lg bg-brand-50 px-2.5 py-1 text-xs font-semibold text-brand-700">${pendingRoutines().length} open</span></div>
+            ${activeRoutines().map((routine) => routineRow(routine)).join("")}
+          </div>
+        `
+      }
+
+      function todayFocus() {
+        const next = pendingRoutines()[0]
+        const queue = pendingRoutines().slice(1)
+        if (!next) return allDone()
+        return `
+          <div class="grid gap-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(300px,.65fr)]">
+            <article class="rounded-2xl bg-brand-900 p-6 text-white md:p-8 dark:text-canvas">
+              <p class="text-sm font-medium opacity-70">Up next at <span class="font-mono">${next.time}</span></p>
+              <h2 class="mt-5 text-3xl font-semibold tracking-[-.03em] md:text-4xl">${next.title}</h2>
+              <p class="mt-2 text-sm opacity-70">${next.category}</p>
+              <div class="mt-8 flex flex-wrap gap-2">
+                <button onclick="changeStatus(${next.id}, 'skipped')" class="h-11 rounded-xl border border-white/25 px-4 text-sm font-semibold hover:bg-white/10">Skip</button>
+                <button onclick="changeStatus(${next.id}, 'completed')" class="inline-flex h-11 items-center gap-2 rounded-xl bg-white px-5 text-sm font-semibold text-brand-900">${icon("check", "h-4 w-4")} Complete</button>
+              </div>
+            </article>
+            <div class="overflow-hidden rounded-2xl border border-line bg-surface">
+              <div class="border-b border-line px-5 py-4"><h2 class="font-semibold">After this</h2><p class="mt-1 text-xs text-muted">${queue.length} routines remain</p></div>
+              ${queue.slice(0, 4).map((routine) => `<div class="flex items-center gap-3 border-b border-line px-5 py-3.5 last:border-0"><span class="w-20 font-mono text-xs text-muted">${routine.time}</span><span class="min-w-0 flex-1 truncate text-sm font-medium">${routine.title}</span></div>`).join("") || `<p class="p-5 text-sm text-muted">Nothing else is scheduled.</p>`}
+            </div>
+          </div>
+        `
+      }
+
+      function todayGroups() {
+        return `<div class="grid gap-6">${["Morning", "Afternoon", "Evening"].map((part) => {
+          const group = activeRoutines().filter((routine) => routine.daypart === part)
+          const done = group.filter((routine) => routine.status === "completed").length
+          return `<section><div class="mb-3 flex items-center justify-between"><h2 class="font-semibold">${part}</h2><span class="font-mono text-xs text-muted">${done}/${group.length}</span></div><div class="overflow-hidden rounded-2xl border border-line bg-surface">${group.map((routine) => routineRow(routine, true)).join("")}</div></section>`
+        }).join("")}</div>`
+      }
+
+      function routineRow(routine, compact = false) {
+        const done = routine.status === "completed"
+        const skipped = routine.status === "skipped"
+        const inactive = done || skipped
+        return `
+          <article class="flex flex-col gap-3 border-b border-line px-4 py-${compact ? "3" : "4"} last:border-0 sm:flex-row sm:items-center">
+            <span class="w-20 shrink-0 font-mono text-xs text-muted">${routine.time}</span>
+            <div class="min-w-0 flex-1"><h3 class="truncate text-sm font-semibold ${inactive ? "text-muted line-through" : ""}">${routine.title}</h3><p class="mt-0.5 text-xs text-muted">${routine.category}</p></div>
+            ${done ? statusLabel("Completed", "circle-check", "text-done bg-brand-50") : skipped ? statusLabel("Skipped", "circle-slash-2", "text-skipped bg-amber-50 dark:bg-amber-950/30") : `<div class="flex gap-2 self-end sm:self-auto"><button onclick="changeStatus(${routine.id}, 'skipped')" class="h-9 rounded-xl border border-line px-3 text-xs font-semibold hover:bg-soft">Skip</button><button onclick="changeStatus(${routine.id}, 'completed')" class="inline-flex h-9 items-center gap-1.5 rounded-xl bg-brand-600 px-3 text-xs font-semibold text-white hover:bg-brand-700">${icon("check", "h-3.5 w-3.5")} Complete</button></div>`}
+          </article>
+        `
+      }
+
+      function statusLabel(label, iconName, classes) {
+        return `<span class="inline-flex self-end items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold sm:self-auto ${classes}">${icon(iconName, "h-3.5 w-3.5")} ${label}</span>`
+      }
+
+      function allDone() {
+        return `<div class="rounded-2xl border border-line bg-surface p-10 text-center"><span class="mx-auto grid h-12 w-12 place-items-center rounded-full bg-brand-50 text-brand-700">${icon("check", "h-5 w-5")}</span><h2 class="mt-4 text-xl font-semibold">Today is recorded</h2><p class="mt-2 text-sm text-muted">Every scheduled routine is completed or skipped.</p></div>`
+      }
+
+      function renderRoutines() {
+        return `
+          ${pageHeader("Routines", "See what is scheduled, then manage recurring routines without leaving this page.", addButton())}
+          <div class="mt-7 inline-flex rounded-xl bg-soft p-1" role="tablist">
+            ${tabButton("schedule", "Schedule", "routineView")}${tabButton("all", "All routines", "routineView")}
+          </div>
+          ${state.routineView === "all" ? allRoutines() : scheduleView()}
+        `
+      }
+
+      function tabButton(value, label, key) {
+        return `<button onclick="setTab('${key}', '${value}')" class="rounded-lg px-4 py-2 text-sm font-semibold ${state[key] === value ? "bg-surface shadow-soft" : "text-muted hover:text-ink"}" role="tab" aria-selected="${state[key] === value}">${label}</button>`
+      }
+
+      function scheduleView() {
+        const selected = days[state.selectedDay]
+        return `
+          <section class="mt-5 overflow-hidden rounded-2xl border border-line bg-surface">
+            <div class="p-5"><h2 class="font-semibold">August 8-14, 2026</h2><p class="mt-1 text-sm text-muted">Today stays in the center. Past days are read-only.</p></div>
+            <div class="grid grid-cols-7 border-y border-line">${days.map((day, index) => `<button onclick="selectDay(${index})" class="min-w-0 border-r border-line px-1 py-3 text-center last:border-0 ${index === state.selectedDay ? "bg-brand-50 text-brand-700" : "hover:bg-soft"}" aria-pressed="${index === state.selectedDay}"><span class="block font-mono text-[10px] text-muted">${day.short}</span><span class="mx-auto mt-1 grid h-8 w-8 place-items-center rounded-full font-mono text-sm ${index === state.selectedDay ? "bg-brand-600 text-white" : ""}">${day.day}</span></button>`).join("")}</div>
+            <div class="flex items-center justify-between gap-4 border-b border-line p-5"><div><h3 class="font-semibold">${selected.today ? "Today" : selected.past ? "Past day" : "Upcoming day"}, August ${selected.day}</h3><p class="mt-1 text-sm text-muted">${selected.today ? `${activeRoutines().length} routines scheduled` : selected.past ? "History is available in Review" : "7 routines scheduled"}</p></div><button onclick="${selected.past ? "void(0)" : "openAdd()"}" ${selected.past ? "disabled title='Past days are read-only'" : ""} class="inline-flex h-9 items-center gap-1.5 rounded-xl px-3 text-sm font-semibold ${selected.past ? "cursor-not-allowed text-muted opacity-60" : "text-brand-700 hover:bg-brand-50"}">${icon("plus", "h-4 w-4")} Add routine</button></div>
+            ${selected.today ? activeRoutines().map((routine) => `<div class="flex items-center gap-4 border-b border-line px-5 py-3.5 last:border-0"><span class="w-20 font-mono text-xs text-muted">${routine.time}</span><span class="min-w-0 flex-1 truncate text-sm font-semibold">${routine.title}</span><span class="hidden text-xs text-muted sm:block">${routine.category}</span></div>`).join("") : `<div class="p-10 text-center text-sm text-muted">${selected.past ? "Past schedules cannot be changed." : "Select Add routine to schedule something for this day."}</div>`}
+          </section>
+        `
+      }
+
+      function allRoutines() {
+        return `<section class="mt-5 overflow-hidden rounded-2xl border border-line bg-surface"><div class="border-b border-line p-5"><h2 class="font-semibold">Recurring routines</h2><p class="mt-1 text-sm text-muted">Pause a routine without deleting its history.</p></div>${state.routines.map((routine) => `<div class="flex items-center gap-4 border-b border-line px-5 py-4 last:border-0 ${routine.enabled ? "" : "opacity-55"}"><div class="min-w-0 flex-1"><h3 class="truncate text-sm font-semibold">${routine.title}</h3><p class="mt-1 text-xs text-muted">Every day at ${routine.time} · ${routine.category}</p></div><button onclick="toggleRoutine(${routine.id})" class="relative h-7 w-12 rounded-full ${routine.enabled ? "bg-brand-600" : "bg-line"}" role="switch" aria-checked="${routine.enabled}" aria-label="${routine.enabled ? "Pause" : "Resume"} ${routine.title}"><span class="absolute top-1 h-5 w-5 rounded-full bg-white shadow ${routine.enabled ? "left-6" : "left-1"}"></span></button></div>`).join("")}</section>`
+      }
+
+      function renderReview() {
+        const total = activeRoutines().length
+        const completed = completedCount()
+        const skipped = skippedCount()
+        const open = Math.max(total - completed - skipped, 0)
+        const completeEnd = total ? (completed / total) * 100 : 0
+        const skipEnd = total ? ((completed + skipped) / total) * 100 : 0
+        return `
+          ${pageHeader("Review", "Understand what happened. Scheduled routines are always included in the totals.")}
+          <div class="mt-7 inline-flex rounded-xl bg-soft p-1" role="tablist">${tabButton("summary", "Summary", "reviewView")}${tabButton("history", "History", "reviewView")}</div>
+          ${state.reviewView === "history" ? historyView() : `
+            <div class="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+              ${metric(total, "Scheduled today", "calendar-days")}${metric(completed, "Completed", "check")}${metric(skipped, "Skipped", "circle-slash-2")}${metric(`${progressRate()}%`, "Completion rate", "target")}
+            </div>
+            <section class="mt-5 grid overflow-hidden rounded-2xl border border-line bg-surface lg:grid-cols-[minmax(0,1fr)_280px]">
+              <div class="p-5 md:p-6"><h2 class="font-semibold">Daily completion</h2><p class="mt-1 text-sm text-muted">Completed out of all routines scheduled each day.</p><div class="mt-7 flex h-52 items-end gap-3 border-b border-line px-2">${[45, 62, 56, progressRate(), 0, 0, 0].map((value, index) => `<div class="flex h-full flex-1 flex-col justify-end gap-2"><div class="min-h-1 rounded-t-lg bg-brand-100" style="height:${Math.max(value, 2)}%" title="${value}% completed"></div><span class="pb-3 text-center font-mono text-[10px] text-muted">${days[index].short}</span></div>`).join("")}</div></div>
+              <aside class="border-t border-line p-5 lg:border-l lg:border-t-0 md:p-6"><h2 class="font-semibold">Today by status</h2><p class="mt-1 text-sm text-muted">${total} routines scheduled.</p><div class="mx-auto mt-7 h-32 w-32 rounded-full" role="img" aria-label="${completed} completed, ${skipped} skipped, ${open} not recorded" style="background:conic-gradient(var(--done) 0 ${completeEnd}%, var(--skipped) ${completeEnd}% ${skipEnd}%, var(--line) ${skipEnd}% 100%)"></div><div class="mt-6 grid gap-3">${legend("Completed", completed, "bg-done")}${legend("Skipped", skipped, "bg-skipped")}${legend("Not recorded", open, "bg-line")}</div></aside>
+            </section>
+            ${categoryBreakdown(total)}
+          `}
+        `
+      }
+
+      function metric(value, label, iconName) {
+        return `<div class="rounded-2xl border border-line bg-surface p-5"><div class="flex items-center justify-between"><span class="grid h-9 w-9 place-items-center rounded-xl bg-soft text-muted">${icon(iconName, "h-4 w-4")}</span><strong class="font-mono text-2xl font-medium">${value}</strong></div><p class="mt-4 text-sm font-semibold">${label}</p></div>`
+      }
+
+      function legend(label, value, color) {
+        return `<div class="flex items-center justify-between gap-3 text-xs"><span class="flex items-center gap-2 text-muted"><span class="h-2.5 w-2.5 rounded-full ${color}"></span>${label}</span><span class="font-mono font-medium">${value}</span></div>`
+      }
+
+      function categoryBreakdown(total) {
+        const groups = [
+          { name: "Prayer", completed: 1, total: 4 },
+          { name: "Personal", completed: 1, total: 2 },
+          { name: "Learning", completed: 1, total: 2 },
+          { name: "Food habit", completed: 1, total: 1 },
+        ]
+        return `<section class="mt-5 overflow-hidden rounded-2xl border border-line bg-surface"><div class="border-b border-line p-5"><h2 class="font-semibold">Category breakdown</h2><p class="mt-1 text-sm text-muted">Completion uses all scheduled routines in each category.</p></div>${groups.map((group) => { const rate = Math.round((group.completed / group.total) * 100); return `<div class="grid gap-2 border-b border-line px-5 py-4 last:border-0 sm:grid-cols-[1fr_90px_2fr_56px] sm:items-center"><span class="text-sm font-semibold">${group.name}</span><span class="text-xs text-muted">${group.completed} of ${group.total}</span><div class="h-1.5 rounded-full bg-soft"><div class="h-full rounded-full bg-done" style="width:${rate}%"></div></div><span class="font-mono text-sm">${rate}%</span></div>` }).join("")}</section>`
+      }
+
+      function historyView() {
+        const recorded = activeRoutines().filter((routine) => routine.status !== "pending")
+        return `<section class="mt-5 overflow-hidden rounded-2xl border border-line bg-surface"><div class="border-b border-line p-5"><h2 class="font-semibold">Outcome history</h2><p class="mt-1 text-sm text-muted">Detailed records are secondary to the daily workflow.</p></div>${recorded.map((routine, index) => `<div class="grid gap-2 border-b border-line px-5 py-4 last:border-0 sm:grid-cols-[140px_1fr_120px] sm:items-center"><span class="font-mono text-xs text-muted">Aug 11 · ${routine.time}</span><span class="text-sm font-semibold">${routine.title}</span>${routine.status === "completed" ? statusLabel("Completed", "check", "text-done bg-brand-50") : statusLabel("Skipped", "circle-slash-2", "text-skipped bg-amber-50 dark:bg-amber-950/30")}</div>`).join("")}</section>`
+      }
+
+      function renderSettings() {
+        return `
+          ${pageHeader("Settings", "Manage reminders, connected calendars, data, and your account.")}
+          <div class="mt-7 grid gap-6 xl:grid-cols-2">
+            <section class="rounded-2xl border border-line bg-surface"><div class="border-b border-line p-5"><h2 class="font-semibold">Notifications</h2><p class="mt-1 text-sm text-muted">Choose what Routempo sends you.</p></div>${settingRow("Routine reminders", "Before each scheduled routine", "reminders")}${settingRow("Weekly summary", "A short review every Monday", "summary")}</section>
+            <section class="rounded-2xl border border-line bg-surface xl:row-span-2"><div class="border-b border-line p-5"><h2 class="font-semibold">Calendar and task integrations</h2><p class="mt-1 text-sm text-muted">Import existing plans or export enabled routines.</p></div>${provider("google", "Google")}${provider("microsoft", "Microsoft")}</section>
+            <section class="rounded-2xl border border-line bg-surface"><div class="border-b border-line p-5"><h2 class="font-semibold">Data and account</h2><p class="mt-1 text-sm text-muted">Download your data or sign out.</p></div><div class="flex flex-wrap gap-2 p-5"><button onclick="notify('Your export is being prepared.')" class="inline-flex h-10 items-center gap-2 rounded-xl border border-line px-4 text-sm font-semibold hover:bg-soft">${icon("download", "h-4 w-4")} Export data</button><button onclick="notify('Sign out confirmation would open here.')" class="h-10 rounded-xl px-4 text-sm font-semibold text-missed hover:bg-red-50 dark:hover:bg-red-950/20">Sign out</button></div></section>
+          </div>
+        `
+      }
+
+      function settingRow(title, description, key) {
+        return `<div class="flex items-center gap-4 border-b border-line p-5 last:border-0"><div class="min-w-0 flex-1"><h3 class="text-sm font-semibold">${title}</h3><p class="mt-1 text-xs text-muted">${description}</p></div><button onclick="toggleSetting('${key}')" class="relative h-7 w-12 rounded-full ${state.settings[key] ? "bg-brand-600" : "bg-line"}" role="switch" aria-checked="${state.settings[key]}"><span class="absolute top-1 h-5 w-5 rounded-full bg-white shadow ${state.settings[key] ? "left-6" : "left-1"}"></span></button></div>`
+      }
+
+      function provider(key, label) {
+        const connected = state.connected[key]
+        return `<div class="border-b border-line p-5 last:border-0"><div class="flex items-start justify-between gap-4"><div><h3 class="text-sm font-semibold">${label}</h3><p class="mt-1 text-xs text-muted">${connected ? "Connected and ready to sync" : "Connect your account to enable sync"}</p></div><button onclick="toggleProvider('${key}')" class="h-9 rounded-xl px-3 text-xs font-semibold ${connected ? "border border-line hover:bg-soft" : "bg-brand-600 text-white hover:bg-brand-700"}">${connected ? "Disconnect" : "Connect"}</button></div>${connected ? `<div class="mt-4 grid grid-cols-2 gap-2"><button onclick="notify('${label} calendar import started.')" class="h-9 rounded-xl border border-line text-xs font-semibold hover:bg-soft">Import calendar</button><button onclick="notify('Routines exported to ${label}.')" class="h-9 rounded-xl border border-line text-xs font-semibold hover:bg-soft">Export routines</button></div>` : ""}</div>`
+      }
+
+      function renderSwitcher() {
+        const key = currentVariant()
+        return `<aside class="fixed bottom-4 left-1/2 z-40 w-[calc(100%-24px)] max-w-[570px] -translate-x-1/2 rounded-2xl bg-[#17231b] p-2 text-white shadow-float" aria-label="Prototype variant switcher"><div class="flex items-center gap-2"><button onclick="cycleVariant(-1)" class="grid h-10 w-10 shrink-0 place-items-center rounded-xl text-white/70 hover:bg-white/10" aria-label="Previous variant">${icon("arrow-left", "h-4 w-4")}</button><div class="min-w-0 flex-1 text-center"><p class="truncate text-sm font-semibold">${key}: ${variants[key].name}</p><p class="mt-0.5 truncate text-[10px] text-white/55">${variants[key].note}</p></div><div class="hidden gap-1 sm:flex">${Object.keys(variants).map((item) => `<button onclick="setVariant('${item}')" class="grid h-8 w-8 place-items-center rounded-lg text-xs font-semibold ${item === key ? "bg-white text-[#17231b]" : "text-white/60 hover:bg-white/10"}" aria-current="${item === key}">${item}</button>`).join("")}</div><button onclick="cycleVariant(1)" class="grid h-10 w-10 shrink-0 place-items-center rounded-xl text-white/70 hover:bg-white/10" aria-label="Next variant">${icon("arrow-right", "h-4 w-4")}</button></div></aside>`
+      }
+
+      function renderToast() {
+        if (!state.toast) return ""
+        return `<div role="status" class="fixed right-4 top-4 z-50 flex max-w-sm items-center gap-3 rounded-2xl border border-line bg-surface px-4 py-3 shadow-float"><span class="grid h-8 w-8 place-items-center rounded-lg bg-brand-50 text-brand-700">${icon("check", "h-4 w-4")}</span><span class="text-sm font-medium">${state.toast}</span>${state.undo ? `<button onclick="undo()" class="ml-2 text-sm font-semibold text-brand-700">Undo</button>` : ""}</div>`
+      }
+
+      function renderModal() {
+        if (state.modal !== "add") return ""
+        return `<div class="fixed inset-0 z-50 grid place-items-center bg-slate-950/35 p-4" onclick="closeModal(event)"><section role="dialog" aria-modal="true" aria-labelledby="add-title" class="max-h-[calc(100dvh-2rem)] w-full max-w-lg overflow-y-auto rounded-2xl bg-surface p-6 shadow-float"><div class="flex items-start justify-between gap-4"><div><h2 id="add-title" class="text-xl font-semibold">Add a routine</h2><p class="mt-1 text-sm text-muted">Start with the essentials. Repeat options are optional.</p></div><button onclick="dismissModal()" class="grid h-9 w-9 place-items-center rounded-xl hover:bg-soft" aria-label="Close">${icon("x", "h-4 w-4")}</button></div><form class="mt-6 grid gap-4" onsubmit="addRoutine(event)"><label class="grid gap-2 text-sm font-semibold">Routine name<input id="new-title" required placeholder="Example: Take an evening walk" class="h-11 rounded-xl border border-line bg-surface px-3 font-normal placeholder:text-muted" /></label><div class="grid gap-4 sm:grid-cols-2"><label class="grid gap-2 text-sm font-semibold">Start date<input id="new-date" required type="date" min="2026-08-11" value="2026-08-11" class="h-11 rounded-xl border border-line bg-surface px-3 font-normal" /></label><label class="grid gap-2 text-sm font-semibold">Time<input id="new-time" required type="time" value="18:00" class="h-11 rounded-xl border border-line bg-surface px-3 font-normal" /></label></div><label class="flex items-center gap-3 rounded-xl bg-soft p-4"><input id="new-repeats" type="checkbox" onchange="toggleRepeat(this.checked)" class="h-4 w-4 accent-green-700" /><span><span class="block text-sm font-semibold">Repeat this routine</span><span class="mt-0.5 block text-xs text-muted">Turn on only if this belongs on more than one day.</span></span></label><div id="repeat-options" class="hidden grid-cols-2 gap-4"><label class="grid gap-2 text-sm font-semibold">Frequency<select class="h-11 rounded-xl border border-line bg-surface px-3 font-normal"><option>Every day</option><option>Selected weekdays</option><option>Every week</option></select></label><label class="grid gap-2 text-sm font-semibold">Ends <span class="font-normal text-muted">Optional</span><input type="date" min="2026-08-11" class="h-11 rounded-xl border border-line bg-surface px-3 font-normal" /></label></div><div class="mt-2 flex justify-end gap-2"><button type="button" onclick="dismissModal()" class="h-10 rounded-xl px-4 text-sm font-semibold hover:bg-soft">Cancel</button><button type="submit" class="h-10 rounded-xl bg-brand-600 px-4 text-sm font-semibold text-white hover:bg-brand-700">Add routine</button></div></form></section></div>`
+      }
+
+      function navigate(page) {
+        state.page = page
+        const url = new URL(location.href)
+        url.searchParams.set("page", page)
+        history.pushState({}, "", url)
+        render()
+        scrollTo({ top: 0, behavior: "smooth" })
+      }
+
+      function changeStatus(id, status) {
+        const routine = state.routines.find((item) => item.id === id)
+        state.undo = { id, status: routine.status }
+        routine.status = status
+        state.toast = status === "completed" ? `${routine.title} completed.` : `${routine.title} skipped for today.`
+        render()
+      }
+
+      function undo() {
+        const routine = state.routines.find((item) => item.id === state.undo.id)
+        routine.status = state.undo.status
+        state.undo = null
+        state.toast = "Last action undone."
+        render()
+      }
+
+      function notify(message) { state.undo = null; state.toast = message; render(); setTimeout(() => { state.toast = null; render() }, 2600) }
+      function openAdd() { state.modal = "add"; render() }
+      function dismissModal() { state.modal = null; render() }
+      function closeModal(event) { if (event.target === event.currentTarget) dismissModal() }
+      function toggleRepeat(show) { document.getElementById("repeat-options").className = show ? "grid grid-cols-1 gap-4 sm:grid-cols-2" : "hidden grid-cols-2 gap-4" }
+
+      function addRoutine(event) {
+        event.preventDefault()
+        const title = document.getElementById("new-title").value.trim()
+        const rawTime = document.getElementById("new-time").value
+        const [hourText, minute] = rawTime.split(":")
+        const hour = Number(hourText)
+        const time = `${hour % 12 || 12}:${minute} ${hour >= 12 ? "PM" : "AM"}`
+        state.routines.push({ id: Date.now(), title, time, category: "Personal", status: "pending", enabled: true, daypart: hour < 12 ? "Morning" : hour < 17 ? "Afternoon" : "Evening" })
+        state.modal = null
+        notify(`${title} added to today.`)
+      }
+
+      function setTab(key, value) { state[key] = value; render() }
+      function selectDay(index) { state.selectedDay = index; render() }
+      function toggleRoutine(id) { const routine = state.routines.find((item) => item.id === id); routine.enabled = !routine.enabled; notify(`${routine.title} ${routine.enabled ? "resumed" : "paused"}.`) }
+      function toggleSetting(key) { state.settings[key] = !state.settings[key]; notify(`${key === "reminders" ? "Routine reminders" : "Weekly summary"} ${state.settings[key] ? "enabled" : "disabled"}.`) }
+      function toggleProvider(key) { state.connected[key] = !state.connected[key]; notify(`${key === "google" ? "Google" : "Microsoft"} ${state.connected[key] ? "connected" : "disconnected"}.`) }
+      function toggleTheme() { state.theme = state.theme === "dark" ? "light" : "dark"; render() }
+
+      function setVariant(key) {
+        const url = new URL(location.href)
+        url.searchParams.set("variant", key)
+        history.replaceState({}, "", url)
+        render()
+      }
+
+      function cycleVariant(direction) {
+        const keys = Object.keys(variants)
+        const index = keys.indexOf(currentVariant())
+        setVariant(keys[(index + direction + keys.length) % keys.length])
+      }
+
+      addEventListener("keydown", (event) => {
+        const target = event.target
+        if (target.matches("input, textarea, select, [contenteditable='true']")) return
+        if (event.key === "ArrowLeft") cycleVariant(-1)
+        if (event.key === "ArrowRight") cycleVariant(1)
+        if (event.key === "Escape" && state.modal) dismissModal()
+      })
+      addEventListener("popstate", () => { state.page = new URLSearchParams(location.search).get("page") || "today"; render() })
+      render()
+    </script>
+  </body>
+</html>
