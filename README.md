@@ -2,14 +2,17 @@
 
 > A timezone-aware routine planner for deciding what comes next, recording what actually happened, and learning from real outcomes without turning the day into a scorecard.
 
+[![Live app](https://img.shields.io/badge/Live_app-Netlify-00C7B7?logo=netlify&logoColor=white)](https://routempo.netlify.app)
+[![Support on SupportKori](https://img.shields.io/badge/Support_on-SupportKori-00B8B5)](https://www.supportkori.com/montasim)
+
 Routempo helps people build repeatable daily rhythms. Users can schedule one-off or recurring routines, complete or skip each occurrence, review behavior history and insights, receive browser reminders, and move routines between Routempo and Google or Microsoft calendars and task lists.
 
 This repository contains the full-stack web application, its Neon PostgreSQL schema and migrations, an interactive product prototype, a reusable design system, and automated unit and browser tests.
 
-**[Review the v1 prototype](prototypes/v1/README.md) · [Explore the design system](docs/design_system/readme.md) · [Report an issue](https://github.com/montasim/Routempo/issues)**
+**[Open the live app](https://routempo.netlify.app) · [Review the v1 prototype](prototypes/v1/README.md) · [Report an issue](https://github.com/montasim/Routempo/issues)**
 
 > [!NOTE]
-> Routempo is under active development. This repository does not currently declare a public production deployment.
+> Routempo is under active development. The public deployment is available for evaluation, but it has no uptime or availability commitment.
 
 ## Why Routempo?
 
@@ -267,7 +270,7 @@ The application APIs are internal implementation surfaces and are not currently 
 
 ## Deployment and operations
 
-No provider-specific deployment configuration is committed. A deployment must support the generated Nitro Node server, provide all required environment variables, connect to Neon, and run:
+The public application is deployed on Netlify at [routempo.netlify.app](https://routempo.netlify.app). Another deployment must support the generated Nitro Node server, provide all required environment variables, connect to Neon, and run:
 
 ```bash
 pnpm build
@@ -287,7 +290,7 @@ The repository currently has no committed CI workflow or release automation, so 
 
 ## Status, privacy, and limitations
 
-- Routempo is under active development; no public availability or uptime commitment is documented.
+- Routempo is under active development. Its public Netlify deployment has no uptime or availability commitment.
 - A Neon database is always required, including for the development demo identity.
 - The application has no offline data cache. Its manifest and service worker support installation and push notifications, not offline use.
 - Browser reminders require explicit permission and a working external scheduler. Signing out currently ends the session but does not remove the server-side push subscription for that browser.
@@ -341,7 +344,11 @@ The repository does not yet include a contribution guide or code of conduct. Bef
 
 ## Funding
 
-No project funding channel is currently configured. Bug reports, focused pull requests, testing feedback, and documentation corrections are the available ways to support the project.
+Optional financial support helps cover hosting, database costs, and continued development.
+
+[![Support Routempo on SupportKori](https://img.shields.io/badge/Support_Routempo-SupportKori-00B8B5?style=for-the-badge)](https://www.supportkori.com/montasim)
+
+Bug reports, focused pull requests, testing feedback, and documentation corrections are equally valuable ways to support the project.
 
 ## Maintainer
 
