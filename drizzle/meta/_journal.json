@@ -1,0 +1,48 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1786355330294,
+      "tag": "0000_acoustic_the_spike",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1786358618036,
+      "tag": "0001_remove-prototype-data",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1786365414045,
+      "tag": "0002_productive_adam_warlock",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1786410683300,
+      "tag": "0003_loud_norrin_radd",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1786411251560,
+      "tag": "0004_disable_legacy_notification_preferences",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1786411328408,
+      "tag": "0005_friendly_black_bird",
+      "breakpoints": true
+    }
+  ]
+}

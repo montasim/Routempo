@@ -1,0 +1,48 @@
+@import "tailwindcss" source(".");
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/manrope";
+@import "@fontsource/dm-mono/400.css";
+@import "@fontsource/dm-mono/500.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-sans: "Manrope Variable", system-ui, sans-serif;
+  --font-display: "Manrope Variable", system-ui, sans-serif;
+  --font-mono: "DM Mono", ui-monospace, monospace;
+  --color-paper-0: #ffffff;
+  --color-paper-50: #f8faf9;
+  --color-paper-100: #f1f5f2;
+  --color-paper-200: #e2e8e4;
+  --color-paper-300: #cbd5ce;
+  --color-paper-400: #94a39a;
+  --color-ink-900: #17201a;
+  --color-ink-800: #27352c;
+  --color-ink-700: #405047;
+  --color-ink-500: #647269;
+  --color-ink-400: #87938b;
+  --color-signal-50: #f0fdf4;
+  --color-signal-100: #dcfce7;
+  --color-signal-200: #bbf7d0;
+  --color-signal-300: #86efac;
+  --color-signal-500: #22c55e;
+  --color-signal-600: #15803d;
+  --color-signal-700: #166534;
+  --color-signal-800: #14532d;
+  --color-signal-900: #0f3d24;
+  --color-completed-100: #e4f4ec;
+  --color-completed-500: #25b36b;
+  --color-completed-600: #1f9d5b;
+  --color-skipped-100: #fbf0dd;
+  --color-skipped-500: #e8a13a;
+  --color-skipped-600: #cf8a26;
+  --color-skipped-700: #a96b18;
+  --color-missed-100: #fbe7e8;
+  --color-missed-500: #e5484d;
+  --color-missed-600: #d83a3f;
+  --color-missed-700: #b9272d;
+  --shadow-soft:
+    0 4px 10px -2px rgb(23 32 26 / 0.08), 0 2px 4px -2px rgb(23 32 26 / 0.05);
+  --shadow-float: 0 18px 44px -10px rgb(23 32 26 / 0.2);
+}

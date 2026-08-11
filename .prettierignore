@@ -1,6 +1,8 @@
 dist/
 node_modules/
-.next/
+.output/
+.nitro/
+.tanstack/
 .turbo/
 coverage/
 pnpm-lock.yaml
