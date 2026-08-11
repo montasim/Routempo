@@ -1,0 +1,10 @@
+<svg width="186" height="64" viewBox="0 0 186 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Routempo">
+  <rect x="0" y="12" width="40" height="40" rx="10" fill="#16181D"/>
+  <rect x="8" y="36" width="4.5" height="9" rx="1.5" fill="#6A6E78"/>
+  <rect x="15" y="31" width="4.5" height="14" rx="1.5" fill="#8B909B"/>
+  <rect x="22" y="25" width="4.5" height="20" rx="1.5" fill="#25B36B"/>
+  <rect x="29" y="19" width="4.5" height="26" rx="1.5" fill="#3E63FF"/>
+  <circle cx="31.25" cy="16.5" r="3.2" fill="#3E63FF"/>
+
+  <text x="52" y="42" font-family="'Space Grotesk', 'Arial', sans-serif" font-size="27" font-weight="700" letter-spacing="-0.6" fill="#16181D">Rou<tspan fill="#3E63FF">tempo</tspan></text>
+</svg>

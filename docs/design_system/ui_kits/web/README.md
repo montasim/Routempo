@@ -4,6 +4,7 @@ Recreation of the secondary Next.js analytics + management dashboard. Open
 `index.html`.
 
 ## Layout
+
 - **Sidebar** — brand lockup + nav (Overview, Routines, Logs, Exports, Settings).
 - **Topbar** — page title, timezone chip, Export `.xlsx` action, avatar.
 - **Content** — period tabs, a KPI row of `MetricTile`s, a completion-trend
@@ -12,6 +13,7 @@ Recreation of the secondary Next.js analytics + management dashboard. Open
   · Scheduled · Completed · Delay · Status · Timezone).
 
 ## Composition
+
 `dashboard.jsx` factors the chart, discipline panel, and logs table onto `window`
 (`RFTrendChart`, `RFDisciplinePanel`, `RFLogsTable`); `index.html` assembles the
 shell and reads primitives from `window.RoutineFlowDesignSystem_4781a2`. Shares

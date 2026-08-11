@@ -1,0 +1,1 @@
+ALTER TABLE "routine" ADD COLUMN "repeat_on_days" integer[];

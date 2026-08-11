@@ -1,0 +1,1802 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Throwaway Routempo v1 prototype aligned with the current product UI."
+    />
+    <title>Routempo workflow prototype</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              ink: {
+                DEFAULT: "var(--ink-900)",
+                900: "var(--ink-900)",
+                800: "var(--ink-800)",
+                700: "var(--ink-700)",
+                500: "var(--ink-500)",
+                400: "var(--ink-400)",
+              },
+              mist: "var(--paper-50)",
+              paper: {
+                0: "var(--paper-0)",
+                50: "var(--paper-50)",
+                100: "var(--paper-100)",
+                200: "var(--paper-200)",
+                300: "var(--paper-300)",
+                400: "var(--paper-400)",
+              },
+              signal: {
+                50: "var(--signal-50)",
+                100: "var(--signal-100)",
+                200: "var(--signal-200)",
+                300: "var(--signal-300)",
+                500: "var(--signal-500)",
+                600: "var(--signal-600)",
+                700: "var(--signal-700)",
+                800: "var(--signal-800)",
+                900: "var(--signal-900)",
+              },
+              completed: {
+                100: "var(--completed-100)",
+                500: "var(--completed-500)",
+                600: "var(--completed-600)",
+              },
+              missed: {
+                100: "var(--missed-100)",
+                500: "var(--missed-500)",
+                600: "var(--missed-600)",
+                700: "var(--missed-700)",
+              },
+              skipped: {
+                100: "var(--skipped-100)",
+                500: "var(--skipped-500)",
+                600: "var(--skipped-600)",
+                700: "var(--skipped-700)",
+              },
+              action: {
+                DEFAULT: "var(--interactive)",
+                hover: "var(--interactive-hover)",
+              },
+              inverse: "var(--surface-inverse)",
+              "on-inverse": "var(--text-inverse)",
+              "auth-panel": "var(--auth-panel)",
+            },
+            boxShadow: {
+              soft: "var(--shadow-md)",
+              float: "var(--shadow-pop)",
+            },
+            fontFamily: {
+              sans: ["Manrope", "system-ui", "sans-serif"],
+              display: ["Manrope", "system-ui", "sans-serif"],
+              mono: ["DM Mono", "ui-monospace", "monospace"],
+            },
+            fontSize: {
+              "2xs": ["0.6875rem", { lineHeight: "1.4" }],
+              xs: ["0.75rem", { lineHeight: "1.5" }],
+              sm: ["0.8125rem", { lineHeight: "1.5" }],
+              base: ["0.9375rem", { lineHeight: "1.5" }],
+              lg: ["1.0625rem", { lineHeight: "1.45" }],
+              xl: ["1.375rem", { lineHeight: "1.28" }],
+              "2xl": ["1.625rem", { lineHeight: "1.22" }],
+              "3xl": ["1.875rem", { lineHeight: "1.15" }],
+              "4xl": ["2.25rem", { lineHeight: "1.1" }],
+              "5xl": ["2.75rem", { lineHeight: "1.05" }],
+            },
+          },
+        },
+      }
+    </script>
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <style>
+      :root {
+        color-scheme: light;
+        --paper-0: #ffffff;
+        --paper-50: #f8faf9;
+        --paper-100: #f1f5f2;
+        --paper-200: #e2e8e4;
+        --paper-300: #cbd5ce;
+        --paper-400: #94a39a;
+        --ink-900: #17201a;
+        --ink-800: #27352c;
+        --ink-700: #405047;
+        --ink-500: #647269;
+        --ink-400: #87938b;
+        --signal-50: #f0fdf4;
+        --signal-100: #dcfce7;
+        --signal-200: #bbf7d0;
+        --signal-300: #86efac;
+        --signal-400: #4ade80;
+        --signal-500: #22c55e;
+        --signal-600: #15803d;
+        --signal-700: #166534;
+        --signal-800: #14532d;
+        --signal-900: #0f3d24;
+        --completed-100: #e4f4ec;
+        --completed-500: #25b36b;
+        --completed-600: #1f9d5b;
+        --missed-100: #fbe7e8;
+        --missed-500: #e5484d;
+        --missed-600: #d83a3f;
+        --missed-700: #b9272d;
+        --skipped-100: #fbf0dd;
+        --skipped-500: #e8a13a;
+        --skipped-600: #cf8a26;
+        --skipped-700: #a96b18;
+        --surface-inverse: #14532d;
+        --text-inverse: #ffffff;
+        --auth-panel: #14532d;
+        --interactive: #15803d;
+        --interactive-hover: #166534;
+        --shadow-md:
+          0 4px 10px -2px rgb(23 32 26 / 0.08),
+          0 2px 4px -2px rgb(23 32 26 / 0.05);
+        --shadow-pop: 0 18px 44px -10px rgb(23 32 26 / 0.2);
+      }
+      .dark {
+        color-scheme: dark;
+        --paper-0: #171d18;
+        --paper-50: #101511;
+        --paper-100: #202821;
+        --paper-200: #2b352d;
+        --paper-300: #3a463d;
+        --paper-400: #647067;
+        --ink-900: #f2f6f2;
+        --ink-800: #e2e9e3;
+        --ink-700: #cad4cc;
+        --ink-500: #a7b7aa;
+        --ink-400: #839187;
+        --signal-50: #26382b;
+        --signal-100: #294333;
+        --signal-200: #345b3e;
+        --signal-300: #72c58c;
+        --signal-400: #4ade80;
+        --signal-500: #4fae6b;
+        --signal-600: #72c58c;
+        --signal-700: #a8d8b5;
+        --signal-800: #c6ead0;
+        --signal-900: #e5f6ea;
+        --completed-100: #173528;
+        --completed-500: #38bd79;
+        --completed-600: #55ce8d;
+        --missed-100: #421f24;
+        --missed-500: #ef6468;
+        --missed-600: #ff7b7f;
+        --missed-700: #ff989b;
+        --skipped-100: #3b2d18;
+        --skipped-500: #e9aa50;
+        --skipped-600: #f1ba69;
+        --skipped-700: #f6ca87;
+        --surface-inverse: #dfeee2;
+        --text-inverse: #17261c;
+        --auth-panel: #10251a;
+        --interactive: #15803d;
+        --interactive-hover: #166534;
+        --shadow-md: 0 4px 12px -2px rgb(0 0 0 / 0.3);
+        --shadow-pop: 0 18px 44px -10px rgb(0 0 0 / 0.56);
+      }
+      * {
+        -webkit-tap-highlight-color: transparent;
+      }
+      body {
+        font-family: "Manrope", system-ui, sans-serif;
+        font-size: 15px;
+        line-height: 1.55;
+        text-rendering: optimizeLegibility;
+      }
+      h1,
+      h2,
+      h3,
+      .font-display {
+        font-family: "Manrope", system-ui, sans-serif;
+        font-weight: 600;
+      }
+      h1 {
+        line-height: 1.1;
+        letter-spacing: -0.025em;
+      }
+      h2,
+      h3 {
+        line-height: 1.25;
+        letter-spacing: -0.015em;
+      }
+      .font-bold {
+        font-weight: 600 !important;
+      }
+      button.font-bold,
+      button.font-semibold {
+        font-weight: 500 !important;
+      }
+      button,
+      a,
+      input,
+      select {
+        outline: none;
+        font-family: inherit;
+      }
+      button {
+        font-weight: 500;
+      }
+      button,
+      a {
+        transition-duration: 140ms;
+        transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+      }
+      input,
+      select {
+        color: var(--ink-900);
+      }
+      ::selection {
+        background: var(--signal-100);
+        color: var(--ink-900);
+      }
+      [class*="rounded-xl"] {
+        border-radius: 10px !important;
+      }
+      [class*="rounded-2xl"] {
+        border-radius: 14px !important;
+      }
+      [class*="rounded-lg"] {
+        border-radius: 6px !important;
+      }
+      .tabular-nums,
+      [data-measure] {
+        font-family: "DM Mono", ui-monospace, monospace;
+        font-variant-numeric: tabular-nums;
+      }
+      button:focus-visible,
+      a:focus-visible,
+      input:focus-visible,
+      select:focus-visible {
+        box-shadow: 0 0 0 3px rgb(21 128 61 / 0.24);
+      }
+      .view-enter {
+        animation: view-enter 0.24s ease-out;
+      }
+      .toast-enter {
+        animation: toast-enter 0.28s ease-out;
+      }
+      @keyframes view-enter {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes toast-enter {
+        from {
+          opacity: 0;
+          transform: translate(-50%, 10px);
+        }
+        to {
+          opacity: 1;
+          transform: translate(-50%, 0);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          scroll-behavior: auto !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body class="bg-mist text-ink min-h-[100dvh] font-sans antialiased">
+    <!--
+      PROTOTYPE ONLY. No persistence and no production integration.
+      Question: Does the current Routempo workflow feel clear from a first login?
+    -->
+    <div id="app"></div>
+
+    <script>
+      const prototypeParams = new URLSearchParams(location.search)
+      if (prototypeParams.has("variant")) {
+        const cleanUrl = new URL(location.href)
+        cleanUrl.searchParams.delete("variant")
+        history.replaceState({}, "", cleanUrl)
+      }
+
+      const state = {
+        theme: window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "light",
+        categories: [],
+        routines: [],
+        logs: [],
+        toast: null,
+        modal:
+          prototypeParams.get("dialog") === "add"
+            ? {
+                type: "add",
+                startDate: prototypeParams.get("date") || "2026-08-10",
+              }
+            : null,
+        menuOpen: false,
+        planView: "week",
+        selectedDay: 0,
+        insightRange: "7",
+        logFilter: "all",
+        expandedLog: null,
+        settings: {
+          name: "Montasim",
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC",
+          reminder: "10",
+          notifications: false,
+          weeklySummary: false,
+        },
+      }
+
+      function currentPage() {
+        const value = new URLSearchParams(location.search)
+          .get("page")
+          ?.toLowerCase()
+        return [
+          "login",
+          "today",
+          "plan",
+          "insights",
+          "logs",
+          "settings",
+        ].includes(value)
+          ? value
+          : "today"
+      }
+
+      function todayRoutines() {
+        return state.routines.filter((routine) =>
+          routineOccursOnDate(routine, "2026-08-10", 0)
+        )
+      }
+
+      function pendingRoutines() {
+        return todayRoutines().filter((routine) => routine.status === "pending")
+      }
+
+      function completedCount() {
+        return todayRoutines().filter(
+          (routine) => routine.status === "completed"
+        ).length
+      }
+
+      function routineOccursOnDate(routine, date, dayIndex) {
+        const startDate = routine.startDate || "2026-08-10"
+        const repeat = routine.repeat || "Every day"
+        if (date < startDate || (routine.endDate && date > routine.endDate))
+          return false
+        if (repeat === "Does not repeat") return date === startDate
+        if (repeat === "Weekdays") return dayIndex < 5
+        if (repeat === "Once a week") {
+          const elapsedDays = Math.round(
+            (new Date(`${date}T00:00:00`) - new Date(`${startDate}T00:00:00`)) /
+              86400000
+          )
+          return elapsedDays % 7 === 0
+        }
+        return true
+      }
+
+      function scheduleLabel(routine) {
+        const repeat = routine.repeat || "Every day"
+        if (repeat !== "Does not repeat") return repeat
+        return new Intl.DateTimeFormat("en-US", {
+          month: "short",
+          day: "numeric",
+        }).format(new Date(`${routine.startDate}T00:00:00`))
+      }
+
+      function greeting() {
+        const hour = Number(
+          new Intl.DateTimeFormat("en-US", {
+            timeZone: state.settings.timezone,
+            hour: "numeric",
+            hourCycle: "h23",
+          }).format(new Date())
+        )
+        const period =
+          hour < 12 ? "morning" : hour < 18 ? "afternoon" : "evening"
+        return `Good ${period}, ${state.settings.name}`
+      }
+
+      function icon(name, className = "h-5 w-5") {
+        return `<i data-lucide="${name}" class="${className}" aria-hidden="true"></i>`
+      }
+
+      function render() {
+        document.documentElement.classList.toggle(
+          "dark",
+          state.theme === "dark"
+        )
+        document.getElementById("app").innerHTML = `
+          <main class="min-h-[100dvh]">
+            ${currentPage() === "login" ? renderLogin() : renderGuidedHome()}
+          </main>
+          ${renderModal()}
+          ${renderToast()}
+        `
+        lucide.createIcons({ attrs: { "stroke-width": 1.8 } })
+      }
+
+      function brand(compact = false) {
+        return `
+          <a href="?page=today" class="inline-flex items-center gap-2.5 rounded-xl" aria-label="Routempo home">
+            <img src="../../public/logo.svg" alt="" class="h-8 w-8" />
+            ${compact ? "" : `<span class="font-display text-[18px] font-bold tracking-[-0.02em]">Rou<span class="text-signal-600 dark:text-signal-300">tempo</span></span>`}
+          </a>
+        `
+      }
+
+      function renderLogin() {
+        return `
+          <div class="view-enter min-h-[100dvh] bg-paper-50 px-4 py-4 dark:bg-paper-50 sm:px-6 sm:py-6">
+            <div class="mx-auto grid min-h-[calc(100dvh-2rem)] max-w-[1180px] overflow-hidden rounded-2xl border border-paper-200 bg-paper-0 shadow-soft dark:border-paper-200 dark:bg-paper-0 sm:min-h-[calc(100dvh-3rem)] lg:grid-cols-[minmax(0,1.05fr)_minmax(420px,.95fr)]">
+              <section class="relative hidden overflow-hidden bg-auth-panel p-10 text-white lg:flex lg:flex-col lg:justify-between xl:p-14">
+                <div class="flex items-center gap-2.5">
+                  <img src="../../public/logo.svg" alt="" class="h-9 w-9 rounded-xl bg-white p-1.5" />
+                  <span class="font-display text-lg font-semibold">Routempo</span>
+                </div>
+                <div class="max-w-xl py-14">
+                  <p class="font-mono text-xs font-medium uppercase tracking-[0.12em] text-white/65">A calmer daily rhythm</p>
+                  <h1 class="mt-5 max-w-lg text-4xl font-semibold tracking-[-0.03em] text-white xl:text-5xl">Know what comes next. Record what actually happened.</h1>
+                  <p class="mt-5 max-w-md text-base leading-7 text-white/70">Routempo keeps your schedule, reminders, and progress in one place without turning your day into another dashboard to manage.</p>
+                </div>
+                <div class="grid grid-cols-3 gap-3 border-t border-white/15 pt-6 text-sm text-white/70">
+                  <div><span class="block font-mono text-lg font-medium text-white">01</span><span class="mt-1 block">Plan simply</span></div>
+                  <div><span class="block font-mono text-lg font-medium text-white">02</span><span class="mt-1 block">Act on time</span></div>
+                  <div><span class="block font-mono text-lg font-medium text-white">03</span><span class="mt-1 block">Learn gently</span></div>
+                </div>
+              </section>
+
+              <section class="relative flex min-h-[620px] flex-col px-5 py-6 sm:px-10 sm:py-9 lg:px-14 xl:px-20">
+                <div class="flex items-center justify-between">
+                  <div class="lg:hidden">${brand()}</div>
+                  <div class="ml-auto">${themeButton()}</div>
+                </div>
+                <div class="my-auto w-full max-w-[420px] self-center py-10">
+                  <div class="grid h-11 w-11 place-items-center rounded-xl bg-signal-50 text-signal-600 dark:bg-signal-50 dark:text-signal-300">${icon("shield-check", "h-5 w-5")}</div>
+                  <p class="mt-6 text-sm font-medium text-signal-600 dark:text-signal-300">Welcome to Routempo</p>
+                  <h1 class="mt-3 text-[1.6rem] font-semibold tracking-[-0.02em]">Sign in to continue</h1>
+                  <p class="mt-3 text-sm leading-6 text-ink-500 dark:text-ink-400">Use your Google account to securely access today’s routines, plan, and progress.</p>
+                  <button onclick="signInWithGoogle()" class="mt-8 inline-flex h-12 w-full items-center justify-center gap-3 rounded-xl border border-paper-300 bg-paper-0 px-5 text-sm font-medium text-ink-800 shadow-sm hover:bg-paper-50 active:scale-[.99] dark:border-paper-300 dark:bg-paper-100 dark:text-ink-700 dark:hover:bg-paper-200">${icon("chrome", "h-[18px] w-[18px]")} Continue with Google</button>
+                  <div class="mt-6 flex items-start gap-3 rounded-xl bg-paper-50 p-4 dark:bg-paper-100">
+                    ${icon("lock-keyhole", "mt-0.5 h-4 w-4 shrink-0 text-signal-600 dark:text-signal-300")}
+                    <p class="text-xs leading-5 text-ink-500 dark:text-ink-400">Routempo uses Google only to verify your identity. The prototype does not send or store account data.</p>
+                  </div>
+                </div>
+                <p class="text-center text-xs leading-5 text-ink-400">By continuing, you agree to the prototype terms and privacy notice.</p>
+              </section>
+            </div>
+          </div>
+        `
+      }
+
+      function themeButton() {
+        const nextLabel =
+          state.theme === "dark" ? "Use light theme" : "Use dark theme"
+        return `
+          <button onclick="toggleTheme()" class="grid h-10 w-10 place-items-center rounded-xl border border-black/10 bg-paper-0 text-ink-700 transition hover:bg-paper-50 active:scale-[.97] dark:border-paper-200 dark:bg-paper-0 dark:text-ink-400 dark:hover:bg-paper-100" aria-label="${nextLabel}" title="${nextLabel}">
+            ${icon(state.theme === "dark" ? "sun" : "moon", "h-[18px] w-[18px]")}
+          </button>
+        `
+      }
+
+      function avatarButton() {
+        return `
+          <button onclick="toggleMenu()" class="grid h-10 w-10 place-items-center overflow-hidden rounded-full bg-signal-100 text-sm font-bold text-signal-700 transition active:scale-[.97] dark:bg-signal-50 dark:text-signal-300" aria-label="Open account menu" aria-expanded="${state.menuOpen}"><span aria-hidden="true">M</span></button>
+        `
+      }
+
+      function accountMenu(position = "right-0 top-12") {
+        if (!state.menuOpen) return ""
+        return `
+          <div class="absolute ${position} z-30 w-60 rounded-2xl border border-black/10 bg-paper-0 p-2 shadow-soft dark:border-paper-200 dark:bg-paper-100">
+            <div class="px-3 py-2">
+              <p class="text-sm font-semibold">${state.settings.name}</p>
+              <p class="mt-0.5 truncate text-xs text-ink-500 dark:text-ink-400">montasim@example.com</p>
+            </div>
+            <div class="my-1 h-px bg-black/5 dark:bg-paper-100"></div>
+            <button onclick="navigatePage('settings')" class="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm hover:bg-paper-100 dark:hover:bg-paper-100">${icon("settings", "h-4 w-4")} Settings</button>
+            <button onclick="openConfirmation('signout')" class="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm hover:bg-paper-100 dark:hover:bg-paper-100">${icon("log-out", "h-4 w-4")} Sign out</button>
+          </div>
+        `
+      }
+
+      function desktopSidebar() {
+        const routinesToday = todayRoutines()
+        return `
+          <aside class="sticky top-0 hidden h-[100dvh] w-[255.2px] shrink-0 border-r border-paper-200 bg-paper-0 px-4 py-6 lg:flex lg:flex-col">
+            <div class="px-2">${brand()}</div>
+            <nav class="mt-9 space-y-1" aria-label="Primary navigation">
+              ${sideNavItem("home", "Today", "today")}
+              ${sideNavItem("calendar-days", "Plan", "plan")}
+              ${sideNavItem("chart-no-axes-column-increasing", "Insights", "insights")}
+              ${sideNavItem("scroll-text", "Logs", "logs")}
+              ${sideNavItem("settings", "Settings", "settings")}
+            </nav>
+            <div class="mt-auto px-3">
+              <p class="text-xs font-semibold text-ink-400 dark:text-ink-500">Today</p>
+              ${
+                routinesToday.length
+                  ? `<div class="mt-3 flex gap-1.5" aria-label="${completedCount()} of ${routinesToday.length} routines completed">${routinesToday.map((routine) => `<span class="h-1.5 flex-1 rounded-full ${routine.status === "completed" ? "bg-completed-500" : routine.status === "skipped" ? "bg-skipped-500" : "bg-paper-200"}"></span>`).join("")}</div><p data-measure class="mt-2 text-xs text-ink-500">${completedCount()} of ${routinesToday.length} complete</p>`
+                  : `<p class="mt-2 text-xs text-ink-500">No routines scheduled</p>`
+              }
+            </div>
+          </aside>
+        `
+      }
+
+      function renderGuidedHome() {
+        if (currentPage() !== "today")
+          return renderSecondaryPage("sidebar", currentPage())
+        const routinesToday = todayRoutines()
+        const next = pendingRoutines()[0]
+        const upcoming = pendingRoutines().slice(1)
+        return `
+          <div class="view-enter min-h-[100dvh] bg-paper-50 dark:bg-paper-50">
+            <div class="flex min-h-[100dvh] w-full">
+              ${desktopSidebar()}
+
+              <section class="min-w-0 flex-1">
+                <header class="sticky top-0 z-20 flex min-h-[72px] flex-wrap items-center justify-between gap-y-2 border-b border-paper-200 bg-paper-0/95 px-4 py-3 backdrop-blur md:px-8">
+                  <div class="flex items-center gap-3 lg:hidden">${brand()} </div>
+                  <p class="hidden text-sm font-medium text-ink-500 lg:block dark:text-ink-400">Monday, August 10</p>
+                  <div class="relative flex items-center gap-2">${themeButton()} ${avatarButton()} ${accountMenu()}</div>
+                  <nav class="flex w-full gap-1 lg:hidden" aria-label="Primary navigation">${compactNav()}</nav>
+                </header>
+
+                <div class="w-full px-4 py-8 md:px-8">
+                  <div class="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+                    <div>
+                      <p class="text-sm font-semibold text-ink-500">${greeting()}</p>
+                      <h1 class="mt-2 text-[1.6rem] font-bold tracking-[-0.02em] md:text-[1.9125rem]">${state.routines.length ? "Here is what needs your attention." : "Build a rhythm that fits your day."}</h1>
+                    </div>
+                    <button onclick="openAddRoutine()" class="inline-flex h-11 shrink-0 items-center justify-center gap-2 self-start rounded-xl bg-action px-4 text-sm font-semibold text-white transition hover:bg-action-hover active:scale-[.97] sm:self-auto">
+                      ${icon("plus", "h-4 w-4")} Add routine
+                    </button>
+                  </div>
+
+                  ${
+                    !state.routines.length
+                      ? renderEmptyState(
+                          "calendar-days",
+                          "Start with one routine",
+                          "Choose one useful thing and give it a realistic time. You can add more after the first one feels right.",
+                          "Add your first routine",
+                          "openAddRoutine()"
+                        )
+                      : next
+                        ? `
+                    <section class="mt-8 overflow-hidden rounded-2xl bg-inverse text-on-inverse shadow-soft">
+                      <div class="grid gap-7 p-6 md:grid-cols-[1fr_auto] md:items-end md:p-8">
+                        <div>
+                          <div class="flex items-center gap-2 font-mono text-sm font-medium opacity-70">
+                            ${icon("clock-3", "h-4 w-4")} Up next at ${next.time}
+                          </div>
+                          <h2 class="mt-4 text-3xl font-bold tracking-[-0.03em] md:text-4xl">${next.title}</h2>
+                          <p class="mt-2 text-sm opacity-70">${next.note}. Reminder is already set.</p>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                          <button onclick="askSkip(${next.id})" class="h-11 rounded-xl border border-current/25 px-4 text-sm font-semibold transition hover:bg-current/10 active:scale-[.97]">Skip today</button>
+                          <button onclick="completeRoutine(${next.id})" class="inline-flex h-11 items-center gap-2 rounded-xl bg-action px-5 text-sm font-bold text-white transition hover:bg-action-hover active:scale-[.97]">
+                            ${icon("check", "h-4 w-4")} Mark complete
+                          </button>
+                        </div>
+                      </div>
+                    </section>
+                  `
+                        : renderAllDone()
+                  }
+
+                  ${
+                    state.routines.length
+                      ? `<div class="mt-8 grid gap-6 xl:grid-cols-[minmax(0,7fr)_minmax(0,3fr)]">
+                    <section>
+                      <div class="mb-3 flex items-center justify-between">
+                        <h2 class="text-lg font-bold">Later today</h2>
+                        <button onclick="navigatePage('plan')" class="rounded-lg px-2 py-1 text-sm font-semibold text-signal-600 hover:bg-signal-50 dark:text-signal-300 dark:hover:bg-paper-100">View plan</button>
+                      </div>
+                      <div class="overflow-hidden rounded-2xl border border-paper-200 bg-paper-0 dark:border-paper-200 dark:bg-paper-0">
+                        ${upcoming.length ? upcoming.map((routine) => routineRow(routine)).join("") : `<p class="p-6 text-sm text-ink-500 dark:text-ink-400">Nothing else is scheduled today.</p>`}
+                      </div>
+                    </section>
+
+                    <aside class="rounded-2xl border border-paper-200 bg-paper-0 p-5 dark:border-paper-200 dark:bg-paper-0">
+                      <div class="flex items-start justify-between gap-4">
+                        <div>
+                          <p class="text-sm font-bold">Your week</p>
+                          <p class="mt-1 text-sm text-ink-500 dark:text-ink-400">A quick check, not a report.</p>
+                        </div>
+                        ${routinesToday.length ? `<span data-measure class="text-2xl font-semibold text-completed-600">${Math.round((completedCount() / routinesToday.length) * 100)}%</span>` : ""}
+                      </div>
+                      <div class="mt-6 grid grid-cols-7 gap-2 text-center">
+                        ${["M", "T", "W", "T", "F", "S", "S"].map((day, index) => `<div><span class="font-mono text-[11px] font-medium text-ink-400">${day}</span><span class="mx-auto mt-2 grid h-7 w-7 place-items-center rounded-lg text-xs font-bold ${index === 0 && completedCount() ? "bg-completed-100 text-completed-600" : "bg-paper-100 text-ink-400"}">${index === 0 && completedCount() ? icon("check", "h-3.5 w-3.5") : ""}</span></div>`).join("")}
+                      </div>
+                      <button onclick="navigatePage('insights')" class="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-signal-600 dark:text-signal-300">See what is working ${icon("arrow-right", "h-4 w-4")}</button>
+                    </aside>
+                  </div>`
+                      : ""
+                  }
+                </div>
+              </section>
+            </div>
+          </div>
+        `
+      }
+
+      function sideNavItem(iconName, label, page) {
+        const active = currentPage() === page
+        return `
+          <button onclick="navigatePage('${page}')" class="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition active:scale-[.97] ${active ? "bg-signal-50 text-signal-700 dark:bg-signal-50 dark:text-signal-300" : "text-ink-700 hover:bg-paper-100 dark:text-ink-400 dark:hover:bg-paper-100"}">
+            ${icon(iconName, "h-[18px] w-[18px]")} ${label}
+          </button>
+        `
+      }
+
+      function routineRow(routine) {
+        return `
+          <div class="flex items-center gap-4 border-b border-paper-200 p-4 last:border-0 dark:border-paper-200">
+            <span class="w-[72px] shrink-0 font-mono text-sm font-medium tabular-nums text-ink-500">${routine.time}</span>
+            <span class="min-w-0 flex-1"><span class="block truncate text-sm font-bold">${routine.title}</span><span class="mt-0.5 block text-xs text-ink-500 dark:text-ink-400">${routine.note}</span></span>
+            <button onclick="completeRoutine(${routine.id})" class="grid h-9 w-9 shrink-0 place-items-center rounded-xl border border-paper-200 text-ink-400 transition hover:border-completed-500 hover:bg-completed-100 hover:text-completed-600 active:scale-[.97]" aria-label="Mark ${routine.title} complete">${icon("check", "h-4 w-4")}</button>
+          </div>
+        `
+      }
+
+      function renderEmptyState(
+        iconName,
+        title,
+        description,
+        actionLabel,
+        action
+      ) {
+        return `
+          <section class="mt-8 rounded-2xl border border-paper-200 bg-paper-0 px-6 py-16 text-center dark:border-paper-200 dark:bg-paper-0">
+            <span class="mx-auto grid h-12 w-12 place-items-center rounded-xl bg-signal-50 text-signal-700 dark:bg-signal-50 dark:text-signal-300">${icon(iconName, "h-5 w-5")}</span>
+            <h2 class="mt-5 text-lg font-semibold">${title}</h2>
+            <p class="mx-auto mt-2 max-w-lg text-sm leading-6 text-ink-500 dark:text-ink-400">${description}</p>
+            ${actionLabel ? `<button onclick="${action}" class="mt-6 inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-action px-4 text-sm font-semibold text-white hover:bg-action-hover">${icon("plus", "h-4 w-4")} ${actionLabel}</button>` : ""}
+          </section>
+        `
+      }
+
+      function renderDayTimeline() {
+        if (currentPage() !== "today")
+          return renderSecondaryPage("sidebar", currentPage())
+        const routinesToday = todayRoutines()
+        return `
+          <div class="view-enter min-h-[100dvh] bg-paper-50 dark:bg-paper-50">
+            <div class="flex min-h-[100dvh] w-full">
+              ${desktopSidebar()}
+              <section class="min-w-0 flex-1">
+                <header class="sticky top-0 z-20 border-b border-paper-200 bg-paper-0">
+                  <div class="flex min-h-[72px] flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3 md:px-8">
+                    <div class="lg:hidden">${brand()}</div>
+                    <nav class="order-3 flex w-full items-center gap-1 lg:hidden" aria-label="Primary navigation">${compactNav()}</nav>
+                    <div class="relative ml-auto flex items-center gap-2">${themeButton()} ${avatarButton()} ${accountMenu()}</div>
+                  </div>
+                </header>
+
+                <div class="mx-auto max-w-[1120px] px-4 py-8 md:px-8 md:py-12">
+              <div class="flex flex-col gap-5 border-b border-paper-200 pb-8 md:flex-row md:items-end md:justify-between dark:border-paper-200">
+                <div>
+                  <button onclick="prototypeOnly('A date picker would open here.')" class="inline-flex items-center gap-2 rounded-lg text-sm font-semibold text-ink-500 hover:text-signal-600">${icon("calendar-days", "h-4 w-4")} Monday, August 10 ${icon("chevron-down", "h-4 w-4")}</button>
+                  <h1 class="mt-3 text-[1.9125rem] font-bold tracking-[-0.03em] md:text-[2.3375rem]">Your day, in order.</h1>
+                  <p class="mt-3 max-w-xl text-base text-ink-500 dark:text-ink-400">Follow the timeline. Routempo handles reminders and records what you finish.</p>
+                </div>
+                <button onclick="openAddRoutine()" class="inline-flex h-11 items-center justify-center gap-2 self-start rounded-xl bg-action px-4 text-sm font-semibold text-white hover:bg-action-hover active:scale-[.97] md:self-auto">${icon("plus", "h-4 w-4")} Add routine</button>
+              </div>
+
+              <div class="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_340px]">
+                <section aria-label="Today's routine timeline">
+                  <div class="relative ml-3 border-l-2 border-paper-200 pl-7 dark:border-paper-200 md:ml-6 md:pl-10">
+                    ${routinesToday.map((routine) => timelineItem(routine)).join("")}
+                  </div>
+                </section>
+
+                <aside class="lg:sticky lg:top-28 lg:self-start">
+                  <div class="rounded-2xl bg-completed-100 p-6">
+                    <div class="flex items-center justify-between">
+                      <h2 class="font-bold">Today so far</h2>
+                      <span data-measure class="text-sm font-medium text-completed-600">${completedCount()} of ${routinesToday.length}</span>
+                    </div>
+                    <p class="mt-3 text-sm leading-6 text-ink-500 dark:text-ink-500">Complete a routine when you do it. The actual time is saved automatically.</p>
+                    <div class="mt-5 flex gap-2">
+                      ${routinesToday.map((routine) => `<span class="h-2 flex-1 rounded-full ${routine.status === "completed" ? "bg-completed-600" : routine.status === "skipped" ? "bg-skipped-1000" : "bg-paper-0"}"></span>`).join("")}
+                    </div>
+                  </div>
+                  <div class="mt-4 rounded-2xl border border-paper-200 bg-paper-0 p-6 dark:border-paper-200 dark:bg-paper-0">
+                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-paper-100 text-ink-700">${icon("bell-ring", "h-5 w-5")}</div>
+                    <h2 class="mt-4 font-bold">No need to keep checking.</h2>
+                    <p class="mt-2 text-sm leading-6 text-ink-500 dark:text-ink-400">We will remind you 10 minutes before each routine.</p>
+                    <button onclick="prototypeOnly('Reminder settings would open here.')" class="mt-4 text-sm font-semibold text-signal-600 dark:text-signal-300">Change reminders</button>
+                  </div>
+                </aside>
+              </div>
+                </div>
+              </section>
+            </div>
+          </div>
+        `
+      }
+
+      function topNavItem(label, page) {
+        const active = currentPage() === page
+        return `<button onclick="navigatePage('${page}')" class="rounded-xl px-3 py-2 text-sm font-semibold ${active ? "bg-signal-50 text-signal-700" : "text-ink-500 hover:bg-paper-100 hover:text-ink"}">${label}</button>`
+      }
+
+      function timelineItem(routine) {
+        const isDone = routine.status === "completed"
+        const isSkipped = routine.status === "skipped"
+        const isNext = routine.id === pendingRoutines()[0]?.id
+        return `
+          <article class="relative pb-7 last:pb-0">
+            <span class="absolute -left-[37px] top-5 grid h-4 w-4 place-items-center rounded-full border-2 md:-left-[49px] ${isDone ? "border-completed-600 bg-completed-600 text-white" : isSkipped ? "border-skipped-1000 bg-skipped-1000" : isNext ? "border-signal-600 bg-paper-0" : "border-paper-300 bg-paper-50"}">${isDone ? icon("check", "h-2.5 w-2.5") : ""}</span>
+            <div class="rounded-2xl border p-5 transition md:p-6 ${isNext ? "border-signal-500 bg-paper-0 shadow-soft" : "border-paper-200 bg-paper-0"} ${isDone || isSkipped ? "opacity-60" : ""}">
+              <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
+                <div class="w-24 shrink-0">
+                  <p class="font-mono text-sm font-medium tabular-nums ${isNext ? "text-signal-600" : "text-ink-500"}">${routine.time}</p>
+                  ${isNext ? `<p class="mt-1 text-xs font-semibold text-signal-600 dark:text-signal-300">Up next</p>` : ""}
+                </div>
+                <div class="min-w-0 flex-1">
+                  <h2 class="text-lg font-bold ${isDone || isSkipped ? "line-through" : ""}">${routine.title}</h2>
+                  <p class="mt-1 text-sm text-ink-500 dark:text-ink-400">${routine.note} <span class="mx-1 text-ink-400 dark:text-ink-700">/</span> ${routine.category}</p>
+                </div>
+                ${
+                  isDone
+                    ? `<span class="inline-flex items-center gap-1.5 text-sm font-semibold text-completed-600">${icon("circle-check", "h-4 w-4")} Done</span>`
+                    : isSkipped
+                      ? `<span class="text-sm font-semibold text-skipped-600 dark:text-skipped-500">Skipped</span>`
+                      : `
+                  <div class="flex gap-2">
+                    <button onclick="askSkip(${routine.id})" class="h-10 rounded-xl border border-paper-200 px-3 text-sm font-semibold text-ink-700 hover:bg-paper-50 active:scale-[.97] dark:border-paper-200 dark:text-ink-400 dark:hover:bg-paper-100">Skip</button>
+                    <button onclick="completeRoutine(${routine.id})" class="inline-flex h-10 items-center gap-2 rounded-xl bg-action px-4 text-sm font-semibold text-white hover:bg-action-hover active:scale-[.97]">${icon("check", "h-4 w-4")} Complete</button>
+                  </div>
+                `
+                }
+              </div>
+            </div>
+          </article>
+        `
+      }
+
+      function renderSecondaryPage(shell, page) {
+        const content =
+          page === "plan"
+            ? renderPlanContent()
+            : page === "insights"
+              ? renderInsightsContent()
+              : page === "logs"
+                ? renderLogsContent()
+                : renderSettingsContent()
+        if (shell === "sidebar") {
+          return `
+            <div class="view-enter min-h-[100dvh] bg-paper-50 dark:bg-paper-50">
+              <div class="flex min-h-[100dvh] w-full">
+                ${desktopSidebar()}
+                <section class="min-w-0 flex-1">
+                  <header class="sticky top-0 z-20 border-b border-paper-200 bg-paper-0 px-5 py-4 md:px-10">
+                    <div class="flex items-center justify-between gap-3"><div class="lg:hidden">${brand()}</div><p class="hidden text-sm font-medium text-ink-500 lg:block dark:text-ink-400">Monday, August 10</p><div class="relative flex items-center gap-2">${themeButton()} ${avatarButton()} ${accountMenu()}</div></div>
+                    <nav class="mt-3 flex gap-1 lg:hidden" aria-label="Primary navigation">${compactNav()}</nav>
+                  </header>
+                  <div class="w-full px-4 py-8 md:px-8">${content}</div>
+                </section>
+              </div>
+            </div>
+          `
+        }
+
+        const minimal = shell === "minimal"
+        return `
+          <div class="view-enter min-h-[100dvh] ${minimal ? "bg-paper-50 dark:bg-paper-50" : "bg-paper-50 dark:bg-paper-50"}">
+            <header class="sticky top-0 z-20 border-b border-paper-200 bg-paper-0">
+              <div class="mx-auto flex min-h-[72px] max-w-[1320px] flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3 md:px-8">
+                ${brand()}
+                <nav class="order-3 flex w-full gap-1 sm:order-none sm:w-auto" aria-label="Primary navigation">${topNavItem("Today", "today")} ${topNavItem("Plan", "plan")} ${topNavItem("Insights", "insights")} ${topNavItem("Logs", "logs")} ${topNavItem("Settings", "settings")}</nav>
+                <div class="relative ml-auto flex items-center gap-2">${themeButton()} ${avatarButton()} ${accountMenu()}</div>
+              </div>
+            </header>
+            <div class="mx-auto max-w-[1120px] px-4 py-8 md:px-8 md:py-12">${content}</div>
+          </div>
+        `
+      }
+
+      function compactNav() {
+        return [
+          ["Today", "today"],
+          ["Plan", "plan"],
+          ["Insights", "insights"],
+          ["Logs", "logs"],
+          ["Settings", "settings"],
+        ]
+          .map(
+            ([label, page]) =>
+              `<button onclick="navigatePage('${page}')" class="flex-1 rounded-xl px-2 py-2 text-xs font-semibold sm:px-3 sm:text-sm ${currentPage() === page ? "bg-signal-50 text-signal-700 dark:bg-signal-50 dark:text-signal-300" : "text-ink-500 dark:text-ink-400"}">${label}</button>`
+          )
+          .join("")
+      }
+
+      function renderPlanContent() {
+        const days = [
+          ["Mon", "10"],
+          ["Tue", "11"],
+          ["Wed", "12"],
+          ["Thu", "13"],
+          ["Fri", "14"],
+          ["Sat", "15"],
+          ["Sun", "16"],
+        ]
+        const selectedDate = `2026-08-${days[state.selectedDay][1]}`
+        const scheduledRoutines = state.routines.filter((routine) =>
+          routineOccursOnDate(routine, selectedDate, state.selectedDay)
+        )
+        if (!state.routines.length)
+          return `
+            <section>
+              <div class="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+                <div><h1 class="text-[1.6rem] font-bold md:text-[2rem]">Plan</h1><p class="max-w-2xl text-base text-ink-500">Shape a repeatable week without over-planning every day.</p></div>
+                <button onclick="openAddRoutine()" class="inline-flex h-11 items-center gap-2 self-start rounded-xl bg-action px-4 text-sm font-semibold text-white">${icon("plus", "h-4 w-4")} Add routine</button>
+              </div>
+              ${renderEmptyState("calendar-days", "Your plan is ready for a first routine", "Start with one repeatable action. Pick a time you can usually keep, then adjust it after a few real days.", "Add your first routine", "openAddRoutine()")}
+            </section>`
+        return `
+          <section>
+            <div class="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+              <div><h1 class="text-[1.6rem] font-bold md:text-[2rem]">Plan</h1><p class="max-w-2xl text-base text-ink-500">Shape a repeatable week without over-planning every day.</p></div>
+              <button onclick="openAddRoutine()" class="inline-flex h-11 shrink-0 items-center justify-center gap-2 self-start rounded-xl bg-action px-4 text-sm font-semibold text-white hover:bg-action-hover active:scale-[.97] sm:self-auto">${icon("plus", "h-4 w-4")} Add routine</button>
+            </div>
+
+            <div class="mt-8 inline-flex rounded-xl bg-paper-100 p-1 dark:bg-paper-0" role="tablist" aria-label="Plan view">
+              <button onclick="setPlanView('week')" class="rounded-lg px-4 py-2 text-sm font-semibold ${state.planView === "week" ? "bg-paper-0 shadow-sm dark:bg-paper-100" : "text-ink-500 dark:text-ink-400"}" role="tab" aria-selected="${state.planView === "week"}">Week</button>
+              <button onclick="setPlanView('routines')" class="rounded-lg px-4 py-2 text-sm font-semibold ${state.planView === "routines" ? "bg-paper-0 shadow-sm dark:bg-paper-100" : "text-ink-500 dark:text-ink-400"}" role="tab" aria-selected="${state.planView === "routines"}">Manage routines</button>
+            </div>
+
+            ${
+              state.planView === "week"
+                ? `
+              <div class="mt-6 grid grid-cols-7 gap-2">
+                ${days.map(([day, date], index) => `<button onclick="selectDay(${index})" class="rounded-xl border px-1 py-3 text-center transition active:scale-[.97] ${state.selectedDay === index ? "border-signal-600 bg-action text-white" : "border-paper-200 bg-paper-0 hover:border-signal-300"}"><span class="block font-mono text-[11px] font-medium ${state.selectedDay === index ? "text-white/75" : "text-ink-400"}">${day}</span><span class="mt-1 block font-mono text-base font-semibold">${date}</span></button>`).join("")}
+              </div>
+              <div class="mt-5 overflow-hidden rounded-2xl border border-paper-200 bg-paper-0 dark:border-paper-200 dark:bg-paper-0">
+                <div class="flex items-center justify-between border-b border-paper-200 p-5 dark:border-paper-200"><div><h2 class="font-bold">${days[state.selectedDay][0]}, August ${days[state.selectedDay][1]}</h2><p class="mt-1 text-sm text-ink-500 dark:text-ink-400">${scheduledRoutines.length ? `${scheduledRoutines.length} ${scheduledRoutines.length === 1 ? "item" : "items"} scheduled` : "No routines scheduled"}</p></div><button onclick="openAddRoutine('${selectedDate}')" class="text-sm font-semibold text-signal-600 dark:text-signal-300">Add one</button></div>
+                ${scheduledRoutines.length ? scheduledRoutines.map((routine) => planRoutineRow(routine)).join("") : `<div class="p-10 text-center"><div class="mx-auto grid h-11 w-11 place-items-center rounded-xl bg-signal-50 text-signal-600 dark:bg-signal-50">${icon("calendar-plus", "h-5 w-5")}</div><h3 class="mt-4 font-bold">This day is open.</h3><p class="mt-1 text-sm text-ink-500 dark:text-ink-400">Add a routine only if it helps your week.</p></div>`}
+              </div>
+            `
+                : `
+              <div class="mt-6 overflow-hidden rounded-2xl border border-paper-200 bg-paper-0 dark:border-paper-200 dark:bg-paper-0">
+                <div class="border-b border-paper-200 p-5 dark:border-paper-200"><h2 class="font-bold">Recurring routines</h2><p class="mt-1 text-sm text-ink-500 dark:text-ink-400">Turn a routine off without deleting its history.</p></div>
+                ${state.routines.map((routine) => manageRoutineRow(routine)).join("")}
+              </div>
+            `
+            }
+          </section>
+        `
+      }
+
+      function planRoutineRow(routine) {
+        return `<div class="flex items-center gap-4 border-b border-paper-200 p-4 last:border-0"><span class="w-[74px] shrink-0 font-mono text-sm font-medium text-ink-500">${routine.time}</span><span class="min-w-0 flex-1"><span class="block truncate text-sm font-bold">${routine.title}</span><span class="mt-0.5 block text-xs text-ink-500">${routine.category} / ${scheduleLabel(routine)}</span></span><button onclick="prototypeOnly('Reminder set for ${routine.title}.')" class="grid h-9 w-9 place-items-center rounded-xl text-ink-400 hover:bg-signal-50 hover:text-signal-600" aria-label="View reminder for ${routine.title}">${icon("bell", "h-4 w-4")}</button></div>`
+      }
+
+      function manageRoutineRow(routine) {
+        const enabled = routine.enabled !== false
+        return `<div class="flex items-center gap-4 border-b border-paper-200 p-4 last:border-0 dark:border-paper-200 ${enabled ? "" : "opacity-55"}"><div class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-signal-50 text-signal-600 dark:bg-signal-50 dark:text-signal-300">${icon(routine.category === "Movement" ? "footprints" : routine.category === "Health" ? "heart-pulse" : "book-open", "h-5 w-5")}</div><span class="min-w-0 flex-1"><span class="block truncate text-sm font-bold">${routine.title}</span><span class="mt-0.5 block text-xs text-ink-500 dark:text-ink-400">${scheduleLabel(routine)} at ${routine.time}</span></span><button onclick="${enabled ? `openPauseConfirmation(${routine.id})` : `toggleRoutineEnabled(${routine.id})`}" class="relative h-7 w-12 shrink-0 rounded-full transition ${enabled ? "bg-action" : "bg-paper-300 dark:bg-paper-400"}" role="switch" aria-checked="${enabled}" aria-label="${enabled ? "Pause" : "Resume"} ${routine.title}"><span class="absolute top-1 h-5 w-5 rounded-full bg-white shadow transition ${enabled ? "left-6" : "left-1"}"></span></button></div>`
+      }
+
+      function renderInsightsContent() {
+        if (!state.routines.length && !state.logs.length)
+          return `<section><div><h1 class="text-[1.6rem] font-bold md:text-[2rem]">Insights</h1><p class="max-w-2xl text-base text-ink-500">Notice patterns without turning your routines into a scorecard.</p></div>${renderEmptyState("chart-no-axes-column-increasing", "Your patterns will appear here", "Add a routine and record what happens. Routempo will turn those real outcomes into a useful review.", "Add your first routine", "openAddRoutine()")}</section>`
+        const routinesToday = todayRoutines()
+        const done = completedCount()
+        const rate = routinesToday.length
+          ? Math.round((done / routinesToday.length) * 100)
+          : 0
+        const chart = [0, 0, 0, 0, 0, 0, rate]
+        return `
+          <section>
+            <div class="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+              <div><h1 class="text-[1.6rem] font-bold md:text-[2rem]">Insights</h1><p class="max-w-2xl text-base text-ink-500">Notice patterns without turning your routines into a scorecard.</p></div>
+              <label class="grid gap-1.5 self-start"><span class="text-xs font-semibold text-ink-500 dark:text-ink-400">Time range</span><select onchange="setInsightRange(this.value)" class="h-11 rounded-xl border border-paper-300 bg-paper-0 px-3 text-sm font-semibold dark:border-paper-200 dark:bg-paper-100"><option value="7" ${state.insightRange === "7" ? "selected" : ""}>Last 7 days</option><option value="30" ${state.insightRange === "30" ? "selected" : ""}>Last 30 days</option></select></label>
+            </div>
+
+            <div class="mt-8 grid gap-4 sm:grid-cols-3">
+              ${insightMetric(`${rate}%`, "Completed", "Finished as planned", "completed")}
+              ${insightMetric(done ? "Morning" : "Not yet", "Strongest time", done ? "Most reliable before noon" : "Complete routines to learn")}
+              ${insightMetric(`${routinesToday.length - done}`, "Still open", "Scheduled for today", "pending")}
+            </div>
+
+            <div class="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(280px,.6fr)]">
+              <div class="rounded-2xl border border-paper-200 bg-paper-0 p-5 md:p-6 dark:border-paper-200 dark:bg-paper-0">
+                <div><h2 class="font-bold">Completion pattern</h2><p class="mt-1 text-sm text-ink-500 dark:text-ink-400">Based only on outcomes recorded in this prototype session.</p></div>
+                <div class="mt-8 flex h-48 items-end gap-3" aria-label="Weekly completion chart">
+                  ${chart.map((value, index) => `<div class="flex h-full flex-1 flex-col justify-end gap-2"><div class="rounded-t-lg bg-completed-500" style="height:${value}%" title="${value}%"></div><span class="text-center font-mono text-[11px] font-medium text-ink-400">${["M", "T", "W", "T", "F", "S", "S"][index]}</span></div>`).join("")}
+                </div>
+              </div>
+              <aside class="rounded-2xl bg-inverse p-6 text-on-inverse">
+                <div class="grid h-11 w-11 place-items-center rounded-xl bg-current/10">${icon("lightbulb", "h-5 w-5")}</div>
+                <h2 class="mt-5 text-xl font-bold">${done ? "You recorded your first outcome." : "Keep recording what happens."}</h2>
+                <p class="mt-3 text-sm leading-6 opacity-70">${done ? "A few more real outcomes will make patterns easier to see." : "Routempo will highlight a pattern only when there is enough real activity."}</p>
+                <button onclick="navigatePage('plan')" class="mt-6 inline-flex items-center gap-2 text-sm font-bold">Adjust your plan ${icon("arrow-right", "h-4 w-4")}</button>
+              </aside>
+            </div>
+
+            <div class="mt-6 rounded-2xl border border-paper-200 bg-paper-0 dark:border-paper-200 dark:bg-paper-0">
+              <div class="p-5"><h2 class="font-bold">Today’s activity</h2><p class="mt-1 text-sm text-ink-500 dark:text-ink-400">Updates as you use the prototype.</p></div>
+              ${routinesToday.map((routine) => `<div class="flex items-center gap-3 border-t border-paper-200 px-5 py-3.5"><span class="grid h-8 w-8 place-items-center rounded-lg ${routine.status === "completed" ? "bg-completed-100 text-completed-600" : routine.status === "skipped" ? "bg-skipped-100 text-skipped-600 dark:bg-skipped-500/10" : "bg-paper-100 text-ink-400"}">${icon(routine.status === "completed" ? "check" : routine.status === "skipped" ? "forward" : "clock-3", "h-4 w-4")}</span><span class="min-w-0 flex-1 text-sm font-semibold">${routine.title}</span><span class="text-xs font-semibold text-ink-500">${routine.status === "completed" ? "Completed" : routine.status === "skipped" ? "Skipped" : "Scheduled"}</span></div>`).join("")}
+            </div>
+          </section>
+        `
+      }
+
+      function behaviorLogs() {
+        return state.logs
+      }
+
+      function logStatusMeta(status) {
+        if (status === "completed")
+          return {
+            label: "Completed",
+            icon: "circle-check",
+            classes: "bg-completed-100 text-completed-600",
+          }
+        if (status === "skipped")
+          return {
+            label: "Skipped",
+            icon: "fast-forward",
+            classes:
+              "bg-skipped-100 text-skipped-700 dark:bg-skipped-500/10 dark:text-skipped-500",
+          }
+        return {
+          label: "Missed",
+          icon: "circle-x",
+          classes:
+            "bg-missed-100 text-missed-700 dark:bg-missed-500/10 dark:text-missed-500",
+        }
+      }
+
+      function renderLogsContent() {
+        const logs = behaviorLogs()
+        const visibleLogs =
+          state.logFilter === "all"
+            ? logs
+            : logs.filter((entry) => entry.status === state.logFilter)
+        const counts = Object.fromEntries(
+          ["completed", "skipped", "missed"].map((status) => [
+            status,
+            logs.filter((entry) => entry.status === status).length,
+          ])
+        )
+        return `
+          <section>
+            <div class="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <h1 class="text-[1.6rem] font-bold md:text-[2rem]">Behavior logs</h1>
+                <p class="max-w-2xl text-base text-ink-500 dark:text-ink-400">Review routine outcomes or add context that was recorded elsewhere.</p>
+              </div>
+              <button onclick="prototypeOnly('The log editor would open here.')" class="inline-flex h-11 shrink-0 items-center justify-center gap-2 self-start rounded-xl bg-action px-4 text-sm font-semibold text-white hover:bg-action-hover active:scale-[.97] sm:self-auto">${icon("plus", "h-4 w-4")} Add log</button>
+            </div>
+
+            <div class="mt-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+              ${auditMetric(logs.length, "Recorded events", "Saved outcomes", "shield-check")}
+              ${auditMetric(counts.completed, "Completed", "Confirmed by you", "circle-check", "completed")}
+              ${auditMetric(counts.skipped, "Skipped", "Intentionally deferred", "fast-forward", "skipped")}
+              ${auditMetric(counts.missed, "Missed", "Closed by scheduler", "circle-x", "missed")}
+            </div>
+
+            <div class="mt-6 overflow-hidden rounded-2xl border border-paper-200 bg-paper-0 dark:border-paper-200 dark:bg-paper-0">
+              <div class="flex flex-col gap-4 border-b border-paper-200 p-4 sm:flex-row sm:items-center sm:justify-between md:p-5 dark:border-paper-200">
+                <div><h2 class="font-bold">Recorded events</h2><p class="mt-1 text-sm text-ink-500 dark:text-ink-400">Newest first. Times reflect the timezone captured with each event.</p></div>
+                <div class="flex flex-wrap gap-1 rounded-xl bg-paper-100 p-1 dark:bg-paper-100" role="tablist" aria-label="Filter behavior logs">
+                  ${["all", "completed", "skipped", "missed"].map((status) => `<button onclick="setLogFilter('${status}')" class="rounded-lg px-3 py-2 text-xs font-semibold capitalize ${state.logFilter === status ? "bg-paper-0 text-ink shadow-sm dark:bg-paper-0" : "text-ink-500 dark:text-ink-400"}" role="tab" aria-selected="${state.logFilter === status}">${status}</button>`).join("")}
+                </div>
+              </div>
+              <div aria-live="polite">
+                ${visibleLogs.length ? visibleLogs.map((entry) => renderAuditLogRow(entry)).join("") : `<div class="p-10 text-center"><div class="mx-auto grid h-11 w-11 place-items-center rounded-xl bg-signal-50 text-signal-700">${icon("scroll-text", "h-5 w-5")}</div><h3 class="mt-4 font-semibold">${logs.length ? `No ${state.logFilter} records` : "No behavior logs yet"}</h3><p class="mt-1 text-sm text-ink-500">${logs.length ? "Choose another outcome to review." : "Complete, skip, or manually add an outcome to start your history."}</p></div>`}
+              </div>
+            </div>
+          </section>
+        `
+      }
+
+      function auditMetric(value, label, note, iconName, tone = "neutral") {
+        const toneClasses =
+          tone === "completed"
+            ? "bg-completed-100 text-completed-600"
+            : tone === "skipped"
+              ? "bg-skipped-100 text-skipped-700 dark:bg-skipped-500/10 dark:text-skipped-500"
+              : tone === "missed"
+                ? "bg-missed-100 text-missed-700 dark:bg-missed-500/10 dark:text-missed-500"
+                : "bg-paper-100 text-ink-500"
+        return `<div class="rounded-2xl border border-paper-200 bg-paper-0 p-4 dark:border-paper-200 dark:bg-paper-0"><div class="flex items-center justify-between gap-3"><span class="grid h-9 w-9 place-items-center rounded-xl ${toneClasses}">${icon(iconName, "h-4 w-4")}</span><span data-measure class="text-2xl font-semibold">${value}</span></div><p class="mt-4 text-sm font-semibold">${label}</p><p class="mt-1 text-xs text-ink-500 dark:text-ink-400">${note}</p></div>`
+      }
+
+      function renderAuditLogRow(entry) {
+        const status = logStatusMeta(entry.status)
+        const expanded = state.expandedLog === entry.id
+        return `
+          <article class="border-b border-paper-200 last:border-0 dark:border-paper-200">
+            <button onclick="toggleLogDetails('${entry.id}')" class="grid w-full gap-4 p-4 text-left hover:bg-paper-50 md:grid-cols-[140px_minmax(180px,1fr)_110px_120px_118px_24px] md:items-center md:p-5 dark:hover:bg-paper-100" aria-expanded="${expanded}">
+              <span><span class="block font-mono text-xs font-medium text-ink-700 dark:text-ink-700">${entry.date}</span><span class="mt-1 block font-mono text-[11px] text-ink-400">${entry.eventTime}</span></span>
+              <span class="min-w-0"><span class="block truncate text-sm font-semibold">${entry.title}</span><span class="mt-1 block text-xs text-ink-500 dark:text-ink-400">${entry.category}</span></span>
+              <span><span class="block text-[11px] text-ink-400 md:hidden">Scheduled</span><span class="font-mono text-xs text-ink-700 dark:text-ink-700">${entry.scheduled}</span></span>
+              <span><span class="block text-[11px] text-ink-400 md:hidden">Actual</span><span class="font-mono text-xs text-ink-700 dark:text-ink-700">${entry.actual}</span><span class="mt-1 block text-[11px] text-ink-400">${entry.variance}</span></span>
+              <span class="inline-flex w-fit items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold ${status.classes}">${icon(status.icon, "h-3.5 w-3.5")} ${status.label}</span>
+              ${icon(expanded ? "chevron-up" : "chevron-down", "h-4 w-4 text-ink-400")}
+            </button>
+            ${expanded ? `<div class="border-t border-paper-200 bg-paper-50 px-4 py-5 md:px-5 dark:border-paper-200 dark:bg-paper-100"><dl class="grid gap-x-6 gap-y-4 sm:grid-cols-2 lg:grid-cols-4"><div><dt class="text-[11px] font-medium uppercase tracking-[0.08em] text-ink-400">Event ID</dt><dd class="mt-1.5 font-mono text-xs text-ink-700 dark:text-ink-700">${entry.id}</dd></div><div><dt class="text-[11px] font-medium uppercase tracking-[0.08em] text-ink-400">Recorded at</dt><dd class="mt-1.5 font-mono text-xs text-ink-700 dark:text-ink-700">${entry.recordedAt}</dd></div><div><dt class="text-[11px] font-medium uppercase tracking-[0.08em] text-ink-400">Actor and source</dt><dd class="mt-1.5 text-xs text-ink-700 dark:text-ink-700">${entry.actor} / ${entry.source}</dd></div><div><dt class="text-[11px] font-medium uppercase tracking-[0.08em] text-ink-400">Timezone snapshot</dt><dd class="mt-1.5 text-xs text-ink-700 dark:text-ink-700">${entry.timezone}</dd></div><div class="sm:col-span-2 lg:col-span-4"><dt class="text-[11px] font-medium uppercase tracking-[0.08em] text-ink-400">Routine snapshot</dt><dd class="mt-1.5 text-xs text-ink-700 dark:text-ink-700">${entry.snapshot}</dd></div></dl></div>` : ""}
+          </article>
+        `
+      }
+
+      function renderSettingsContent() {
+        return `
+          <section>
+            <div><h1 class="text-[1.6rem] font-bold md:text-[2rem]">Settings</h1><p class="max-w-2xl text-base text-ink-500">Manage your account, reminders, and interface preferences.</p></div>
+
+            <div class="mt-8 grid gap-6 xl:grid-cols-2">
+              <form onsubmit="saveSettings(event)" class="rounded-2xl border border-paper-200 bg-paper-0 dark:border-paper-200 dark:bg-paper-0">
+                <div class="border-b border-paper-200 p-5 dark:border-paper-200"><h2 class="font-bold">Profile</h2><p class="mt-1 text-sm text-ink-500 dark:text-ink-400">How your account appears.</p></div>
+                <div class="grid gap-5 p-5 2xl:grid-cols-2">
+                  <label class="grid content-start gap-2"><span class="text-sm font-semibold">Name</span><input id="settings-name" value="${state.settings.name}" class="h-11 rounded-xl border border-paper-300 bg-paper-0 px-3 text-sm dark:border-paper-200 dark:bg-paper-100" /></label>
+                  <label class="grid content-start gap-2"><span class="text-sm font-semibold">Email</span><input value="montasim@example.com" disabled class="h-11 rounded-xl border border-paper-300 bg-paper-50 px-3 text-sm text-ink-500 dark:border-paper-200 dark:bg-paper-100" /><span class="text-xs text-ink-500">Managed by your Google account.</span></label>
+                  <label class="grid content-start gap-2"><span class="text-sm font-semibold">Timezone</span><div class="relative"><input id="settings-timezone" list="timezones" value="${state.settings.timezone}" class="h-11 w-full rounded-xl border border-paper-300 bg-paper-0 px-3 pr-10 text-sm dark:border-paper-200 dark:bg-paper-100" /><span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-ink-400">${icon("chevrons-up-down", "h-4 w-4")}</span></div><datalist id="timezones">${supportedTimezones()
+                    .map(
+                      (zone) =>
+                        `<option value="${zone}">${timezoneOffset(zone)}</option>`
+                    )
+                    .join(
+                      ""
+                    )}</datalist><span class="text-xs text-ink-500">Current device: ${Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"}</span></label>
+                  <label class="grid content-start gap-2"><span class="text-sm font-semibold">Default reminder</span><select id="settings-reminder" class="h-11 rounded-xl border border-paper-300 bg-paper-0 px-3 text-sm dark:border-paper-200 dark:bg-paper-100">${[
+                    ["0", "At scheduled time"],
+                    ["5", "5 minutes before"],
+                    ["10", "10 minutes before"],
+                    ["15", "15 minutes before"],
+                    ["20", "20 minutes before"],
+                    ["30", "30 minutes before"],
+                    ["45", "45 minutes before"],
+                    ["60", "1 hour before"],
+                  ]
+                    .map(
+                      ([value, label]) =>
+                        `<option value="${value}" ${state.settings.reminder === value ? "selected" : ""}>${label}</option>`
+                    )
+                    .join("")}</select></label>
+                </div>
+                <div class="flex justify-end border-t border-paper-200 p-4"><button type="submit" class="inline-flex h-10 items-center gap-2 rounded-xl bg-action px-4 text-sm font-semibold text-white">${icon("check", "h-4 w-4")} Save changes</button></div>
+              </form>
+
+              <div class="rounded-2xl border border-paper-200 bg-paper-0 dark:border-paper-200 dark:bg-paper-0">
+                <div class="flex items-center justify-between gap-4 border-b border-paper-200 p-5"><div><h2 class="font-bold">Categories</h2><p class="mt-1 text-sm text-ink-500">Group routines in a way that makes your plan easier to scan.</p></div><button onclick="addCategoryPrompt()" class="inline-flex h-9 shrink-0 items-center gap-2 rounded-xl bg-action px-3 text-sm text-white">${icon("plus", "h-4 w-4")} Add category</button></div>
+                ${state.categories.length ? state.categories.map((category) => `<div class="flex items-center gap-4 border-b border-paper-200 p-5 last:border-0"><span class="grid h-10 w-10 place-items-center rounded-xl bg-signal-50 text-signal-700">${icon("tags", "h-4 w-4")}</span><span class="flex-1 text-sm font-semibold">${escapeHtml(category)}</span></div>`).join("") : `<div class="px-6 py-14 text-center"><span class="mx-auto grid h-11 w-11 place-items-center rounded-xl bg-signal-50 text-signal-700">${icon("tags", "h-5 w-5")}</span><h3 class="mt-4 font-semibold">No categories yet</h3><p class="mx-auto mt-1 max-w-md text-sm text-ink-500">Add a category to organize your routines, or create one while adding a routine.</p><button onclick="addCategoryPrompt()" class="mt-5 inline-flex h-9 items-center gap-2 rounded-xl bg-action px-3 text-sm text-white">${icon("plus", "h-4 w-4")} Add your first category</button></div>`}
+              </div>
+
+              <div class="rounded-2xl border border-paper-200 bg-paper-0 dark:border-paper-200 dark:bg-paper-0">
+                <div class="border-b border-paper-200 p-5"><h2 class="font-bold">Notifications</h2><p class="mt-1 text-sm text-ink-500">Choose what Routempo sends you.</p></div>
+                ${settingsSwitch("notifications", "Routine reminders", "Get notified before scheduled routines.", state.settings.notifications)}
+                ${settingsSwitch("weeklySummary", "Weekly summary", "Receive a short review every Monday.", state.settings.weeklySummary)}
+              </div>
+
+              <div class="rounded-2xl border border-paper-200 bg-paper-0 dark:border-paper-200 dark:bg-paper-0">
+                <div class="border-b border-paper-200 p-5"><h2 class="font-bold">Data and account</h2><p class="mt-1 text-sm text-ink-500">Export your routines and auditable behavior history.</p></div>
+                <div class="flex flex-wrap gap-2 p-5"><button onclick="exportData()" class="inline-flex h-10 items-center gap-2 rounded-xl border border-paper-300 px-4 text-sm font-semibold">${icon("download", "h-4 w-4")} Export data</button><input id="import-data" type="file" accept="application/json,.json" class="hidden" onchange="importData(event)" /><button onclick="document.getElementById('import-data').click()" class="inline-flex h-10 items-center gap-2 rounded-xl border border-paper-300 px-4 text-sm font-semibold">${icon("upload", "h-4 w-4")} Import data</button></div>
+              </div>
+
+              <div class="rounded-2xl border border-paper-200 bg-paper-0 p-5"><h2 class="font-bold">Calendar and task integrations</h2><p class="mt-1 text-sm text-ink-500">Connect services and choose when routines sync.</p><p class="mt-5 text-sm text-ink-500">No integrations connected.</p></div>
+            </div>
+          </section>
+        `
+      }
+
+      function settingsSwitch(key, label, description, checked) {
+        return `<div class="flex items-center gap-4 border-b border-paper-200 p-5 last:border-0 dark:border-paper-200"><span class="min-w-0 flex-1"><span class="block text-sm font-bold">${label}</span><span class="mt-1 block text-sm text-ink-500 dark:text-ink-400">${description}</span></span><button onclick="toggleSetting('${key}')" class="relative h-7 w-12 shrink-0 rounded-full transition ${checked ? "bg-action" : "bg-paper-300 dark:bg-paper-400"}" role="switch" aria-checked="${checked}" aria-label="Toggle ${label}"><span class="absolute top-1 h-5 w-5 rounded-full bg-white shadow transition ${checked ? "left-6" : "left-1"}"></span></button></div>`
+      }
+
+      function supportedTimezones() {
+        try {
+          return Intl.supportedValuesOf("timeZone")
+        } catch {
+          return [
+            "UTC",
+            "Asia/Dhaka",
+            "Asia/Kolkata",
+            "Europe/London",
+            "America/New_York",
+          ]
+        }
+      }
+
+      function timezoneOffset(zone) {
+        try {
+          const part = new Intl.DateTimeFormat("en", {
+            timeZone: zone,
+            timeZoneName: "longOffset",
+          })
+            .formatToParts(new Date())
+            .find((item) => item.type === "timeZoneName")
+          return (part?.value || "GMT").replace("GMT", "UTC")
+        } catch {
+          return ""
+        }
+      }
+
+      function insightMetric(value, label, note, tone = "neutral") {
+        const valueTone =
+          tone === "completed"
+            ? "text-completed-600"
+            : tone === "pending"
+              ? "text-ink-500"
+              : "text-ink"
+        return `<div class="rounded-2xl border border-paper-200 bg-paper-0 p-5"><p data-measure class="text-3xl font-semibold ${valueTone}">${value}</p><p class="mt-3 text-sm font-bold">${label}</p><p class="mt-1 text-xs text-ink-500">${note}</p></div>`
+      }
+
+      function renderFocusMode() {
+        if (currentPage() !== "today")
+          return renderSecondaryPage("sidebar", currentPage())
+        const next = pendingRoutines()[0]
+        const remaining = pendingRoutines().length
+        return `
+          <div class="view-enter min-h-[100dvh] bg-paper-50 dark:bg-paper-50">
+            <div class="flex min-h-[100dvh] w-full">
+              ${desktopSidebar()}
+              <section class="flex min-w-0 flex-1 flex-col">
+                <header class="relative flex min-h-[72px] flex-wrap items-center justify-between gap-y-2 border-b border-paper-200 bg-paper-0 px-5 py-3 md:px-8">
+                  <div class="lg:hidden">${brand()}</div>
+                  <div class="relative flex items-center gap-2 lg:ml-auto">
+                    ${themeButton()} ${avatarButton()} ${accountMenu()}
+                  </div>
+                  <nav class="flex w-full items-center gap-1 lg:hidden" aria-label="Primary navigation">${compactNav()}</nav>
+                </header>
+
+                <main class="flex flex-1 items-center justify-center px-5 py-8">
+              <div class="w-full max-w-[780px]">
+                ${
+                  next
+                    ? `
+                  <div class="text-center">
+                    <p class="text-sm font-semibold text-ink-500">Now</p>
+                    <p data-measure class="mt-2 text-sm text-ink-500">Scheduled for ${next.time}</p>
+                    <h1 class="mt-6 text-[clamp(2.25rem,5vw,4rem)] font-bold leading-[1.04] tracking-[-0.035em]">${next.title}</h1>
+                    <p class="mx-auto mt-5 max-w-md text-lg text-ink-500 dark:text-ink-400">${next.note}. Tap complete when you finish.</p>
+                    <div class="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                      <button onclick="completeRoutine(${next.id})" class="inline-flex h-14 min-w-[210px] items-center justify-center gap-2 rounded-xl bg-action px-7 text-base font-bold text-white shadow-soft transition hover:bg-action-hover active:scale-[.97]">${icon("check", "h-5 w-5")} I did it</button>
+                      <button onclick="askSkip(${next.id})" class="h-14 rounded-xl px-6 text-sm font-semibold text-ink-500 hover:bg-paper-100 active:scale-[.97]">Skip for today</button>
+                    </div>
+                  </div>
+                `
+                    : renderAllDone(true)
+                }
+              </div>
+                </main>
+
+                <footer class="px-5 pb-28 md:px-8">
+              <div class="mx-auto flex max-w-[920px] items-center gap-4 rounded-2xl border border-paper-200 bg-paper-0 p-4">
+                <div class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-signal-50 text-signal-600 dark:bg-signal-50 dark:text-signal-300">${icon(remaining > 1 ? "arrow-right" : "sparkles", "h-5 w-5")}</div>
+                <div class="min-w-0 flex-1">
+                  <p class="text-xs font-semibold text-ink-400">After this</p>
+                  <p class="mt-0.5 truncate text-sm font-bold">${pendingRoutines()[1] ? `${pendingRoutines()[1].title} at ${pendingRoutines()[1].time}` : "Your routine list is clear"}</p>
+                </div>
+                <button onclick="openAddRoutine()" class="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-paper-200 text-ink-500 hover:bg-paper-0 active:scale-[.97] dark:border-paper-200 dark:text-ink-400 dark:hover:bg-paper-100" aria-label="Add routine">${icon("plus", "h-4 w-4")}</button>
+              </div>
+                </footer>
+              </section>
+            </div>
+          </div>
+        `
+      }
+
+      function renderAllDone(centered = false) {
+        return `
+          <section class="${centered ? "text-center" : "mt-8"}">
+            <div class="rounded-2xl bg-completed-100 p-8 text-completed-600">
+              <div class="${centered ? "mx-auto" : ""} grid h-12 w-12 place-items-center rounded-2xl bg-white/70 dark:bg-paper-100">${icon("party-popper", "h-6 w-6")}</div>
+              <h1 class="mt-5 text-3xl font-bold tracking-[-0.03em]">You are done for today.</h1>
+              <p class="mt-2 text-sm opacity-75">Everything scheduled has been recorded.</p>
+            </div>
+          </section>
+        `
+      }
+
+      function renderToast() {
+        if (!state.toast) return ""
+        const tone = state.toast.tone || "success"
+        const toneClass =
+          tone === "error"
+            ? "border-missed-500"
+            : tone === "info"
+              ? "border-signal-500"
+              : "border-completed-500"
+        const iconTone =
+          tone === "error"
+            ? "text-missed-500"
+            : tone === "info"
+              ? "text-signal-300"
+              : "text-completed-500"
+        const iconName =
+          tone === "error"
+            ? "circle-alert"
+            : tone === "info"
+              ? "info"
+              : "circle-check"
+        return `<div role="status" class="toast-enter fixed left-1/2 top-5 z-50 flex w-[calc(100%-24px)] max-w-sm -translate-x-1/2 items-center gap-3 rounded-xl border bg-[#17201a] ${toneClass} px-4 py-3 text-sm font-semibold text-white shadow-float"><span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-white/10 ${iconTone}">${icon(iconName, "h-4 w-4")}</span><span class="min-w-0 flex-1">${state.toast.message}</span><button onclick="dismissToast()" class="grid h-7 w-7 shrink-0 place-items-center rounded-lg text-white/60 hover:bg-white/10 hover:text-white" aria-label="Dismiss notification">${icon("x", "h-4 w-4")}</button></div>`
+      }
+
+      function renderModal() {
+        if (!state.modal) return ""
+        if (state.modal.type === "skip") {
+          const routine = state.routines.find(
+            (item) => item.id === state.modal.id
+          )
+          return `
+            <div class="fixed inset-0 z-50 grid place-items-center bg-black/35 p-4 backdrop-blur-sm" role="presentation" onclick="closeModal(event)">
+              <section role="alertdialog" aria-modal="true" aria-labelledby="skip-title" class="w-full max-w-md rounded-2xl bg-paper-0 p-6 shadow-float dark:bg-paper-100">
+                <div class="grid h-11 w-11 place-items-center rounded-xl bg-skipped-100 text-skipped-700 dark:bg-skipped-500/10 dark:text-amber-300">${icon("forward", "h-5 w-5")}</div>
+                <h2 id="skip-title" class="mt-5 text-xl font-bold">Skip ${routine.title} today?</h2>
+                <p class="mt-2 text-sm leading-6 text-ink-500 dark:text-ink-400">It will be recorded as skipped. Your schedule will stay the same.</p>
+                <div class="mt-6 flex justify-end gap-2">
+                  <button onclick="dismissModal()" class="h-10 rounded-xl px-4 text-sm font-semibold text-ink-700 hover:bg-paper-100 dark:text-ink-400 dark:hover:bg-paper-100">Keep it</button>
+                  <button onclick="skipRoutine(${routine.id})" class="h-10 rounded-xl bg-skipped-600 px-4 text-sm font-semibold text-white hover:bg-skipped-700">Skip today</button>
+                </div>
+              </section>
+            </div>
+          `
+        }
+        if (state.modal.type === "confirm") {
+          const danger = state.modal.tone === "danger"
+          return `
+            <div class="fixed inset-0 z-50 grid place-items-center bg-black/35 p-4 backdrop-blur-sm" role="presentation" onclick="closeModal(event)">
+              <section role="alertdialog" aria-modal="true" aria-labelledby="confirm-title" aria-describedby="confirm-description" class="w-full max-w-md rounded-2xl bg-paper-0 p-6 shadow-float dark:bg-paper-100">
+                <div class="grid h-11 w-11 place-items-center rounded-xl ${danger ? "bg-missed-100 text-missed-600 dark:bg-missed-500/10 dark:text-missed-500" : "bg-signal-50 text-signal-700 dark:bg-signal-50 dark:text-signal-300"}">${icon(danger ? "triangle-alert" : "circle-help", "h-5 w-5")}</div>
+                <h2 id="confirm-title" class="mt-5 text-xl font-bold">${state.modal.title}</h2>
+                <p id="confirm-description" class="mt-2 text-sm leading-6 text-ink-500 dark:text-ink-400">${state.modal.body}</p>
+                <div class="mt-6 flex justify-end gap-2">
+                  <button onclick="dismissModal()" class="h-10 rounded-xl px-4 text-sm font-semibold text-ink-700 hover:bg-paper-100 dark:text-ink-400 dark:hover:bg-paper-100">Cancel</button>
+                  <button onclick="confirmAction()" class="h-10 rounded-xl px-4 text-sm font-semibold text-white ${danger ? "bg-missed-600 hover:bg-missed-700" : "bg-action hover:bg-action-hover"}">${state.modal.label}</button>
+                </div>
+              </section>
+            </div>
+          `
+        }
+        return `
+          <div class="fixed inset-0 z-50 grid place-items-center bg-black/35 p-4 backdrop-blur-sm" role="presentation" onclick="closeModal(event)">
+            <section role="dialog" aria-modal="true" aria-labelledby="add-title" class="max-h-[calc(100dvh-2rem)] w-full max-w-xl overflow-y-auto rounded-2xl bg-paper-0 p-6 shadow-float dark:bg-paper-100">
+              <div class="flex items-start justify-between gap-4">
+                <div><h2 id="add-title" class="text-2xl font-bold tracking-[-0.025em]">Add a routine</h2><p class="mt-1 text-sm text-ink-500 dark:text-ink-400">Schedule it once or make it part of your rhythm.</p></div>
+                <button onclick="dismissModal()" class="grid h-9 w-9 place-items-center rounded-xl text-ink-400 hover:bg-paper-100 hover:text-ink-800 dark:hover:bg-paper-100 dark:hover:text-white" aria-label="Close">${icon("x", "h-5 w-5")}</button>
+              </div>
+              <form class="mt-6 grid gap-4" onsubmit="addRoutine(event)">
+                <label class="grid gap-2"><span class="text-sm font-semibold">Routine name</span><input id="routine-title" required autofocus placeholder="Drink a glass of water" class="h-11 rounded-xl border border-paper-300 bg-paper-0 px-3 text-sm placeholder:text-ink-400 dark:border-paper-200 dark:bg-paper-100" /></label>
+                <div class="grid gap-4 sm:grid-cols-2">
+                  <label class="grid gap-2"><span class="text-sm font-semibold">Start date</span><input id="routine-date" required type="date" value="${state.modal.startDate || "2026-08-10"}" onchange="syncEndDateMinimum(this.value)" class="h-11 rounded-xl border border-paper-300 bg-paper-0 px-3 text-sm dark:border-paper-200 dark:bg-paper-100" /></label>
+                  <label class="grid gap-2"><span class="text-sm font-semibold">Time</span><input id="routine-time" required type="time" value="18:00" class="h-11 rounded-xl border border-paper-300 bg-paper-0 px-3 text-sm dark:border-paper-200 dark:bg-paper-100" /></label>
+                </div>
+                <div class="grid gap-4 sm:grid-cols-2">
+                  <label class="grid gap-2"><span class="text-sm font-semibold">Repeat</span><select id="routine-repeat" onchange="toggleEndDate(this.value)" class="h-11 rounded-xl border border-paper-300 bg-paper-0 px-3 text-sm dark:border-paper-200 dark:bg-paper-100"><option>Does not repeat</option><option>Every day</option><option>Weekdays</option><option>Once a week</option></select></label>
+                  <label id="routine-end-label" class="hidden gap-2"><span class="text-sm font-semibold">Ends <span class="font-normal text-ink-400">(optional)</span></span><input id="routine-end-date" type="date" min="${state.modal.startDate || "2026-08-10"}" class="h-11 rounded-xl border border-paper-300 bg-paper-0 px-3 text-sm dark:border-paper-200 dark:bg-paper-100" /></label>
+                </div>
+                <label class="grid gap-2"><span class="text-sm font-semibold">Category <span class="text-missed-500">*</span></span><div class="relative"><div class="relative">${icon("search", "pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-400")}<input id="routine-category" required role="combobox" aria-autocomplete="list" aria-controls="category-options" aria-expanded="false" autocomplete="off" placeholder="Search or add a category…" onfocus="openCategoryOptions()" oninput="updateCategoryOptions(this.value)" onblur="scheduleCategoryClose()" onkeydown="handleCategoryKeydown(event)" class="h-11 w-full rounded-xl border border-paper-300 bg-paper-0 pl-9 pr-9 text-sm dark:border-paper-200 dark:bg-paper-100" />${icon("chevrons-up-down", "pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-400")}</div><div id="category-options" role="listbox" class="absolute left-0 right-0 top-[calc(100%+6px)] z-20 hidden max-h-52 overflow-y-auto rounded-xl border border-paper-200 bg-paper-0 p-1.5 shadow-float dark:bg-paper-100">${categoryOptionsMarkup("")}</div></div><span class="text-xs font-normal text-ink-500 dark:text-ink-400">Choose an existing category or type to create one.</span></label>
+                <label class="grid gap-2"><span class="text-sm font-semibold">Note</span><input id="routine-note" value="10 minutes" placeholder="Add a useful cue" class="h-11 rounded-xl border border-paper-300 bg-paper-0 px-3 text-sm placeholder:text-ink-400 dark:border-paper-200 dark:bg-paper-100" /></label>
+                <div class="flex justify-end gap-2 pt-3">
+                  <button type="button" onclick="dismissModal()" class="h-11 rounded-xl px-4 text-sm font-semibold text-ink-700 hover:bg-paper-100 dark:text-ink-400 dark:hover:bg-paper-100">Cancel</button>
+                  <button type="submit" class="inline-flex h-11 items-center gap-2 rounded-xl bg-action px-5 text-sm font-semibold text-white hover:bg-action-hover active:scale-[.97]">${icon("plus", "h-4 w-4")} Add routine</button>
+                </div>
+              </form>
+            </section>
+          </div>
+        `
+      }
+
+      function escapeHtml(value) {
+        return String(value).replace(
+          /[&<>"']/g,
+          (character) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#039;",
+            })[character]
+        )
+      }
+
+      function categoryOptionsMarkup(query) {
+        const trimmed = query.trim()
+        const normalized = trimmed.toLowerCase()
+        const matches = state.categories.filter((category) =>
+          category.toLowerCase().includes(normalized)
+        )
+        const exactMatch = state.categories.some(
+          (category) => category.toLowerCase() === normalized
+        )
+        const options = matches
+          .map(
+            (category) => `
+          <button type="button" role="option" data-category="${escapeHtml(category)}" onmousedown="event.preventDefault()" onclick="selectCategory(this.dataset.category)" class="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-sm hover:bg-paper-100 dark:hover:bg-paper-200">
+            <span class="grid h-5 w-5 place-items-center text-signal-600 dark:text-signal-300">${normalized === category.toLowerCase() ? icon("check", "h-4 w-4") : ""}</span>
+            <span>${escapeHtml(category)}</span>
+          </button>
+        `
+          )
+          .join("")
+        const addOption =
+          trimmed && !exactMatch
+            ? `
+          <div class="my-1 h-px bg-paper-200"></div>
+          <button type="button" role="option" data-category="${escapeHtml(trimmed)}" onmousedown="event.preventDefault()" onclick="createCategory(this.dataset.category)" class="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-sm font-semibold text-signal-700 hover:bg-signal-50 dark:text-signal-300 dark:hover:bg-paper-200">
+            <span class="grid h-5 w-5 place-items-center">${icon("plus", "h-4 w-4")}</span>
+            <span>Add “${escapeHtml(trimmed)}”</span>
+          </button>
+        `
+            : ""
+        return options + addOption
+      }
+
+      function openCategoryOptions() {
+        const input = document.getElementById("routine-category")
+        const options = document.getElementById("category-options")
+        if (!input || !options) return
+        options.innerHTML = categoryOptionsMarkup(input.value)
+        options.classList.remove("hidden")
+        input.setAttribute("aria-expanded", "true")
+      }
+
+      function updateCategoryOptions(value) {
+        const options = document.getElementById("category-options")
+        const input = document.getElementById("routine-category")
+        if (!options || !input) return
+        options.innerHTML = categoryOptionsMarkup(value)
+        options.classList.remove("hidden")
+        input.setAttribute("aria-expanded", "true")
+      }
+
+      function closeCategoryOptions() {
+        const options = document.getElementById("category-options")
+        const input = document.getElementById("routine-category")
+        options?.classList.add("hidden")
+        input?.setAttribute("aria-expanded", "false")
+      }
+
+      let categoryCloseTimer
+      function scheduleCategoryClose() {
+        clearTimeout(categoryCloseTimer)
+        categoryCloseTimer = setTimeout(closeCategoryOptions, 120)
+      }
+
+      function selectCategory(category) {
+        clearTimeout(categoryCloseTimer)
+        const input = document.getElementById("routine-category")
+        if (input) input.value = category
+        closeCategoryOptions()
+      }
+
+      function createCategory(category) {
+        const trimmed = category.trim()
+        if (!trimmed) return
+        if (
+          !state.categories.some(
+            (item) => item.toLowerCase() === trimmed.toLowerCase()
+          )
+        )
+          state.categories.push(trimmed)
+        selectCategory(trimmed)
+      }
+
+      function handleCategoryKeydown(event) {
+        if (event.key !== "Enter") return
+        const value = event.currentTarget.value.trim()
+        if (!value) return
+        event.preventDefault()
+        const existing = state.categories.find(
+          (category) => category.toLowerCase() === value.toLowerCase()
+        )
+        existing ? selectCategory(existing) : createCategory(value)
+      }
+
+      function toggleEndDate(repeat) {
+        const label = document.getElementById("routine-end-label")
+        if (!label) return
+        label.classList.toggle("hidden", repeat === "Does not repeat")
+        label.classList.toggle("grid", repeat !== "Does not repeat")
+      }
+
+      function syncEndDateMinimum(date) {
+        const endDate = document.getElementById("routine-end-date")
+        if (endDate) endDate.min = date
+      }
+
+      function toggleTheme() {
+        state.theme = state.theme === "dark" ? "light" : "dark"
+        render()
+      }
+
+      function signInWithGoogle() {
+        showToast("Google sign-in completed in the prototype.", "success")
+        navigatePage("today")
+      }
+
+      function toggleMenu() {
+        state.menuOpen = !state.menuOpen
+        render()
+      }
+
+      function navigatePage(page) {
+        const url = new URL(location.href)
+        url.searchParams.set("page", page)
+        history.pushState({}, "", url)
+        state.menuOpen = false
+        render()
+        window.scrollTo({ top: 0, behavior: "smooth" })
+      }
+
+      function setPlanView(view) {
+        state.planView = view
+        render()
+      }
+
+      function selectDay(index) {
+        state.selectedDay = index
+        render()
+      }
+
+      function toggleRoutineEnabled(id) {
+        const routine = state.routines.find((item) => item.id === id)
+        routine.enabled = routine.enabled === false
+        showToast(`${routine.title} ${routine.enabled ? "resumed" : "paused"}.`)
+        render()
+      }
+
+      function setInsightRange(value) {
+        state.insightRange = value
+        render()
+      }
+
+      function setLogFilter(status) {
+        state.logFilter = status
+        state.expandedLog = null
+        render()
+      }
+
+      function toggleLogDetails(id) {
+        state.expandedLog = state.expandedLog === id ? null : id
+        render()
+      }
+
+      function addCategoryPrompt() {
+        const category = window.prompt("Category name")?.trim()
+        if (!category) return
+        if (
+          !state.categories.some(
+            (item) => item.toLowerCase() === category.toLowerCase()
+          )
+        )
+          state.categories.push(category)
+        showToast(`${category} added.`, "success")
+        render()
+      }
+
+      function exportData() {
+        const payload = {
+          format: "routempo-data-export",
+          version: 1,
+          exportedAt: new Date().toISOString(),
+          data: {
+            settings: state.settings,
+            categories: state.categories,
+            routines: state.routines,
+            logs: state.logs,
+          },
+        }
+        const blob = new Blob([JSON.stringify(payload, null, 2)], {
+          type: "application/json",
+        })
+        const link = document.createElement("a")
+        link.href = URL.createObjectURL(blob)
+        link.download = `routempo-export-${new Date().toISOString().slice(0, 10)}.json`
+        link.click()
+        URL.revokeObjectURL(link.href)
+        showToast("Data exported", "success")
+        render()
+      }
+
+      async function importData(event) {
+        const file = event.target.files?.[0]
+        event.target.value = ""
+        if (!file) return
+        try {
+          const payload = JSON.parse(await file.text())
+          if (
+            payload?.format !== "routempo-data-export" ||
+            payload?.version !== 1 ||
+            !payload?.data?.settings ||
+            !Array.isArray(payload?.data?.categories) ||
+            !Array.isArray(payload?.data?.routines) ||
+            !Array.isArray(payload?.data?.logs)
+          )
+            throw new Error("Invalid export")
+          state.pendingImport = payload.data
+          state.modal = {
+            type: "confirm",
+            action: "import",
+            tone: "danger",
+            title: "Replace your Routempo data?",
+            body: `Importing ${escapeHtml(file.name)} will replace your settings, categories, routines, and behavior logs. Export a backup first if you need to keep the current data.`,
+            label: "Replace and import",
+          }
+        } catch {
+          showToast("Select a valid Routempo export file.", "error")
+        }
+        render()
+      }
+
+      function saveSettings(event) {
+        event.preventDefault()
+        const nextSettings = {
+          name:
+            document.getElementById("settings-name").value.trim() ||
+            state.settings.name,
+          timezone: document.getElementById("settings-timezone").value,
+          reminder: document.getElementById("settings-reminder").value,
+        }
+        if (nextSettings.timezone !== state.settings.timezone) {
+          state.pendingSettings = nextSettings
+          state.modal = {
+            type: "confirm",
+            action: "timezone",
+            tone: "default",
+            title: "Change your timezone?",
+            body: `Scheduled times will move from ${state.settings.timezone} to ${nextSettings.timezone}. Existing activity history will not change.`,
+            label: "Change timezone",
+          }
+          render()
+          return
+        }
+        Object.assign(state.settings, nextSettings)
+        showToast("Settings saved.", "success")
+        render()
+      }
+
+      function toggleSetting(key) {
+        state.settings[key] = !state.settings[key]
+        showToast(
+          `${key === "notifications" ? "Routine reminders" : "Weekly summary"} ${state.settings[key] ? "enabled" : "disabled"}.`,
+          "info"
+        )
+        render()
+      }
+
+      function showDemoToast(type) {
+        if (type === "error")
+          showToast("We could not save that change. Try again.", "error")
+        else if (type === "export")
+          showToast("Your export is being prepared.", "info")
+        else showToast("Your changes were saved.", "success")
+        render()
+      }
+
+      function openConfirmation(action) {
+        if (action === "signout") {
+          state.menuOpen = false
+          state.modal = {
+            type: "confirm",
+            action,
+            tone: "danger",
+            title: "Sign out of Routempo?",
+            body: "You will need to sign in again to view and update your routines.",
+            label: "Sign out",
+          }
+        } else {
+          state.modal = {
+            type: "confirm",
+            action,
+            tone: "default",
+            title: "Apply these changes?",
+            body: "Review the action before continuing. Nothing changes until you confirm.",
+            label: "Confirm changes",
+          }
+        }
+        render()
+      }
+
+      function openPauseConfirmation(id) {
+        const routine = state.routines.find((item) => item.id === id)
+        state.modal = {
+          type: "confirm",
+          action: "pause",
+          routineId: id,
+          tone: "default",
+          title: `Pause ${routine.title}?`,
+          body: "Future reminders for this routine will stop. Its activity history will remain available.",
+          label: "Pause routine",
+        }
+        render()
+      }
+
+      function confirmAction() {
+        const action = state.modal?.action
+        const routineId = state.modal?.routineId
+        state.modal = null
+        if (action === "pause") {
+          const routine = state.routines.find((item) => item.id === routineId)
+          routine.enabled = false
+          showToast(`${routine.title} paused.`, "info")
+        } else if (action === "timezone") {
+          Object.assign(state.settings, state.pendingSettings)
+          state.pendingSettings = null
+          showToast("Timezone and schedule updated.", "success")
+        } else if (action === "import") {
+          Object.assign(state.settings, state.pendingImport.settings)
+          state.categories = [...state.pendingImport.categories]
+          state.routines = [...state.pendingImport.routines]
+          state.logs = [...state.pendingImport.logs]
+          state.pendingImport = null
+          showToast("Data imported", "success")
+        } else if (action === "signout") {
+          showToast("Signed out successfully.", "info")
+          navigatePage("login")
+        } else {
+          showToast("Changes confirmed.", "success")
+        }
+        render()
+      }
+
+      function completeRoutine(id) {
+        const routine = state.routines.find((item) => item.id === id)
+        routine.status = "completed"
+        recordLog(routine, "completed")
+        showToast(`${routine.title} completed.`)
+        render()
+      }
+
+      function askSkip(id) {
+        state.modal = { type: "skip", id }
+        render()
+      }
+
+      function skipRoutine(id) {
+        const routine = state.routines.find((item) => item.id === id)
+        routine.status = "skipped"
+        recordLog(routine, "skipped")
+        state.modal = null
+        showToast(`${routine.title} skipped for today.`)
+        render()
+      }
+
+      function recordLog(routine, status) {
+        state.logs.unshift({
+          id: `EVT-${Date.now()}`,
+          date: "Aug 10, 2026",
+          eventTime: "Just now",
+          recordedAt: new Date().toISOString(),
+          title: routine.title,
+          category: routine.category,
+          scheduled: routine.time,
+          actual: status === "completed" ? "Just now" : "Not completed",
+          variance: status === "completed" ? "On action" : "Skipped",
+          status,
+          source: "Web app",
+          actor: state.settings.name,
+          timezone: `${state.settings.timezone} (${timezoneOffset(state.settings.timezone)})`,
+          snapshot: `${routine.category} / ${scheduleLabel(routine)} / ${routine.note || "No note"}`,
+        })
+      }
+
+      function openAddRoutine(startDate) {
+        const selectedPlanDate = `2026-08-${String(10 + state.selectedDay).padStart(2, "0")}`
+        state.modal = {
+          type: "add",
+          startDate:
+            startDate ||
+            (currentPage() === "plan" ? selectedPlanDate : "2026-08-10"),
+        }
+        render()
+        setTimeout(() => document.getElementById("routine-title")?.focus(), 0)
+      }
+
+      function addRoutine(event) {
+        event.preventDefault()
+        const title = document.getElementById("routine-title").value.trim()
+        const rawTime = document.getElementById("routine-time").value
+        const startDate = document.getElementById("routine-date").value
+        const repeat = document.getElementById("routine-repeat").value
+        const endDate =
+          repeat === "Does not repeat"
+            ? ""
+            : document.getElementById("routine-end-date").value
+        const categoryInput = document
+          .getElementById("routine-category")
+          .value.trim()
+        const category =
+          state.categories.find(
+            (item) => item.toLowerCase() === categoryInput.toLowerCase()
+          ) || categoryInput
+        if (
+          !state.categories.some(
+            (item) => item.toLowerCase() === category.toLowerCase()
+          )
+        )
+          state.categories.push(category)
+        const [hours, minutes] = rawTime.split(":").map(Number)
+        const period = hours >= 12 ? "PM" : "AM"
+        const displayHours = hours % 12 || 12
+        state.routines.push({
+          id: Date.now(),
+          time: `${displayHours}:${String(minutes).padStart(2, "0")} ${period}`,
+          title,
+          note: document.getElementById("routine-note").value.trim(),
+          category,
+          startDate,
+          repeat,
+          endDate,
+          status: "pending",
+          enabled: true,
+        })
+        state.modal = null
+        const formattedDate = new Intl.DateTimeFormat("en-US", {
+          month: "short",
+          day: "numeric",
+        }).format(new Date(`${startDate}T00:00:00`))
+        showToast(
+          repeat === "Does not repeat"
+            ? `${title} scheduled for ${formattedDate}.`
+            : `${title} added starting ${formattedDate}.`
+        )
+        render()
+      }
+
+      function dismissModal() {
+        state.modal = null
+        render()
+      }
+
+      function closeModal(event) {
+        if (event.target === event.currentTarget) dismissModal()
+      }
+
+      function prototypeOnly(message) {
+        state.menuOpen = false
+        showToast(message)
+        render()
+      }
+
+      let toastTimer
+      function showToast(message, tone = "success") {
+        state.toast = { message, tone }
+        clearTimeout(toastTimer)
+        toastTimer = setTimeout(() => {
+          state.toast = null
+          render()
+        }, 2200)
+      }
+
+      function dismissToast() {
+        clearTimeout(toastTimer)
+        state.toast = null
+        render()
+      }
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && state.modal) dismissModal()
+      })
+
+      window.addEventListener("popstate", render)
+      render()
+    </script>
+  </body>
+</html>

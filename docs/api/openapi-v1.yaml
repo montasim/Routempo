@@ -33,7 +33,12 @@ paths:
               $ref: "#/components/schemas/OtpSendRequest"
             examples:
               send:
-                value: { email: user@example.com, name: Demo User, timezone: Asia/Dhaka }
+                value:
+                  {
+                    email: user@example.com,
+                    name: Demo User,
+                    timezone: Asia/Dhaka,
+                  }
       responses:
         "202":
           description: OTP accepted for delivery
@@ -66,8 +71,18 @@ paths:
                 success:
                   value:
                     data:
-                      session: { token: session_token_for_api_clients, expiresAt: "2026-07-06T00:00:00.000Z" }
-                      user: { id: user_id, name: Demo User, email: user@example.com, image: null }
+                      session:
+                        {
+                          token: session_token_for_api_clients,
+                          expiresAt: "2026-07-06T00:00:00.000Z",
+                        }
+                      user:
+                        {
+                          id: user_id,
+                          name: Demo User,
+                          email: user@example.com,
+                          image: null,
+                        }
                     meta: { requestId: req_123 }
         "401":
           $ref: "#/components/responses/Problem"
@@ -147,7 +162,11 @@ paths:
               $ref: "#/components/schemas/SocialExchangeRequest"
             examples:
               exchange:
-                value: { code: one_time_exchange_code, redirectUri: routineflow://auth/callback }
+                value:
+                  {
+                    code: one_time_exchange_code,
+                    redirectUri: routineflow://auth/callback,
+                  }
       responses:
         "200":
           description: Session created
@@ -235,7 +254,13 @@ paths:
               $ref: "#/components/schemas/CategoryWrite"
             examples:
               create:
-                value: { name: Fitness, color: "#1F9D5B", description: Training and movement routines, sortOrder: 10 }
+                value:
+                  {
+                    name: Fitness,
+                    color: "#1F9D5B",
+                    description: Training and movement routines,
+                    sortOrder: 10,
+                  }
       responses:
         "201":
           description: Category created
@@ -459,7 +484,8 @@ paths:
           schema: { type: string, enum: [xlsx, csv], default: xlsx }
         - in: query
           name: range
-          schema: { type: string, enum: [all, 7d, 30d, 90d, custom], default: 30d }
+          schema:
+            { type: string, enum: [all, 7d, 30d, 90d, custom], default: 30d }
         - in: query
           name: startDate
           schema: { type: string, format: date }
@@ -740,10 +766,19 @@ components:
         description: { anyOf: [{ type: string }, { type: "null" }] }
         sortOrder: { type: integer }
         isDeleted: { type: boolean }
-        deletedAt: { anyOf: [{ type: string, format: date-time }, { type: "null" }] }
+        deletedAt:
+          { anyOf: [{ type: string, format: date-time }, { type: "null" }] }
     RoutineWrite:
       type: object
-      required: [title, categoryId, scheduledTime, recurrenceType, recurrenceRules, reminderOverride]
+      required:
+        [
+          title,
+          categoryId,
+          scheduledTime,
+          recurrenceType,
+          recurrenceRules,
+          reminderOverride,
+        ]
       properties:
         title: { type: string, minLength: 1, maxLength: 120 }
         categoryId: { type: string }
@@ -849,7 +884,8 @@ components:
         date: { type: string, format: date }
         scheduledTime: { type: string }
         scheduledTimeUtc: { type: string, format: date-time }
-        completedAt: { anyOf: [{ type: string, format: date-time }, { type: "null" }] }
+        completedAt:
+          { anyOf: [{ type: string, format: date-time }, { type: "null" }] }
         timezoneAtLog: { type: string }
         status: { $ref: "#/components/schemas/LogStatus" }
         delayMinutes: { anyOf: [{ type: integer }, { type: "null" }] }
@@ -900,6 +936,7 @@ components:
                   items:
                     type: object
                     properties:
-                      resourceType: { type: string, enum: [routine, occurrence, category] }
+                      resourceType:
+                        { type: string, enum: [routine, occurrence, category] }
                       resourceId: { type: string }
                       deletedAt: { type: string, format: date-time }

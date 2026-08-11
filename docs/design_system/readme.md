@@ -1,7 +1,7 @@
 # RoutineFlow — Design System
 
 > Discipline, measured. RoutineFlow is a cross-platform **routine execution
-> tracking system** — not a to-do app, but a *behavioral measurement system*.
+> tracking system** — not a to-do app, but a _behavioral measurement system_.
 > Every routine generates daily occurrences; every occurrence produces a log;
 > all analytics derive from logs only. This design system gives that idea a
 > visual language: precise, calm, instrument-grade.
@@ -26,7 +26,7 @@ The conceptual spine (drives every visual decision):
   delay in minutes, timezone snapshots per log. All of this is rendered in
   **monospace** with tabular numerics.
 - **`routine_logs` is the single source of truth** — streaks, discipline score,
-  heatmaps, and exports are all *computed*, never stored. The UI reflects that
+  heatmaps, and exports are all _computed_, never stored. The UI reflects that
   honesty: it shows measured data, not motivational fluff.
 
 ### Sources
@@ -45,8 +45,8 @@ system should be reconciled against it.
 does not nag or congratulate. Copy is calm, factual, and quietly confident.
 
 - **Person.** Address the user as **you**; the system refers to itself as **the
-  server / RoutineFlow**, never "we". Example: *"You only ever complete or skip
-  — the analytics build themselves."*
+  server / RoutineFlow**, never "we". Example: _"You only ever complete or skip
+  — the analytics build themselves."_
 - **Casing.** Sentence case everywhere (buttons, headings, labels). The only
   uppercase is the **mono micro-label** (`SCHEDULED · LOCAL`, `DISCIPLINE`) used
   as eyebrows on metrics — tracked out at `--tracking-caps`.
@@ -60,9 +60,9 @@ does not nag or congratulate. Copy is calm, factual, and quietly confident.
 - **No emoji.** Status is communicated by the four-state color+glyph system, not
   by 🔥/✅. (The streak flame is a drawn glyph inside `StreakChip`, not an emoji.)
 - **Microcopy examples.**
-  - Empty state: *"No occurrences today. Your next routine generates at 23:00."*
-  - Missed: *"Marked missed at end of day (00:05 Asia/Dhaka)."*
-  - Skip confirm: *"Skip logged. Your streak pauses — it won't break."*
+  - Empty state: _"No occurrences today. Your next routine generates at 23:00."_
+  - Missed: _"Marked missed at end of day (00:05 Asia/Dhaka)."_
+  - Skip confirm: _"Skip logged. Your streak pauses — it won't break."_
 
 ---
 
@@ -74,10 +74,11 @@ measuring tool — closer to a lab instrument or a well-set table of figures tha
 a playful habit tracker.
 
 ### Color
+
 - **Warm paper neutrals**, not cold grays — app background `--paper-50 #FAF9F6`,
   white cards, `--paper-200` hairlines. This warmth is deliberate and ownable.
 - **Ink** `--ink-900 #16181D` for primary text and the wordmark (a warm near-black).
-- **One accent — "Signal"** `--signal-500 #3E63FF`, a cobalt-azure used *only*
+- **One accent — "Signal"** `--signal-500 #3E63FF`, a cobalt-azure used _only_
   for interactive intent: primary buttons, links, focus rings, active tab
   underline, the discipline ring. Never decorative.
 - **The status family is sacred:** Completed = green `#1F9D5B`, Pending = slate,
@@ -87,24 +88,27 @@ a playful habit tracker.
 - No purple/indigo gradients, no neon, no dark mode in V1.
 
 ### Type
+
 - **Display — Space Grotesk** (700/600): screen titles, card titles, big metric
   numerics. Tracked tight (`-0.02em`).
 - **Text — IBM Plex Sans** (400–600): all UI and body.
 - **Mono — IBM Plex Mono** (400–500): the "measurement DNA" — every time, delay,
   timestamp, count, timezone, and micro-label. If it's a number that was
-  *measured*, it's mono. Tabular by default.
+  _measured_, it's mono. Tabular by default.
 - Minimum UI size 11px (mono micro-labels only); base body 15px.
 
 ### Spacing & layout
+
 - **4px base grid.** Tight, measured rhythm (`--space-*`). Mobile side gutter 20px,
   web 32px.
 - Cards group related figures; whitespace separates concerns. Dense but never cramped.
 
 ### Shape, border, elevation
+
 - **Corner radius:** inputs/buttons 10px (`--radius-md`), cards 14px
   (`--radius-lg`), sheets 20px, pills full.
 - **Hairline-first.** The default card is a flat white panel with a **1px
-  `--paper-200` inset border** (`--ring-hairline`) and *no* shadow. Elevation is
+  `--paper-200` inset border** (`--ring-hairline`) and _no_ shadow. Elevation is
   reserved for things that truly float (menus, sheets, hover) and is **tight and
   low-spread** — `--shadow-sm/md/lg` lift only a few px with soft, slightly cool
   umbra. No big diffuse glows.
@@ -112,6 +116,7 @@ a playful habit tracker.
   bar on `OccurrenceRow` (a 4px pill, not a border).
 
 ### Motion
+
 - **Calm and precise. No bounce, no overshoot.** Standard easing
   `cubic-bezier(.2,0,0,1)`; durations 140/220/320ms. Entrances are short fades
   or 1px lifts; the discipline ring sweeps in on the slow ease-out.
@@ -119,6 +124,7 @@ a playful habit tracker.
   `--surface-sunken`. **Press** = scale `0.97` (shrink, never grow).
 
 ### Imagery & transparency
+
 - Minimal photography. The "imagery" of RoutineFlow is **its own data**:
   heatmaps, rings, status pills, delay numerics. Lean on data viz over stock photos.
 - Transparency/blur used sparingly — only for modal scrims (ink at ~40%). No
@@ -138,7 +144,7 @@ a playful habit tracker.
 - **No emoji, no unicode dingbats** as icons. Common icons: `check`, `x`,
   `skip-forward`, `clock`, `calendar`, `flame`, `bar-chart-3`, `settings`, `plus`,
   `bell`, `chevron-right`, `download`, `globe` (timezone).
-- *Substitution flag:* Lucide is a substitute chosen for fit, not an inherited
+- _Substitution flag:_ Lucide is a substitute chosen for fit, not an inherited
   brand asset (there was no source icon set).
 
 ---
@@ -146,6 +152,7 @@ a playful habit tracker.
 ## 5. Index / manifest
 
 **Root**
+
 - `styles.css` — the one file consumers link (imports-only).
 - `tokens/` — `fonts.css`, `colors.css`, `typography.css`, `spacing.css`,
   `radius.css`, `motion.css`.
@@ -153,6 +160,7 @@ a playful habit tracker.
 - `readme.md` (this file), `SKILL.md` (portable Agent Skill).
 
 **Components** (`window.RoutineFlowDesignSystem_4781a2.*`)
+
 - `components/forms/` — Button, IconButton, Input, Select, Switch, Checkbox
 - `components/core/` — Card, Badge, Tabs, Avatar
 - `components/data/` — StatusPill, MetricTile, ProgressRing, StreakChip, HeatmapCell
@@ -162,6 +170,7 @@ a playful habit tracker.
 shown in the Design System tab.
 
 **UI kits**
+
 - `ui_kits/mobile/` — the primary app: Home, Calendar, Analytics, Settings,
   interactive `index.html` in an iPhone frame.
 - `ui_kits/web/` — the secondary analytics dashboard.

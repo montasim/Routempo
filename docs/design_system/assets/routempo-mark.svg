@@ -1,0 +1,10 @@
+<svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Routempo mark">
+  <rect width="96" height="96" rx="22" fill="#16181D"/>
+
+  <!-- Four measured beats: skipped, pending, completed, on-time. -->
+  <rect x="22" y="58" width="9" height="16" rx="3" fill="#6A6E78"/>
+  <rect x="35" y="48" width="9" height="26" rx="3" fill="#8B909B"/>
+  <rect x="48" y="36" width="9" height="38" rx="3" fill="#25B36B"/>
+  <rect x="61" y="24" width="9" height="50" rx="3" fill="#3E63FF"/>
+  <circle cx="65.5" cy="20" r="6" fill="#3E63FF"/>
+</svg>

@@ -1,26 +1,70 @@
 <!-- @dsCard group="Spacing" viewport="700x170" name="Spacing scale" subtitle="4px base grid — measured, tight rhythm" -->
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<link rel="stylesheet" href="../styles.css">
-<style>
-  body { margin: 0; font-family: var(--font-mono); background: var(--surface-card); color: var(--text-primary); }
-  .wrap { padding: var(--space-7) var(--space-8); display: flex; flex-direction: column; gap: var(--space-3); }
-  .line { display: flex; align-items: center; gap: var(--space-5); }
-  .tok { font-size: var(--text-2xs); color: var(--text-muted); width: 120px; flex: none; }
-  .bar { height: 12px; background: var(--interactive); border-radius: var(--radius-xs); }
-</style>
-</head>
-<body>
-  <div class="wrap">
-    <div class="line"><span class="tok">space-2 · 4</span><div class="bar" style="width:4px"></div></div>
-    <div class="line"><span class="tok">space-3 · 8</span><div class="bar" style="width:8px"></div></div>
-    <div class="line"><span class="tok">space-5 · 16</span><div class="bar" style="width:16px"></div></div>
-    <div class="line"><span class="tok">space-7 · 24</span><div class="bar" style="width:24px"></div></div>
-    <div class="line"><span class="tok">space-8 · 32</span><div class="bar" style="width:32px"></div></div>
-    <div class="line"><span class="tok">space-10 · 48</span><div class="bar" style="width:48px"></div></div>
-    <div class="line"><span class="tok">space-11 · 64</span><div class="bar" style="width:64px"></div></div>
-  </div>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../styles.css" />
+    <style>
+      body {
+        margin: 0;
+        font-family: var(--font-mono);
+        background: var(--surface-card);
+        color: var(--text-primary);
+      }
+      .wrap {
+        padding: var(--space-7) var(--space-8);
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3);
+      }
+      .line {
+        display: flex;
+        align-items: center;
+        gap: var(--space-5);
+      }
+      .tok {
+        font-size: var(--text-2xs);
+        color: var(--text-muted);
+        width: 120px;
+        flex: none;
+      }
+      .bar {
+        height: 12px;
+        background: var(--interactive);
+        border-radius: var(--radius-xs);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="line">
+        <span class="tok">space-2 · 4</span>
+        <div class="bar" style="width: 4px"></div>
+      </div>
+      <div class="line">
+        <span class="tok">space-3 · 8</span>
+        <div class="bar" style="width: 8px"></div>
+      </div>
+      <div class="line">
+        <span class="tok">space-5 · 16</span>
+        <div class="bar" style="width: 16px"></div>
+      </div>
+      <div class="line">
+        <span class="tok">space-7 · 24</span>
+        <div class="bar" style="width: 24px"></div>
+      </div>
+      <div class="line">
+        <span class="tok">space-8 · 32</span>
+        <div class="bar" style="width: 32px"></div>
+      </div>
+      <div class="line">
+        <span class="tok">space-10 · 48</span>
+        <div class="bar" style="width: 48px"></div>
+      </div>
+      <div class="line">
+        <span class="tok">space-11 · 64</span>
+        <div class="bar" style="width: 64px"></div>
+      </div>
+    </div>
+  </body>
 </html>

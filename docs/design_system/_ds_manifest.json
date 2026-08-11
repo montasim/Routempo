@@ -1,1 +1,1046 @@
-{"namespace":"RoutineFlowDesignSystem_4781a2","components":[{"name":"Avatar","sourcePath":"components/core/Avatar.jsx"},{"name":"Badge","sourcePath":"components/core/Badge.jsx"},{"name":"Card","sourcePath":"components/core/Card.jsx"},{"name":"Tabs","sourcePath":"components/core/Tabs.jsx"},{"name":"HeatmapCell","sourcePath":"components/data/HeatmapCell.jsx"},{"name":"MetricTile","sourcePath":"components/data/MetricTile.jsx"},{"name":"ProgressRing","sourcePath":"components/data/ProgressRing.jsx"},{"name":"StatusPill","sourcePath":"components/data/StatusPill.jsx"},{"name":"StreakChip","sourcePath":"components/data/StreakChip.jsx"},{"name":"OccurrenceRow","sourcePath":"components/domain/OccurrenceRow.jsx"},{"name":"Button","sourcePath":"components/forms/Button.jsx"},{"name":"Checkbox","sourcePath":"components/forms/Checkbox.jsx"},{"name":"IconButton","sourcePath":"components/forms/IconButton.jsx"},{"name":"Input","sourcePath":"components/forms/Input.jsx"},{"name":"Select","sourcePath":"components/forms/Select.jsx"},{"name":"Switch","sourcePath":"components/forms/Switch.jsx"}],"startingPoints":[{"name":"MetricTile","path":"components/data/MetricTile.jsx","previewPath":"components/data/data.card.html","kind":"component","section":"Data","subtitle":"Analytics KPI tile","viewport":"360x160"},{"name":"StatusPill","path":"components/data/StatusPill.jsx","previewPath":"components/data/data.card.html","kind":"component","section":"Data","subtitle":"Occurrence status pill (4 states)","viewport":"700x100"},{"name":"OccurrenceRow","path":"components/domain/OccurrenceRow.jsx","previewPath":"components/domain/occurrence.card.html","kind":"component","section":"Domain","subtitle":"Daily occurrence list row","viewport":"480x96"},{"name":"Button","path":"components/forms/Button.jsx","previewPath":"components/forms/forms.card.html","kind":"component","section":"Forms","subtitle":"Primary / secondary / ghost / danger button","viewport":"700x120"},{"name":"Card","path":"components/core/Card.jsx","previewPath":"components/core/core.card.html","kind":"component","section":"Layout","subtitle":"Surface container panel","viewport":"700x200"}],"cards":[{"path":"guidelines/brand-logo.html","group":"Brand","viewport":"700x220","subtitle":"Ascending streak crowned by a completion dot","name":"Logo & mark"},{"path":"guidelines/color-ink.html","group":"Colors","viewport":"700x150","subtitle":"Warm-black ink scale for type and the wordmark","name":"Ink & text"},{"path":"guidelines/color-paper.html","group":"Colors","viewport":"700x150","subtitle":"Warm surfaces, tracks, and hairline borders","name":"Paper neutrals"},{"path":"guidelines/color-ramp.html","group":"Colors","viewport":"700x150","subtitle":"Five-step consistency ramp for the yearly heatmap","name":"Discipline ramp"},{"path":"guidelines/color-signal.html","group":"Colors","viewport":"700x170","subtitle":"The one brand accent — cobalt-azure for everything interactive","name":"Signal accent"},{"path":"guidelines/color-status.html","group":"Colors","viewport":"700x180","subtitle":"The four occurrence states — the semantic heart of the system","name":"Status family"},{"path":"components/core/core.card.html","group":"Components","viewport":"700x300","subtitle":"Card, Badge, Tabs, Avatar","name":"Core"},{"path":"components/data/data.card.html","group":"Components","viewport":"700x320","subtitle":"StatusPill, MetricTile, ProgressRing, StreakChip, HeatmapCell","name":"Data"},{"path":"components/domain/occurrence.card.html","group":"Components","viewport":"700x260","subtitle":"The core Home-screen list item across all four states","name":"Domain — OccurrenceRow"},{"path":"components/forms/forms.card.html","group":"Components","viewport":"700x360","subtitle":"Button, IconButton, Input, Select, Switch, Checkbox","name":"Forms"},{"path":"ui_kits/mobile/index.html","group":"Mobile app","viewport":"430x760","subtitle":"Interactive iPhone app — Home, Calendar, Analytics, Settings","name":"RoutineFlow mobile"},{"path":"guidelines/elevation.html","group":"Spacing","viewport":"700x170","subtitle":"Tight, low-spread shadows — precision panels, not floating cards","name":"Elevation"},{"path":"guidelines/motion.html","group":"Spacing","viewport":"700x170","subtitle":"Calm and precise — quick fades, short slides, a subtle press-shrink","name":"Motion"},{"path":"guidelines/radius-scale.html","group":"Spacing","viewport":"700x160","subtitle":"From hairline chips to soft sheets","name":"Radius"},{"path":"guidelines/spacing-scale.html","group":"Spacing","viewport":"700x170","subtitle":"4px base grid — measured, tight rhythm","name":"Spacing scale"},{"path":"guidelines/type-display.html","group":"Type","viewport":"700x200","subtitle":"Headings, screen titles, and big metric numerics","name":"Display — Space Grotesk"},{"path":"guidelines/type-mono.html","group":"Type","viewport":"700x190","subtitle":"The measurement DNA: time, delay, timestamps, data","name":"Mono — IBM Plex Mono"},{"path":"guidelines/type-scale.html","group":"Type","viewport":"700x260","subtitle":"From micro mono labels to hero numerics","name":"Type scale"},{"path":"guidelines/type-text.html","group":"Type","viewport":"700x200","subtitle":"UI labels and body copy across both clients","name":"Text — IBM Plex Sans"},{"path":"ui_kits/web/index.html","group":"Web app","viewport":"1280x800","subtitle":"Secondary web app — analytics overview + routine_logs table","name":"RoutineFlow dashboard"}],"templates":[],"globalCssPaths":["tokens/fonts.css","tokens/colors.css","tokens/typography.css","tokens/spacing.css","tokens/radius.css","tokens/motion.css","styles.css"],"tokens":[{"name":"--paper-0","value":"#ffffff","kind":"color","definedIn":"tokens/colors.css"},{"name":"--paper-50","value":"#faf9f6","kind":"color","definedIn":"tokens/colors.css"},{"name":"--paper-100","value":"#f1f0ea","kind":"color","definedIn":"tokens/colors.css"},{"name":"--paper-200","value":"#e6e4db","kind":"color","definedIn":"tokens/colors.css"},{"name":"--paper-300","value":"#d4d1c5","kind":"color","definedIn":"tokens/colors.css"},{"name":"--paper-400","value":"#b6b2a4","kind":"color","definedIn":"tokens/colors.css"},{"name":"--ink-900","value":"#16181d","kind":"color","definedIn":"tokens/colors.css"},{"name":"--ink-800","value":"#25272e","kind":"color","definedIn":"tokens/colors.css"},{"name":"--ink-700","value":"#3a3d45","kind":"color","definedIn":"tokens/colors.css"},{"name":"--ink-500","value":"#6a6e78","kind":"color","definedIn":"tokens/colors.css"},{"name":"--ink-400","value":"#8b8f99","kind":"color","definedIn":"tokens/colors.css"},{"name":"--ink-300","value":"#b4b8c0","kind":"color","definedIn":"tokens/colors.css"},{"name":"--signal-50","value":"#eef2ff","kind":"color","definedIn":"tokens/colors.css"},{"name":"--signal-100","value":"#dde4ff","kind":"color","definedIn":"tokens/colors.css"},{"name":"--signal-200","value":"#bccaff","kind":"color","definedIn":"tokens/colors.css"},{"name":"--signal-300","value":"#95acff","kind":"color","definedIn":"tokens/colors.css"},{"name":"--signal-500","value":"#3e63ff","kind":"color","definedIn":"tokens/colors.css"},{"name":"--signal-600","value":"#2f4fe0","kind":"color","definedIn":"tokens/colors.css"},{"name":"--signal-700","value":"#2540b8","kind":"color","definedIn":"tokens/colors.css"},{"name":"--completed-600","value":"#1f9d5b","kind":"color","definedIn":"tokens/colors.css"},{"name":"--completed-500","value":"#25b36b","kind":"color","definedIn":"tokens/colors.css"},{"name":"--completed-100","value":"#e4f4ec","kind":"color","definedIn":"tokens/colors.css"},{"name":"--pending-600","value":"#707682","kind":"color","definedIn":"tokens/colors.css"},{"name":"--pending-500","value":"#8b909b","kind":"color","definedIn":"tokens/colors.css"},{"name":"--pending-100","value":"#eeeeea","kind":"color","definedIn":"tokens/colors.css"},{"name":"--missed-600","value":"#d83a3f","kind":"color","definedIn":"tokens/colors.css"},{"name":"--missed-500","value":"#e5484d","kind":"color","definedIn":"tokens/colors.css"},{"name":"--missed-100","value":"#fbe7e8","kind":"color","definedIn":"tokens/colors.css"},{"name":"--skipped-600","value":"#cf8a26","kind":"color","definedIn":"tokens/colors.css"},{"name":"--skipped-500","value":"#e8a13a","kind":"color","definedIn":"tokens/colors.css"},{"name":"--skipped-100","value":"#fbf0dd","kind":"color","definedIn":"tokens/colors.css"},{"name":"--ramp-0","value":"#f1f0ea","kind":"color","definedIn":"tokens/colors.css"},{"name":"--ramp-1","value":"#cfe6da","kind":"color","definedIn":"tokens/colors.css"},{"name":"--ramp-2","value":"#93cdaf","kind":"color","definedIn":"tokens/colors.css"},{"name":"--ramp-3","value":"#4fb083","kind":"color","definedIn":"tokens/colors.css"},{"name":"--ramp-4","value":"#1f9d5b","kind":"color","definedIn":"tokens/colors.css"},{"name":"--text-primary","value":"var(--ink-900)","kind":"font","definedIn":"tokens/colors.css"},{"name":"--text-secondary","value":"var(--ink-500)","kind":"font","definedIn":"tokens/colors.css"},{"name":"--text-muted","value":"var(--ink-400)","kind":"font","definedIn":"tokens/colors.css"},{"name":"--text-faint","value":"var(--ink-300)","kind":"font","definedIn":"tokens/colors.css"},{"name":"--text-inverse","value":"#ffffff","kind":"font","definedIn":"tokens/colors.css"},{"name":"--text-link","value":"var(--signal-600)","kind":"font","definedIn":"tokens/colors.css"},{"name":"--surface-app","value":"var(--paper-50)","kind":"color","definedIn":"tokens/colors.css"},{"name":"--surface-card","value":"var(--paper-0)","kind":"color","definedIn":"tokens/colors.css"},{"name":"--surface-sunken","value":"var(--paper-100)","kind":"color","definedIn":"tokens/colors.css"},{"name":"--surface-inverse","value":"var(--ink-900)","kind":"color","definedIn":"tokens/colors.css"},{"name":"--border-subtle","value":"var(--paper-200)","kind":"color","definedIn":"tokens/colors.css"},{"name":"--border-default","value":"var(--paper-300)","kind":"color","definedIn":"tokens/colors.css"},{"name":"--border-strong","value":"var(--paper-400)","kind":"color","definedIn":"tokens/colors.css"},{"name":"--interactive","value":"var(--signal-500)","kind":"color","definedIn":"tokens/colors.css"},{"name":"--interactive-hover","value":"var(--signal-600)","kind":"color","definedIn":"tokens/colors.css"},{"name":"--interactive-active","value":"var(--signal-700)","kind":"color","definedIn":"tokens/colors.css"},{"name":"--interactive-tint","value":"var(--signal-50)","kind":"color","definedIn":"tokens/colors.css"},{"name":"--focus-ring","value":"var(--signal-500)","kind":"color","definedIn":"tokens/colors.css"},{"name":"--status-completed","value":"var(--completed-600)","kind":"color","definedIn":"tokens/colors.css"},{"name":"--status-completed-bg","value":"var(--completed-100)","kind":"color","definedIn":"tokens/colors.css"},{"name":"--status-pending","value":"var(--pending-600)","kind":"color","definedIn":"tokens/colors.css"},{"name":"--status-pending-bg","value":"var(--pending-100)","kind":"color","definedIn":"tokens/colors.css"},{"name":"--status-missed","value":"var(--missed-600)","kind":"color","definedIn":"tokens/colors.css"},{"name":"--status-missed-bg","value":"var(--missed-100)","kind":"color","definedIn":"tokens/colors.css"},{"name":"--status-skipped","value":"var(--skipped-600)","kind":"color","definedIn":"tokens/colors.css"},{"name":"--status-skipped-bg","value":"var(--skipped-100)","kind":"color","definedIn":"tokens/colors.css"},{"name":"--font-display","value":"'Space Grotesk', system-ui, sans-serif","kind":"font","definedIn":"tokens/typography.css"},{"name":"--font-text","value":"'IBM Plex Sans', system-ui, sans-serif","kind":"font","definedIn":"tokens/typography.css"},{"name":"--font-mono","value":"'IBM Plex Mono', ui-monospace, 'SF Mono', monospace","kind":"font","definedIn":"tokens/typography.css"},{"name":"--text-2xs","value":"0.6875rem","kind":"font","definedIn":"tokens/typography.css"},{"name":"--text-xs","value":"0.75rem","kind":"font","definedIn":"tokens/typography.css"},{"name":"--text-sm","value":"0.8125rem","kind":"font","definedIn":"tokens/typography.css"},{"name":"--text-md","value":"0.9375rem","kind":"font","definedIn":"tokens/typography.css"},{"name":"--text-lg","value":"1.0625rem","kind":"font","definedIn":"tokens/typography.css"},{"name":"--text-xl","value":"1.375rem","kind":"font","definedIn":"tokens/typography.css"},{"name":"--text-2xl","value":"1.75rem","kind":"font","definedIn":"tokens/typography.css"},{"name":"--text-3xl","value":"2.25rem","kind":"font","definedIn":"tokens/typography.css"},{"name":"--text-4xl","value":"3rem","kind":"font","definedIn":"tokens/typography.css"},{"name":"--text-5xl","value":"4rem","kind":"font","definedIn":"tokens/typography.css"},{"name":"--weight-regular","value":"400","kind":"font","definedIn":"tokens/typography.css"},{"name":"--weight-medium","value":"500","kind":"font","definedIn":"tokens/typography.css"},{"name":"--weight-semibold","value":"600","kind":"font","definedIn":"tokens/typography.css"},{"name":"--weight-bold","value":"700","kind":"font","definedIn":"tokens/typography.css"},{"name":"--leading-tight","value":"1.1","kind":"font","definedIn":"tokens/typography.css"},{"name":"--leading-snug","value":"1.28","kind":"font","definedIn":"tokens/typography.css"},{"name":"--leading-normal","value":"1.5","kind":"font","definedIn":"tokens/typography.css"},{"name":"--leading-relaxed","value":"1.65","kind":"font","definedIn":"tokens/typography.css"},{"name":"--tracking-tight","value":"-0.02em","kind":"font","definedIn":"tokens/typography.css"},{"name":"--tracking-normal","value":"0","kind":"font","definedIn":"tokens/typography.css"},{"name":"--tracking-wide","value":"0.02em","kind":"font","definedIn":"tokens/typography.css"},{"name":"--tracking-caps","value":"0.08em","kind":"font","definedIn":"tokens/typography.css"},{"name":"--tracking-mono","value":"0.01em","kind":"font","definedIn":"tokens/typography.css"},{"name":"--space-0","value":"0","kind":"spacing","definedIn":"tokens/spacing.css"},{"name":"--space-1","value":"2px","kind":"spacing","definedIn":"tokens/spacing.css"},{"name":"--space-2","value":"4px","kind":"spacing","definedIn":"tokens/spacing.css"},{"name":"--space-3","value":"8px","kind":"spacing","definedIn":"tokens/spacing.css"},{"name":"--space-4","value":"12px","kind":"spacing","definedIn":"tokens/spacing.css"},{"name":"--space-5","value":"16px","kind":"spacing","definedIn":"tokens/spacing.css"},{"name":"--space-6","value":"20px","kind":"spacing","definedIn":"tokens/spacing.css"},{"name":"--space-7","value":"24px","kind":"spacing","definedIn":"tokens/spacing.css"},{"name":"--space-8","value":"32px","kind":"spacing","definedIn":"tokens/spacing.css"},{"name":"--space-9","value":"40px","kind":"spacing","definedIn":"tokens/spacing.css"},{"name":"--space-10","value":"48px","kind":"spacing","definedIn":"tokens/spacing.css"},{"name":"--space-11","value":"64px","kind":"spacing","definedIn":"tokens/spacing.css"},{"name":"--space-12","value":"80px","kind":"spacing","definedIn":"tokens/spacing.css"},{"name":"--space-13","value":"96px","kind":"spacing","definedIn":"tokens/spacing.css"},{"name":"--gutter-app","value":"20px","kind":"spacing","definedIn":"tokens/spacing.css"},{"name":"--gutter-web","value":"32px","kind":"spacing","definedIn":"tokens/spacing.css"},{"name":"--maxw-content","value":"1200px","kind":"spacing","definedIn":"tokens/spacing.css"},{"name":"--maxw-prose","value":"640px","kind":"spacing","definedIn":"tokens/spacing.css"},{"name":"--radius-xs","value":"4px","kind":"radius","definedIn":"tokens/radius.css"},{"name":"--radius-sm","value":"6px","kind":"radius","definedIn":"tokens/radius.css"},{"name":"--radius-md","value":"10px","kind":"radius","definedIn":"tokens/radius.css"},{"name":"--radius-lg","value":"14px","kind":"radius","definedIn":"tokens/radius.css"},{"name":"--radius-xl","value":"20px","kind":"radius","definedIn":"tokens/radius.css"},{"name":"--radius-2xl","value":"28px","kind":"radius","definedIn":"tokens/radius.css"},{"name":"--radius-pill","value":"999px","kind":"radius","definedIn":"tokens/radius.css"},{"name":"--border-hair","value":"1px","kind":"spacing","definedIn":"tokens/radius.css"},{"name":"--border-thick","value":"1.5px","kind":"spacing","definedIn":"tokens/radius.css"},{"name":"--shadow-xs","value":"0 1px 1px rgba(22, 24, 29, 0.04)","kind":"shadow","definedIn":"tokens/radius.css"},{"name":"--shadow-sm","value":"0 1px 2px rgba(22, 24, 29, 0.06), 0 1px 1px rgba(22, 24, 29, 0.04)","kind":"shadow","definedIn":"tokens/radius.css"},{"name":"--shadow-md","value":"0 4px 10px -2px rgba(22, 24, 29, 0.08), 0 2px 4px -2px rgba(22, 24, 29, 0.05)","kind":"shadow","definedIn":"tokens/radius.css"},{"name":"--shadow-lg","value":"0 12px 28px -6px rgba(22, 24, 29, 0.12), 0 4px 10px -4px rgba(22, 24, 29, 0.06)","kind":"shadow","definedIn":"tokens/radius.css"},{"name":"--shadow-pop","value":"0 18px 44px -10px rgba(22, 24, 29, 0.20)","kind":"shadow","definedIn":"tokens/radius.css"},{"name":"--ring-focus","value":"0 0 0 3px rgba(62, 99, 255, 0.28)","kind":"shadow","definedIn":"tokens/radius.css"},{"name":"--ring-hairline","value":"inset 0 0 0 1px var(--border-subtle)","kind":"color","definedIn":"tokens/radius.css"},{"name":"--duration-instant","value":"80ms","kind":"other","definedIn":"tokens/motion.css","annotation":"other"},{"name":"--duration-fast","value":"140ms","kind":"other","definedIn":"tokens/motion.css","annotation":"other"},{"name":"--duration-base","value":"220ms","kind":"other","definedIn":"tokens/motion.css","annotation":"other"},{"name":"--duration-slow","value":"320ms","kind":"other","definedIn":"tokens/motion.css","annotation":"other"},{"name":"--ease-standard","value":"cubic-bezier(0.2, 0, 0, 1)","kind":"other","definedIn":"tokens/motion.css","annotation":"other"},{"name":"--ease-out","value":"cubic-bezier(0.16, 1, 0.3, 1)","kind":"other","definedIn":"tokens/motion.css","annotation":"other"},{"name":"--ease-in","value":"cubic-bezier(0.4, 0, 1, 1)","kind":"other","definedIn":"tokens/motion.css","annotation":"other"},{"name":"--press-scale","value":"0.97","kind":"other","definedIn":"tokens/motion.css","annotation":"other"},{"name":"--hover-lift","value":"-1px","kind":"spacing","definedIn":"tokens/motion.css","annotation":"spacing"}],"themes":[],"fonts":[],"brandFonts":[{"family":"Space Grotesk","status":"ok","tokens":["--font-display"],"path":"tokens/typography.css"},{"family":"IBM Plex Sans","status":"ok","tokens":["--font-text"],"path":"tokens/typography.css"},{"family":"IBM Plex Mono","status":"ok","tokens":["--font-mono"],"path":"tokens/typography.css"}],"source":"spa"}
+{
+  "namespace": "RoutineFlowDesignSystem_4781a2",
+  "components": [
+    { "name": "Avatar", "sourcePath": "components/core/Avatar.jsx" },
+    { "name": "Badge", "sourcePath": "components/core/Badge.jsx" },
+    { "name": "Card", "sourcePath": "components/core/Card.jsx" },
+    { "name": "Tabs", "sourcePath": "components/core/Tabs.jsx" },
+    { "name": "HeatmapCell", "sourcePath": "components/data/HeatmapCell.jsx" },
+    { "name": "MetricTile", "sourcePath": "components/data/MetricTile.jsx" },
+    {
+      "name": "ProgressRing",
+      "sourcePath": "components/data/ProgressRing.jsx"
+    },
+    { "name": "StatusPill", "sourcePath": "components/data/StatusPill.jsx" },
+    { "name": "StreakChip", "sourcePath": "components/data/StreakChip.jsx" },
+    {
+      "name": "OccurrenceRow",
+      "sourcePath": "components/domain/OccurrenceRow.jsx"
+    },
+    { "name": "Button", "sourcePath": "components/forms/Button.jsx" },
+    { "name": "Checkbox", "sourcePath": "components/forms/Checkbox.jsx" },
+    { "name": "IconButton", "sourcePath": "components/forms/IconButton.jsx" },
+    { "name": "Input", "sourcePath": "components/forms/Input.jsx" },
+    { "name": "Select", "sourcePath": "components/forms/Select.jsx" },
+    { "name": "Switch", "sourcePath": "components/forms/Switch.jsx" }
+  ],
+  "startingPoints": [
+    {
+      "name": "MetricTile",
+      "path": "components/data/MetricTile.jsx",
+      "previewPath": "components/data/data.card.html",
+      "kind": "component",
+      "section": "Data",
+      "subtitle": "Analytics KPI tile",
+      "viewport": "360x160"
+    },
+    {
+      "name": "StatusPill",
+      "path": "components/data/StatusPill.jsx",
+      "previewPath": "components/data/data.card.html",
+      "kind": "component",
+      "section": "Data",
+      "subtitle": "Occurrence status pill (4 states)",
+      "viewport": "700x100"
+    },
+    {
+      "name": "OccurrenceRow",
+      "path": "components/domain/OccurrenceRow.jsx",
+      "previewPath": "components/domain/occurrence.card.html",
+      "kind": "component",
+      "section": "Domain",
+      "subtitle": "Daily occurrence list row",
+      "viewport": "480x96"
+    },
+    {
+      "name": "Button",
+      "path": "components/forms/Button.jsx",
+      "previewPath": "components/forms/forms.card.html",
+      "kind": "component",
+      "section": "Forms",
+      "subtitle": "Primary / secondary / ghost / danger button",
+      "viewport": "700x120"
+    },
+    {
+      "name": "Card",
+      "path": "components/core/Card.jsx",
+      "previewPath": "components/core/core.card.html",
+      "kind": "component",
+      "section": "Layout",
+      "subtitle": "Surface container panel",
+      "viewport": "700x200"
+    }
+  ],
+  "cards": [
+    {
+      "path": "guidelines/brand-logo.html",
+      "group": "Brand",
+      "viewport": "700x220",
+      "subtitle": "Ascending streak crowned by a completion dot",
+      "name": "Logo & mark"
+    },
+    {
+      "path": "guidelines/color-ink.html",
+      "group": "Colors",
+      "viewport": "700x150",
+      "subtitle": "Warm-black ink scale for type and the wordmark",
+      "name": "Ink & text"
+    },
+    {
+      "path": "guidelines/color-paper.html",
+      "group": "Colors",
+      "viewport": "700x150",
+      "subtitle": "Warm surfaces, tracks, and hairline borders",
+      "name": "Paper neutrals"
+    },
+    {
+      "path": "guidelines/color-ramp.html",
+      "group": "Colors",
+      "viewport": "700x150",
+      "subtitle": "Five-step consistency ramp for the yearly heatmap",
+      "name": "Discipline ramp"
+    },
+    {
+      "path": "guidelines/color-signal.html",
+      "group": "Colors",
+      "viewport": "700x170",
+      "subtitle": "The one brand accent — cobalt-azure for everything interactive",
+      "name": "Signal accent"
+    },
+    {
+      "path": "guidelines/color-status.html",
+      "group": "Colors",
+      "viewport": "700x180",
+      "subtitle": "The four occurrence states — the semantic heart of the system",
+      "name": "Status family"
+    },
+    {
+      "path": "components/core/core.card.html",
+      "group": "Components",
+      "viewport": "700x300",
+      "subtitle": "Card, Badge, Tabs, Avatar",
+      "name": "Core"
+    },
+    {
+      "path": "components/data/data.card.html",
+      "group": "Components",
+      "viewport": "700x320",
+      "subtitle": "StatusPill, MetricTile, ProgressRing, StreakChip, HeatmapCell",
+      "name": "Data"
+    },
+    {
+      "path": "components/domain/occurrence.card.html",
+      "group": "Components",
+      "viewport": "700x260",
+      "subtitle": "The core Home-screen list item across all four states",
+      "name": "Domain — OccurrenceRow"
+    },
+    {
+      "path": "components/forms/forms.card.html",
+      "group": "Components",
+      "viewport": "700x360",
+      "subtitle": "Button, IconButton, Input, Select, Switch, Checkbox",
+      "name": "Forms"
+    },
+    {
+      "path": "ui_kits/mobile/index.html",
+      "group": "Mobile app",
+      "viewport": "430x760",
+      "subtitle": "Interactive iPhone app — Home, Calendar, Analytics, Settings",
+      "name": "RoutineFlow mobile"
+    },
+    {
+      "path": "guidelines/elevation.html",
+      "group": "Spacing",
+      "viewport": "700x170",
+      "subtitle": "Tight, low-spread shadows — precision panels, not floating cards",
+      "name": "Elevation"
+    },
+    {
+      "path": "guidelines/motion.html",
+      "group": "Spacing",
+      "viewport": "700x170",
+      "subtitle": "Calm and precise — quick fades, short slides, a subtle press-shrink",
+      "name": "Motion"
+    },
+    {
+      "path": "guidelines/radius-scale.html",
+      "group": "Spacing",
+      "viewport": "700x160",
+      "subtitle": "From hairline chips to soft sheets",
+      "name": "Radius"
+    },
+    {
+      "path": "guidelines/spacing-scale.html",
+      "group": "Spacing",
+      "viewport": "700x170",
+      "subtitle": "4px base grid — measured, tight rhythm",
+      "name": "Spacing scale"
+    },
+    {
+      "path": "guidelines/type-display.html",
+      "group": "Type",
+      "viewport": "700x200",
+      "subtitle": "Headings, screen titles, and big metric numerics",
+      "name": "Display — Space Grotesk"
+    },
+    {
+      "path": "guidelines/type-mono.html",
+      "group": "Type",
+      "viewport": "700x190",
+      "subtitle": "The measurement DNA: time, delay, timestamps, data",
+      "name": "Mono — IBM Plex Mono"
+    },
+    {
+      "path": "guidelines/type-scale.html",
+      "group": "Type",
+      "viewport": "700x260",
+      "subtitle": "From micro mono labels to hero numerics",
+      "name": "Type scale"
+    },
+    {
+      "path": "guidelines/type-text.html",
+      "group": "Type",
+      "viewport": "700x200",
+      "subtitle": "UI labels and body copy across both clients",
+      "name": "Text — IBM Plex Sans"
+    },
+    {
+      "path": "ui_kits/web/index.html",
+      "group": "Web app",
+      "viewport": "1280x800",
+      "subtitle": "Secondary web app — analytics overview + routine_logs table",
+      "name": "RoutineFlow dashboard"
+    }
+  ],
+  "templates": [],
+  "globalCssPaths": [
+    "tokens/fonts.css",
+    "tokens/colors.css",
+    "tokens/typography.css",
+    "tokens/spacing.css",
+    "tokens/radius.css",
+    "tokens/motion.css",
+    "styles.css"
+  ],
+  "tokens": [
+    {
+      "name": "--paper-0",
+      "value": "#ffffff",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--paper-50",
+      "value": "#faf9f6",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--paper-100",
+      "value": "#f1f0ea",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--paper-200",
+      "value": "#e6e4db",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--paper-300",
+      "value": "#d4d1c5",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--paper-400",
+      "value": "#b6b2a4",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--ink-900",
+      "value": "#16181d",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--ink-800",
+      "value": "#25272e",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--ink-700",
+      "value": "#3a3d45",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--ink-500",
+      "value": "#6a6e78",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--ink-400",
+      "value": "#8b8f99",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--ink-300",
+      "value": "#b4b8c0",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--signal-50",
+      "value": "#eef2ff",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--signal-100",
+      "value": "#dde4ff",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--signal-200",
+      "value": "#bccaff",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--signal-300",
+      "value": "#95acff",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--signal-500",
+      "value": "#3e63ff",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--signal-600",
+      "value": "#2f4fe0",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--signal-700",
+      "value": "#2540b8",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--completed-600",
+      "value": "#1f9d5b",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--completed-500",
+      "value": "#25b36b",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--completed-100",
+      "value": "#e4f4ec",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--pending-600",
+      "value": "#707682",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--pending-500",
+      "value": "#8b909b",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--pending-100",
+      "value": "#eeeeea",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--missed-600",
+      "value": "#d83a3f",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--missed-500",
+      "value": "#e5484d",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--missed-100",
+      "value": "#fbe7e8",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--skipped-600",
+      "value": "#cf8a26",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--skipped-500",
+      "value": "#e8a13a",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--skipped-100",
+      "value": "#fbf0dd",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--ramp-0",
+      "value": "#f1f0ea",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--ramp-1",
+      "value": "#cfe6da",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--ramp-2",
+      "value": "#93cdaf",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--ramp-3",
+      "value": "#4fb083",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--ramp-4",
+      "value": "#1f9d5b",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--text-primary",
+      "value": "var(--ink-900)",
+      "kind": "font",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--text-secondary",
+      "value": "var(--ink-500)",
+      "kind": "font",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--text-muted",
+      "value": "var(--ink-400)",
+      "kind": "font",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--text-faint",
+      "value": "var(--ink-300)",
+      "kind": "font",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--text-inverse",
+      "value": "#ffffff",
+      "kind": "font",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--text-link",
+      "value": "var(--signal-600)",
+      "kind": "font",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--surface-app",
+      "value": "var(--paper-50)",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--surface-card",
+      "value": "var(--paper-0)",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--surface-sunken",
+      "value": "var(--paper-100)",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--surface-inverse",
+      "value": "var(--ink-900)",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--border-subtle",
+      "value": "var(--paper-200)",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--border-default",
+      "value": "var(--paper-300)",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--border-strong",
+      "value": "var(--paper-400)",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--interactive",
+      "value": "var(--signal-500)",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--interactive-hover",
+      "value": "var(--signal-600)",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--interactive-active",
+      "value": "var(--signal-700)",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--interactive-tint",
+      "value": "var(--signal-50)",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--focus-ring",
+      "value": "var(--signal-500)",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--status-completed",
+      "value": "var(--completed-600)",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--status-completed-bg",
+      "value": "var(--completed-100)",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--status-pending",
+      "value": "var(--pending-600)",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--status-pending-bg",
+      "value": "var(--pending-100)",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--status-missed",
+      "value": "var(--missed-600)",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--status-missed-bg",
+      "value": "var(--missed-100)",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--status-skipped",
+      "value": "var(--skipped-600)",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--status-skipped-bg",
+      "value": "var(--skipped-100)",
+      "kind": "color",
+      "definedIn": "tokens/colors.css"
+    },
+    {
+      "name": "--font-display",
+      "value": "'Space Grotesk', system-ui, sans-serif",
+      "kind": "font",
+      "definedIn": "tokens/typography.css"
+    },
+    {
+      "name": "--font-text",
+      "value": "'IBM Plex Sans', system-ui, sans-serif",
+      "kind": "font",
+      "definedIn": "tokens/typography.css"
+    },
+    {
+      "name": "--font-mono",
+      "value": "'IBM Plex Mono', ui-monospace, 'SF Mono', monospace",
+      "kind": "font",
+      "definedIn": "tokens/typography.css"
+    },
+    {
+      "name": "--text-2xs",
+      "value": "0.6875rem",
+      "kind": "font",
+      "definedIn": "tokens/typography.css"
+    },
+    {
+      "name": "--text-xs",
+      "value": "0.75rem",
+      "kind": "font",
+      "definedIn": "tokens/typography.css"
+    },
+    {
+      "name": "--text-sm",
+      "value": "0.8125rem",
+      "kind": "font",
+      "definedIn": "tokens/typography.css"
+    },
+    {
+      "name": "--text-md",
+      "value": "0.9375rem",
+      "kind": "font",
+      "definedIn": "tokens/typography.css"
+    },
+    {
+      "name": "--text-lg",
+      "value": "1.0625rem",
+      "kind": "font",
+      "definedIn": "tokens/typography.css"
+    },
+    {
+      "name": "--text-xl",
+      "value": "1.375rem",
+      "kind": "font",
+      "definedIn": "tokens/typography.css"
+    },
+    {
+      "name": "--text-2xl",
+      "value": "1.75rem",
+      "kind": "font",
+      "definedIn": "tokens/typography.css"
+    },
+    {
+      "name": "--text-3xl",
+      "value": "2.25rem",
+      "kind": "font",
+      "definedIn": "tokens/typography.css"
+    },
+    {
+      "name": "--text-4xl",
+      "value": "3rem",
+      "kind": "font",
+      "definedIn": "tokens/typography.css"
+    },
+    {
+      "name": "--text-5xl",
+      "value": "4rem",
+      "kind": "font",
+      "definedIn": "tokens/typography.css"
+    },
+    {
+      "name": "--weight-regular",
+      "value": "400",
+      "kind": "font",
+      "definedIn": "tokens/typography.css"
+    },
+    {
+      "name": "--weight-medium",
+      "value": "500",
+      "kind": "font",
+      "definedIn": "tokens/typography.css"
+    },
+    {
+      "name": "--weight-semibold",
+      "value": "600",
+      "kind": "font",
+      "definedIn": "tokens/typography.css"
+    },
+    {
+      "name": "--weight-bold",
+      "value": "700",
+      "kind": "font",
+      "definedIn": "tokens/typography.css"
+    },
+    {
+      "name": "--leading-tight",
+      "value": "1.1",
+      "kind": "font",
+      "definedIn": "tokens/typography.css"
+    },
+    {
+      "name": "--leading-snug",
+      "value": "1.28",
+      "kind": "font",
+      "definedIn": "tokens/typography.css"
+    },
+    {
+      "name": "--leading-normal",
+      "value": "1.5",
+      "kind": "font",
+      "definedIn": "tokens/typography.css"
+    },
+    {
+      "name": "--leading-relaxed",
+      "value": "1.65",
+      "kind": "font",
+      "definedIn": "tokens/typography.css"
+    },
+    {
+      "name": "--tracking-tight",
+      "value": "-0.02em",
+      "kind": "font",
+      "definedIn": "tokens/typography.css"
+    },
+    {
+      "name": "--tracking-normal",
+      "value": "0",
+      "kind": "font",
+      "definedIn": "tokens/typography.css"
+    },
+    {
+      "name": "--tracking-wide",
+      "value": "0.02em",
+      "kind": "font",
+      "definedIn": "tokens/typography.css"
+    },
+    {
+      "name": "--tracking-caps",
+      "value": "0.08em",
+      "kind": "font",
+      "definedIn": "tokens/typography.css"
+    },
+    {
+      "name": "--tracking-mono",
+      "value": "0.01em",
+      "kind": "font",
+      "definedIn": "tokens/typography.css"
+    },
+    {
+      "name": "--space-0",
+      "value": "0",
+      "kind": "spacing",
+      "definedIn": "tokens/spacing.css"
+    },
+    {
+      "name": "--space-1",
+      "value": "2px",
+      "kind": "spacing",
+      "definedIn": "tokens/spacing.css"
+    },
+    {
+      "name": "--space-2",
+      "value": "4px",
+      "kind": "spacing",
+      "definedIn": "tokens/spacing.css"
+    },
+    {
+      "name": "--space-3",
+      "value": "8px",
+      "kind": "spacing",
+      "definedIn": "tokens/spacing.css"
+    },
+    {
+      "name": "--space-4",
+      "value": "12px",
+      "kind": "spacing",
+      "definedIn": "tokens/spacing.css"
+    },
+    {
+      "name": "--space-5",
+      "value": "16px",
+      "kind": "spacing",
+      "definedIn": "tokens/spacing.css"
+    },
+    {
+      "name": "--space-6",
+      "value": "20px",
+      "kind": "spacing",
+      "definedIn": "tokens/spacing.css"
+    },
+    {
+      "name": "--space-7",
+      "value": "24px",
+      "kind": "spacing",
+      "definedIn": "tokens/spacing.css"
+    },
+    {
+      "name": "--space-8",
+      "value": "32px",
+      "kind": "spacing",
+      "definedIn": "tokens/spacing.css"
+    },
+    {
+      "name": "--space-9",
+      "value": "40px",
+      "kind": "spacing",
+      "definedIn": "tokens/spacing.css"
+    },
+    {
+      "name": "--space-10",
+      "value": "48px",
+      "kind": "spacing",
+      "definedIn": "tokens/spacing.css"
+    },
+    {
+      "name": "--space-11",
+      "value": "64px",
+      "kind": "spacing",
+      "definedIn": "tokens/spacing.css"
+    },
+    {
+      "name": "--space-12",
+      "value": "80px",
+      "kind": "spacing",
+      "definedIn": "tokens/spacing.css"
+    },
+    {
+      "name": "--space-13",
+      "value": "96px",
+      "kind": "spacing",
+      "definedIn": "tokens/spacing.css"
+    },
+    {
+      "name": "--gutter-app",
+      "value": "20px",
+      "kind": "spacing",
+      "definedIn": "tokens/spacing.css"
+    },
+    {
+      "name": "--gutter-web",
+      "value": "32px",
+      "kind": "spacing",
+      "definedIn": "tokens/spacing.css"
+    },
+    {
+      "name": "--maxw-content",
+      "value": "1200px",
+      "kind": "spacing",
+      "definedIn": "tokens/spacing.css"
+    },
+    {
+      "name": "--maxw-prose",
+      "value": "640px",
+      "kind": "spacing",
+      "definedIn": "tokens/spacing.css"
+    },
+    {
+      "name": "--radius-xs",
+      "value": "4px",
+      "kind": "radius",
+      "definedIn": "tokens/radius.css"
+    },
+    {
+      "name": "--radius-sm",
+      "value": "6px",
+      "kind": "radius",
+      "definedIn": "tokens/radius.css"
+    },
+    {
+      "name": "--radius-md",
+      "value": "10px",
+      "kind": "radius",
+      "definedIn": "tokens/radius.css"
+    },
+    {
+      "name": "--radius-lg",
+      "value": "14px",
+      "kind": "radius",
+      "definedIn": "tokens/radius.css"
+    },
+    {
+      "name": "--radius-xl",
+      "value": "20px",
+      "kind": "radius",
+      "definedIn": "tokens/radius.css"
+    },
+    {
+      "name": "--radius-2xl",
+      "value": "28px",
+      "kind": "radius",
+      "definedIn": "tokens/radius.css"
+    },
+    {
+      "name": "--radius-pill",
+      "value": "999px",
+      "kind": "radius",
+      "definedIn": "tokens/radius.css"
+    },
+    {
+      "name": "--border-hair",
+      "value": "1px",
+      "kind": "spacing",
+      "definedIn": "tokens/radius.css"
+    },
+    {
+      "name": "--border-thick",
+      "value": "1.5px",
+      "kind": "spacing",
+      "definedIn": "tokens/radius.css"
+    },
+    {
+      "name": "--shadow-xs",
+      "value": "0 1px 1px rgba(22, 24, 29, 0.04)",
+      "kind": "shadow",
+      "definedIn": "tokens/radius.css"
+    },
+    {
+      "name": "--shadow-sm",
+      "value": "0 1px 2px rgba(22, 24, 29, 0.06), 0 1px 1px rgba(22, 24, 29, 0.04)",
+      "kind": "shadow",
+      "definedIn": "tokens/radius.css"
+    },
+    {
+      "name": "--shadow-md",
+      "value": "0 4px 10px -2px rgba(22, 24, 29, 0.08), 0 2px 4px -2px rgba(22, 24, 29, 0.05)",
+      "kind": "shadow",
+      "definedIn": "tokens/radius.css"
+    },
+    {
+      "name": "--shadow-lg",
+      "value": "0 12px 28px -6px rgba(22, 24, 29, 0.12), 0 4px 10px -4px rgba(22, 24, 29, 0.06)",
+      "kind": "shadow",
+      "definedIn": "tokens/radius.css"
+    },
+    {
+      "name": "--shadow-pop",
+      "value": "0 18px 44px -10px rgba(22, 24, 29, 0.20)",
+      "kind": "shadow",
+      "definedIn": "tokens/radius.css"
+    },
+    {
+      "name": "--ring-focus",
+      "value": "0 0 0 3px rgba(62, 99, 255, 0.28)",
+      "kind": "shadow",
+      "definedIn": "tokens/radius.css"
+    },
+    {
+      "name": "--ring-hairline",
+      "value": "inset 0 0 0 1px var(--border-subtle)",
+      "kind": "color",
+      "definedIn": "tokens/radius.css"
+    },
+    {
+      "name": "--duration-instant",
+      "value": "80ms",
+      "kind": "other",
+      "definedIn": "tokens/motion.css",
+      "annotation": "other"
+    },
+    {
+      "name": "--duration-fast",
+      "value": "140ms",
+      "kind": "other",
+      "definedIn": "tokens/motion.css",
+      "annotation": "other"
+    },
+    {
+      "name": "--duration-base",
+      "value": "220ms",
+      "kind": "other",
+      "definedIn": "tokens/motion.css",
+      "annotation": "other"
+    },
+    {
+      "name": "--duration-slow",
+      "value": "320ms",
+      "kind": "other",
+      "definedIn": "tokens/motion.css",
+      "annotation": "other"
+    },
+    {
+      "name": "--ease-standard",
+      "value": "cubic-bezier(0.2, 0, 0, 1)",
+      "kind": "other",
+      "definedIn": "tokens/motion.css",
+      "annotation": "other"
+    },
+    {
+      "name": "--ease-out",
+      "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+      "kind": "other",
+      "definedIn": "tokens/motion.css",
+      "annotation": "other"
+    },
+    {
+      "name": "--ease-in",
+      "value": "cubic-bezier(0.4, 0, 1, 1)",
+      "kind": "other",
+      "definedIn": "tokens/motion.css",
+      "annotation": "other"
+    },
+    {
+      "name": "--press-scale",
+      "value": "0.97",
+      "kind": "other",
+      "definedIn": "tokens/motion.css",
+      "annotation": "other"
+    },
+    {
+      "name": "--hover-lift",
+      "value": "-1px",
+      "kind": "spacing",
+      "definedIn": "tokens/motion.css",
+      "annotation": "spacing"
+    }
+  ],
+  "themes": [],
+  "fonts": [],
+  "brandFonts": [
+    {
+      "family": "Space Grotesk",
+      "status": "ok",
+      "tokens": ["--font-display"],
+      "path": "tokens/typography.css"
+    },
+    {
+      "family": "IBM Plex Sans",
+      "status": "ok",
+      "tokens": ["--font-text"],
+      "path": "tokens/typography.css"
+    },
+    {
+      "family": "IBM Plex Mono",
+      "status": "ok",
+      "tokens": ["--font-mono"],
+      "path": "tokens/typography.css"
+    }
+  ],
+  "source": "spa"
+}

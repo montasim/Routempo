@@ -1,26 +1,83 @@
 <!-- @dsCard group="Colors" viewport="700x180" name="Status family" subtitle="The four occurrence states — the semantic heart of the system" -->
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<link rel="stylesheet" href="../styles.css">
-<style>
-  body { margin: 0; font-family: var(--font-text); background: var(--surface-card); color: var(--text-primary); }
-  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-4); padding: var(--space-7); }
-  .cell { border-radius: var(--radius-lg); box-shadow: var(--ring-hairline); overflow: hidden; }
-  .bar { height: 44px; }
-  .foot { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-4); }
-  .dot { width: 10px; height: 10px; border-radius: var(--radius-pill); }
-  .lbl { font-size: var(--text-sm); font-weight: var(--weight-semibold); }
-  .pct { margin-left: auto; font-family: var(--font-mono); font-size: var(--text-2xs); color: var(--text-muted); }
-</style>
-</head>
-<body>
-  <div class="grid">
-    <div class="cell"><div class="bar" style="background:var(--status-completed)"></div><div class="foot" style="background:var(--status-completed-bg)"><span class="dot" style="background:var(--status-completed)"></span><span class="lbl">Completed</span></div></div>
-    <div class="cell"><div class="bar" style="background:var(--status-pending)"></div><div class="foot" style="background:var(--status-pending-bg)"><span class="dot" style="background:var(--status-pending)"></span><span class="lbl">Pending</span></div></div>
-    <div class="cell"><div class="bar" style="background:var(--status-missed)"></div><div class="foot" style="background:var(--status-missed-bg)"><span class="dot" style="background:var(--status-missed)"></span><span class="lbl">Missed</span></div></div>
-    <div class="cell"><div class="bar" style="background:var(--status-skipped)"></div><div class="foot" style="background:var(--status-skipped-bg)"><span class="dot" style="background:var(--status-skipped)"></span><span class="lbl">Skipped</span></div></div>
-  </div>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../styles.css" />
+    <style>
+      body {
+        margin: 0;
+        font-family: var(--font-text);
+        background: var(--surface-card);
+        color: var(--text-primary);
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--space-4);
+        padding: var(--space-7);
+      }
+      .cell {
+        border-radius: var(--radius-lg);
+        box-shadow: var(--ring-hairline);
+        overflow: hidden;
+      }
+      .bar {
+        height: 44px;
+      }
+      .foot {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        padding: var(--space-4);
+      }
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: var(--radius-pill);
+      }
+      .lbl {
+        font-size: var(--text-sm);
+        font-weight: var(--weight-semibold);
+      }
+      .pct {
+        margin-left: auto;
+        font-family: var(--font-mono);
+        font-size: var(--text-2xs);
+        color: var(--text-muted);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="grid">
+      <div class="cell">
+        <div class="bar" style="background: var(--status-completed)"></div>
+        <div class="foot" style="background: var(--status-completed-bg)">
+          <span class="dot" style="background: var(--status-completed)"></span
+          ><span class="lbl">Completed</span>
+        </div>
+      </div>
+      <div class="cell">
+        <div class="bar" style="background: var(--status-pending)"></div>
+        <div class="foot" style="background: var(--status-pending-bg)">
+          <span class="dot" style="background: var(--status-pending)"></span
+          ><span class="lbl">Pending</span>
+        </div>
+      </div>
+      <div class="cell">
+        <div class="bar" style="background: var(--status-missed)"></div>
+        <div class="foot" style="background: var(--status-missed-bg)">
+          <span class="dot" style="background: var(--status-missed)"></span
+          ><span class="lbl">Missed</span>
+        </div>
+      </div>
+      <div class="cell">
+        <div class="bar" style="background: var(--status-skipped)"></div>
+        <div class="foot" style="background: var(--status-skipped-bg)">
+          <span class="dot" style="background: var(--status-skipped)"></span
+          ><span class="lbl">Skipped</span>
+        </div>
+      </div>
+    </div>
+  </body>
 </html>
