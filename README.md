@@ -52,9 +52,9 @@ New accounts begin empty. The interface guides the user toward one useful routin
 
 ### Connect and notify
 
-- Google and Microsoft sign-in through Better Auth
-- Google Calendar, Google Tasks, Microsoft Outlook Calendar, and Microsoft To Do batch sync
-- Standards-based Web Push reminders and Monday summaries
+- Configurable Google and Microsoft sign-in through Better Auth
+- Optional Google Calendar, Google Tasks, Microsoft Outlook Calendar, and Microsoft To Do batch sync
+- Optional standards-based Web Push reminders and Monday summaries
 - An installable web-app manifest and notification service worker
 
 ## Using the application
@@ -106,7 +106,7 @@ Sync is batch-oriented rather than continuous two-way synchronization. A single 
 ```bash
 git clone https://github.com/montasim/routine-flow-web.git
 cd routine-flow-web
-pnpm install
+pnpm install --frozen-lockfile
 ```
 
 ### 2. Configure the environment
