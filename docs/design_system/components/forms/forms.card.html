@@ -1,59 +1,141 @@
 <!-- @dsCard group="Components" viewport="700x360" name="Forms" subtitle="Button, IconButton, Input, Select, Switch, Checkbox" -->
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<link rel="stylesheet" href="../../styles.css">
-<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
-<script src="../../_ds_bundle.js"></script>
-<style>
-  body { margin: 0; font-family: var(--font-text); background: var(--surface-card); color: var(--text-primary); }
-  .wrap { padding: var(--space-7); display: flex; flex-direction: column; gap: var(--space-6); }
-  .row { display: flex; align-items: center; gap: var(--space-4); flex-wrap: wrap; }
-  .col { display: flex; flex-direction: column; gap: var(--space-4); max-width: 280px; }
-  .lbl { font-family: var(--font-mono); font-size: var(--text-2xs); text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--text-muted); }
-</style>
-</head>
-<body>
-  <div id="root"></div>
-  <script type="text/babel">
-    const { Button, IconButton, Input, Select, Switch, Checkbox } = window.RoutineFlowDesignSystem_4781a2;
-    const Plus = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>;
-    function Demo() {
-      const [on, setOn] = React.useState(true);
-      const [chk, setChk] = React.useState(true);
-      return (
-        <div className="wrap">
-          <div>
-            <div className="lbl" style={{marginBottom:12}}>Buttons</div>
-            <div className="row">
-              <Button variant="primary">Complete</Button>
-              <Button variant="secondary" iconLeft={<Plus/>}>Add routine</Button>
-              <Button variant="ghost">Cancel</Button>
-              <Button variant="danger">Delete</Button>
-              <Button variant="primary" disabled>Disabled</Button>
-              <IconButton variant="outline" ariaLabel="add"><Plus/></IconButton>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../styles.css" />
+    <script
+      src="https://unpkg.com/react@18.3.1/umd/react.development.js"
+      integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"
+      integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"
+      integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y"
+      crossorigin="anonymous"
+    ></script>
+    <script src="../../_ds_bundle.js"></script>
+    <style>
+      body {
+        margin: 0;
+        font-family: var(--font-text);
+        background: var(--surface-card);
+        color: var(--text-primary);
+      }
+      .wrap {
+        padding: var(--space-7);
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-6);
+      }
+      .row {
+        display: flex;
+        align-items: center;
+        gap: var(--space-4);
+        flex-wrap: wrap;
+      }
+      .col {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-4);
+        max-width: 280px;
+      }
+      .lbl {
+        font-family: var(--font-mono);
+        font-size: var(--text-2xs);
+        text-transform: uppercase;
+        letter-spacing: var(--tracking-caps);
+        color: var(--text-muted);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="text/babel">
+      const { Button, IconButton, Input, Select, Switch, Checkbox } =
+        window.RoutineFlowDesignSystem_4781a2
+      const Plus = () => (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <path
+            d="M12 5v14M5 12h14"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
+        </svg>
+      )
+      function Demo() {
+        const [on, setOn] = React.useState(true)
+        const [chk, setChk] = React.useState(true)
+        return (
+          <div className="wrap">
+            <div>
+              <div className="lbl" style={{ marginBottom: 12 }}>
+                Buttons
+              </div>
+              <div className="row">
+                <Button variant="primary">Complete</Button>
+                <Button variant="secondary" iconLeft={<Plus />}>
+                  Add routine
+                </Button>
+                <Button variant="ghost">Cancel</Button>
+                <Button variant="danger">Delete</Button>
+                <Button variant="primary" disabled>
+                  Disabled
+                </Button>
+                <IconButton variant="outline" ariaLabel="add">
+                  <Plus />
+                </IconButton>
+              </div>
+            </div>
+            <div className="row" style={{ alignItems: "flex-start", gap: 32 }}>
+              <div className="col">
+                <div className="lbl">Input &amp; Select</div>
+                <Input label="Routine title" defaultValue="Morning Gym" />
+                <Select
+                  label="Reminder"
+                  defaultValue="15"
+                  options={[
+                    { value: "5", label: "5 min before" },
+                    { value: "15", label: "15 min before" },
+                    { value: "30", label: "30 min before" },
+                  ]}
+                />
+              </div>
+              <div className="col">
+                <div className="lbl">Switch &amp; Checkbox</div>
+                <label
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 12,
+                    fontSize: "var(--text-md)",
+                  }}
+                >
+                  <Switch checked={on} onChange={setOn} ariaLabel="reminder" />{" "}
+                  Use global reminder
+                </label>
+                <Checkbox
+                  checked={chk}
+                  label="Repeat on weekdays"
+                  onChange={setChk}
+                />
+                <Checkbox
+                  checked={false}
+                  label="Break streak on skip"
+                  onChange={() => {}}
+                />
+              </div>
             </div>
           </div>
-          <div className="row" style={{alignItems:'flex-start', gap:32}}>
-            <div className="col">
-              <div className="lbl">Input &amp; Select</div>
-              <Input label="Routine title" defaultValue="Morning Gym" />
-              <Select label="Reminder" defaultValue="15" options={[{value:'5',label:'5 min before'},{value:'15',label:'15 min before'},{value:'30',label:'30 min before'}]} />
-            </div>
-            <div className="col">
-              <div className="lbl">Switch &amp; Checkbox</div>
-              <label style={{display:'flex',alignItems:'center',gap:12,fontSize:'var(--text-md)'}}><Switch checked={on} onChange={setOn} ariaLabel="reminder"/> Use global reminder</label>
-              <Checkbox checked={chk} label="Repeat on weekdays" onChange={setChk} />
-              <Checkbox checked={false} label="Break streak on skip" onChange={()=>{}} />
-            </div>
-          </div>
-        </div>
-      );
-    }
-    ReactDOM.createRoot(document.getElementById('root')).render(<Demo/>);
-  </script>
-</body>
+        )
+      }
+      ReactDOM.createRoot(document.getElementById("root")).render(<Demo />)
+    </script>
+  </body>
 </html>

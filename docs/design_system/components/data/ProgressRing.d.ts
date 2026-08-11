@@ -1,22 +1,22 @@
-import * as React from 'react';
+import * as React from "react"
 
 /** Circular progress ring with centered value — discipline score, completion %. */
 export interface ProgressRingProps {
-  value?: number;
+  value?: number
   /** @default 100 */
-  max?: number;
+  max?: number
   /** Pixel diameter. @default 96 */
-  size?: number;
+  size?: number
   /** @default 8 */
-  thickness?: number;
+  thickness?: number
   /** Arc color. @default signal */
-  color?: string;
-  trackColor?: string;
+  color?: string
+  trackColor?: string
   /** Mono caption under the ring. */
-  label?: string;
+  label?: string
   /** Override the centered number (else shows rounded percent). */
-  centerLabel?: string;
-  style?: React.CSSProperties;
+  centerLabel?: string
+  style?: React.CSSProperties
 }
 
-export function ProgressRing(props: ProgressRingProps): JSX.Element;
+export function ProgressRing(props: ProgressRingProps): JSX.Element

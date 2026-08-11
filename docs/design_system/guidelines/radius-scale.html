@@ -1,25 +1,65 @@
 <!-- @dsCard group="Spacing" viewport="700x160" name="Radius" subtitle="From hairline chips to soft sheets" -->
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<link rel="stylesheet" href="../styles.css">
-<style>
-  body { margin: 0; font-family: var(--font-mono); background: var(--surface-card); color: var(--text-primary); }
-  .row { display: flex; gap: var(--space-5); padding: var(--space-7) var(--space-8); }
-  .sw { text-align: center; }
-  .box { width: 72px; height: 72px; background: var(--surface-sunken); box-shadow: var(--ring-hairline); border-top: 2px solid var(--interactive); border-left: 2px solid var(--interactive); }
-  .tok { font-size: var(--text-2xs); color: var(--text-muted); margin-top: var(--space-3); }
-</style>
-</head>
-<body>
-  <div class="row">
-    <div class="sw"><div class="box" style="border-radius:var(--radius-sm)"></div><div class="tok">sm · 6</div></div>
-    <div class="sw"><div class="box" style="border-radius:var(--radius-md)"></div><div class="tok">md · 10</div></div>
-    <div class="sw"><div class="box" style="border-radius:var(--radius-lg)"></div><div class="tok">lg · 14</div></div>
-    <div class="sw"><div class="box" style="border-radius:var(--radius-xl)"></div><div class="tok">xl · 20</div></div>
-    <div class="sw"><div class="box" style="border-radius:var(--radius-2xl)"></div><div class="tok">2xl · 28</div></div>
-    <div class="sw"><div class="box" style="border-radius:var(--radius-pill)"></div><div class="tok">pill</div></div>
-  </div>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../styles.css" />
+    <style>
+      body {
+        margin: 0;
+        font-family: var(--font-mono);
+        background: var(--surface-card);
+        color: var(--text-primary);
+      }
+      .row {
+        display: flex;
+        gap: var(--space-5);
+        padding: var(--space-7) var(--space-8);
+      }
+      .sw {
+        text-align: center;
+      }
+      .box {
+        width: 72px;
+        height: 72px;
+        background: var(--surface-sunken);
+        box-shadow: var(--ring-hairline);
+        border-top: 2px solid var(--interactive);
+        border-left: 2px solid var(--interactive);
+      }
+      .tok {
+        font-size: var(--text-2xs);
+        color: var(--text-muted);
+        margin-top: var(--space-3);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="row">
+      <div class="sw">
+        <div class="box" style="border-radius: var(--radius-sm)"></div>
+        <div class="tok">sm · 6</div>
+      </div>
+      <div class="sw">
+        <div class="box" style="border-radius: var(--radius-md)"></div>
+        <div class="tok">md · 10</div>
+      </div>
+      <div class="sw">
+        <div class="box" style="border-radius: var(--radius-lg)"></div>
+        <div class="tok">lg · 14</div>
+      </div>
+      <div class="sw">
+        <div class="box" style="border-radius: var(--radius-xl)"></div>
+        <div class="tok">xl · 20</div>
+      </div>
+      <div class="sw">
+        <div class="box" style="border-radius: var(--radius-2xl)"></div>
+        <div class="tok">2xl · 28</div>
+      </div>
+      <div class="sw">
+        <div class="box" style="border-radius: var(--radius-pill)"></div>
+        <div class="tok">pill</div>
+      </div>
+    </div>
+  </body>
 </html>

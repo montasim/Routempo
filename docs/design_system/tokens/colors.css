@@ -6,29 +6,29 @@
    ============================================================ */
 :root {
   /* --- Warm paper neutrals --- */
-  --paper-0:   #ffffff;   /* card surface */
-  --paper-50:  #faf9f6;   /* app background */
-  --paper-100: #f1f0ea;   /* sunken / track */
-  --paper-200: #e6e4db;   /* hairline borders */
-  --paper-300: #d4d1c5;   /* default borders */
-  --paper-400: #b6b2a4;   /* strong borders / disabled fg */
+  --paper-0: #ffffff; /* card surface */
+  --paper-50: #faf9f6; /* app background */
+  --paper-100: #f1f0ea; /* sunken / track */
+  --paper-200: #e6e4db; /* hairline borders */
+  --paper-300: #d4d1c5; /* default borders */
+  --paper-400: #b6b2a4; /* strong borders / disabled fg */
 
   /* --- Ink (text + brand black) --- */
-  --ink-900: #16181d;     /* primary text / logo ink */
+  --ink-900: #16181d; /* primary text / logo ink */
   --ink-800: #25272e;
   --ink-700: #3a3d45;
-  --ink-500: #6a6e78;     /* secondary text */
-  --ink-400: #8b8f99;     /* muted text */
-  --ink-300: #b4b8c0;     /* faint / placeholder */
+  --ink-500: #6a6e78; /* secondary text */
+  --ink-400: #8b8f99; /* muted text */
+  --ink-300: #b4b8c0; /* faint / placeholder */
 
   /* --- Signal (brand accent: cobalt-azure) --- */
-  --signal-50:  #eef2ff;
+  --signal-50: #eef2ff;
   --signal-100: #dde4ff;
   --signal-200: #bccaff;
   --signal-300: #95acff;
-  --signal-500: #3e63ff;  /* primary interactive */
-  --signal-600: #2f4fe0;  /* hover */
-  --signal-700: #2540b8;  /* active / press */
+  --signal-500: #3e63ff; /* primary interactive */
+  --signal-600: #2f4fe0; /* hover */
+  --signal-700: #2540b8; /* active / press */
 
   /* --- Status: Completed (green) --- */
   --completed-600: #1f9d5b;
@@ -60,35 +60,35 @@
   /* ============================================================
      SEMANTIC ALIASES — reference these in components, not raw scales
      ============================================================ */
-  --text-primary:   var(--ink-900);
+  --text-primary: var(--ink-900);
   --text-secondary: var(--ink-500);
-  --text-muted:     var(--ink-400);
-  --text-faint:     var(--ink-300);
-  --text-inverse:   #ffffff;
-  --text-link:      var(--signal-600);
+  --text-muted: var(--ink-400);
+  --text-faint: var(--ink-300);
+  --text-inverse: #ffffff;
+  --text-link: var(--signal-600);
 
-  --surface-app:    var(--paper-50);
-  --surface-card:   var(--paper-0);
+  --surface-app: var(--paper-50);
+  --surface-card: var(--paper-0);
   --surface-sunken: var(--paper-100);
   --surface-inverse: var(--ink-900);
 
-  --border-subtle:  var(--paper-200);
+  --border-subtle: var(--paper-200);
   --border-default: var(--paper-300);
-  --border-strong:  var(--paper-400);
+  --border-strong: var(--paper-400);
 
-  --interactive:        var(--signal-500);
-  --interactive-hover:  var(--signal-600);
+  --interactive: var(--signal-500);
+  --interactive-hover: var(--signal-600);
   --interactive-active: var(--signal-700);
-  --interactive-tint:   var(--signal-50);
-  --focus-ring:         var(--signal-500);
+  --interactive-tint: var(--signal-50);
+  --focus-ring: var(--signal-500);
 
   /* status → semantic */
-  --status-completed:    var(--completed-600);
+  --status-completed: var(--completed-600);
   --status-completed-bg: var(--completed-100);
-  --status-pending:      var(--pending-600);
-  --status-pending-bg:   var(--pending-100);
-  --status-missed:       var(--missed-600);
-  --status-missed-bg:    var(--missed-100);
-  --status-skipped:      var(--skipped-600);
-  --status-skipped-bg:   var(--skipped-100);
+  --status-pending: var(--pending-600);
+  --status-pending-bg: var(--pending-100);
+  --status-missed: var(--missed-600);
+  --status-missed-bg: var(--missed-100);
+  --status-skipped: var(--skipped-600);
+  --status-skipped-bg: var(--skipped-100);
 }

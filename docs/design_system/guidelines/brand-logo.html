@@ -1,36 +1,78 @@
 <!-- @dsCard group="Brand" viewport="700x220" name="Logo & mark" subtitle="Ascending streak crowned by a completion dot" -->
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<link rel="stylesheet" href="../styles.css">
-<style>
-  body { margin: 0; font-family: var(--font-text); background: var(--surface-card); color: var(--text-primary); }
-  .wrap { padding: var(--space-8); display: flex; align-items: center; gap: var(--space-10); }
-  .lockup { display: flex; align-items: center; gap: var(--space-5); }
-  .mark { width: 64px; height: 64px; }
-  .word { font-family: var(--font-display); font-size: var(--text-3xl); font-weight: var(--weight-bold); letter-spacing: var(--tracking-tight); }
-  .word .flow { color: var(--interactive); }
-  .onink { margin-left: auto; background: var(--ink-900); border-radius: var(--radius-xl); padding: var(--space-6) var(--space-7); }
-  .onink .word { color: #fff; font-size: var(--text-xl); }
-  .note { font-family: var(--font-mono); font-size: var(--text-2xs); color: var(--text-muted); margin-top: var(--space-3); }
-</style>
-</head>
-<body>
-  <div class="wrap">
-    <div>
-      <div class="lockup">
-        <img class="mark" src="../assets/mark.svg" alt="RoutineFlow mark">
-        <span class="word">Routine<span class="flow">Flow</span></span>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../styles.css" />
+    <style>
+      body {
+        margin: 0;
+        font-family: var(--font-text);
+        background: var(--surface-card);
+        color: var(--text-primary);
+      }
+      .wrap {
+        padding: var(--space-8);
+        display: flex;
+        align-items: center;
+        gap: var(--space-10);
+      }
+      .lockup {
+        display: flex;
+        align-items: center;
+        gap: var(--space-5);
+      }
+      .mark {
+        width: 64px;
+        height: 64px;
+      }
+      .word {
+        font-family: var(--font-display);
+        font-size: var(--text-3xl);
+        font-weight: var(--weight-bold);
+        letter-spacing: var(--tracking-tight);
+      }
+      .word .flow {
+        color: var(--interactive);
+      }
+      .onink {
+        margin-left: auto;
+        background: var(--ink-900);
+        border-radius: var(--radius-xl);
+        padding: var(--space-6) var(--space-7);
+      }
+      .onink .word {
+        color: #fff;
+        font-size: var(--text-xl);
+      }
+      .note {
+        font-family: var(--font-mono);
+        font-size: var(--text-2xs);
+        color: var(--text-muted);
+        margin-top: var(--space-3);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div>
+        <div class="lockup">
+          <img class="mark" src="../assets/mark.svg" alt="RoutineFlow mark" />
+          <span class="word">Routine<span class="flow">Flow</span></span>
+        </div>
+        <div class="note">mark + wordmark · clearspace = bar width</div>
       </div>
-      <div class="note">mark + wordmark · clearspace = bar width</div>
-    </div>
-    <div class="onink">
-      <div class="lockup">
-        <img class="mark" src="../assets/mark.svg" alt="" style="width:40px;height:40px">
-        <span class="word">Routine<span class="flow">Flow</span></span>
+      <div class="onink">
+        <div class="lockup">
+          <img
+            class="mark"
+            src="../assets/mark.svg"
+            alt=""
+            style="width: 40px; height: 40px"
+          />
+          <span class="word">Routine<span class="flow">Flow</span></span>
+        </div>
       </div>
     </div>
-  </div>
-</body>
+  </body>
 </html>

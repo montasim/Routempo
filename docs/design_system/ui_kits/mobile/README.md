@@ -4,6 +4,7 @@ Interactive recreation of the primary React Native + Expo app, framed in an
 iPhone. Open `index.html`.
 
 ## Screens
+
 - **home.jsx** — `HomeScreen`: today's occurrences grouped by morning / evening.
   Pending rows have working Complete (green) + Skip actions that update state.
   Summary strip shows a completion ring + streak.
@@ -17,6 +18,7 @@ iPhone. Open `index.html`.
   streak rules, export, sign out.
 
 ## Composition
+
 Each screen file is an IIFE that reads components from
 `window.RoutineFlowDesignSystem_4781a2` and assigns its screen to `window`.
 `data.js` (`window.RF_DATA`) holds the shared mock dataset (modelled on what the

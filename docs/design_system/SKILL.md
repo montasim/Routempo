@@ -13,6 +13,7 @@ accent, monospace for all measured numbers, and a strict four-state status famil
 (Completed / Pending / Missed / Skipped).
 
 ## What's here
+
 - `styles.css` + `tokens/` — the global stylesheet and design tokens (colors,
   typography, spacing, radius, motion). Link `styles.css` to inherit everything.
 - `components/` — React primitives, bundled to `window.RoutineFlowDesignSystem_4781a2`.
@@ -24,6 +25,7 @@ accent, monospace for all measured numbers, and a strict four-state status famil
 - `assets/` — `mark.svg`, `wordmark.svg`. Icons: Lucide (CDN).
 
 ## How to work
+
 If creating visual artifacts (slides, mocks, throwaway prototypes), copy assets
 out and create static HTML files for the user to view. If working on production
 code, copy assets and read the rules here to become an expert in designing with
@@ -34,6 +36,7 @@ build, ask a few questions, and act as an expert designer who outputs HTML
 artifacts _or_ production code, depending on the need.
 
 ## Brand rules of thumb
+
 - Sentence case everywhere; the only uppercase is mono micro-labels (eyebrows).
 - Address the user as **you**; the system is **the server**. No emoji, no hype.
 - Numbers are first-class and always mono. Status is a capitalized noun.

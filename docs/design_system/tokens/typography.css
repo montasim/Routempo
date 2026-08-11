@@ -5,38 +5,38 @@
    Mono    : IBM Plex Mono   (time, delay, timestamps, data, labels)
    ============================================================ */
 :root {
-  --font-display: 'Space Grotesk', system-ui, sans-serif;
-  --font-text:    'IBM Plex Sans', system-ui, sans-serif;
-  --font-mono:    'IBM Plex Mono', ui-monospace, 'SF Mono', monospace;
+  --font-display: "Space Grotesk", system-ui, sans-serif;
+  --font-text: "IBM Plex Sans", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", monospace;
 
   /* Type scale (px-as-rem, 1rem = 16px) */
-  --text-2xs: 0.6875rem;  /* 11 — micro labels, tick marks */
-  --text-xs:  0.75rem;    /* 12 — captions, meta */
-  --text-sm:  0.8125rem;  /* 13 — secondary UI */
-  --text-md:  0.9375rem;  /* 15 — base body / UI */
-  --text-lg:  1.0625rem;  /* 17 — emphasized body */
-  --text-xl:  1.375rem;   /* 22 — card titles */
-  --text-2xl: 1.75rem;    /* 28 — section headings */
-  --text-3xl: 2.25rem;    /* 36 — screen titles */
-  --text-4xl: 3rem;       /* 48 — hero / big metrics */
-  --text-5xl: 4rem;       /* 64 — display numerics */
+  --text-2xs: 0.6875rem; /* 11 — micro labels, tick marks */
+  --text-xs: 0.75rem; /* 12 — captions, meta */
+  --text-sm: 0.8125rem; /* 13 — secondary UI */
+  --text-md: 0.9375rem; /* 15 — base body / UI */
+  --text-lg: 1.0625rem; /* 17 — emphasized body */
+  --text-xl: 1.375rem; /* 22 — card titles */
+  --text-2xl: 1.75rem; /* 28 — section headings */
+  --text-3xl: 2.25rem; /* 36 — screen titles */
+  --text-4xl: 3rem; /* 48 — hero / big metrics */
+  --text-5xl: 4rem; /* 64 — display numerics */
 
   /* Weights */
-  --weight-regular:  400;
-  --weight-medium:   500;
+  --weight-regular: 400;
+  --weight-medium: 500;
   --weight-semibold: 600;
-  --weight-bold:     700;
+  --weight-bold: 700;
 
   /* Line heights */
-  --leading-tight:  1.1;
-  --leading-snug:   1.28;
+  --leading-tight: 1.1;
+  --leading-snug: 1.28;
   --leading-normal: 1.5;
   --leading-relaxed: 1.65;
 
   /* Tracking */
-  --tracking-tight:  -0.02em;   /* display headings */
+  --tracking-tight: -0.02em; /* display headings */
   --tracking-normal: 0;
-  --tracking-wide:   0.02em;
-  --tracking-caps:   0.08em;    /* uppercase eyebrows / labels */
-  --tracking-mono:   0.01em;
+  --tracking-wide: 0.02em;
+  --tracking-caps: 0.08em; /* uppercase eyebrows / labels */
+  --tracking-mono: 0.01em;
 }

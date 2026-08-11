@@ -1,1470 +1,1668 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>RoutineFlow — Complete Behavioral Tracking System</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-/* ===== ROUTINEFLOW DESIGN SYSTEM ===== */
-
-:root {
-  /* Colors */
-  --bg-primary: #ffffff;
-  --bg-secondary: #f8fafc;
-  --bg-card: #ffffff;
-  --bg-elevated: #f1f5f9;
-  --bg-overlay: rgba(15, 23, 42, 0.4);
-
-  --text-primary: #0f172a;
-  --text-secondary: #64748b;
-  --text-muted: #94a3b8;
-  --text-inverse: #ffffff;
-
-  --border: #e2e8f0;
-  --border-light: #f1f5f9;
-  --border-dark: #cbd5e1;
-
-  /* Brand Colors */
-  --primary: #3b82f6;
-  --primary-dark: #2563eb;
-  --primary-light: #dbeafe;
-
-  /* Status Colors */
-  --success: #10b981;
-  --success-dark: #059669;
-  --success-light: #d1fae5;
-
-  --warning: #f59e0b;
-  --warning-dark: #d97706;
-  --warning-light: #fef3c7;
-
-  --error: #ef4444;
-  --error-dark: #dc2626;
-  --error-light: #fee2e2;
-
-  --info: #6366f1;
-  --info-dark: #4f46e5;
-  --info-light: #e0e7ff;
-
-  /* Category Colors */
-  --cat-health: #10b981;
-  --cat-fitness: #3b82f6;
-  --cat-mind: #8b5cf6;
-  --cat-work: #64748b;
-  --cat-faith: #f59e0b;
-
-  /* Effects */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-
-  --radius-sm: 0.375rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
-  --radius-full: 9999px;
-
-  /* Typography */
-  --font-display: 'Space Grotesk', system-ui, -apple-system, sans-serif;
-  --font-body: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
-  --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', monospace;
-
-  --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* ===== DARK MODE ===== */
-[data-theme="dark"] {
-  --bg-primary: #0f172a;
-  --bg-secondary: #1e293b;
-  --bg-card: #1e293b;
-  --bg-elevated: #334155;
-  --bg-overlay: rgba(0, 0, 0, 0.6);
-
-  --text-primary: #f1f5f9;
-  --text-secondary: #cbd5e1;
-  --text-muted: #64748b;
-  --text-inverse: #0f172a;
-
-  --border: #334155;
-  --border-light: #1e293b;
-  --border-dark: #475569;
-
-  --primary: #60a5fa;
-  --primary-dark: #3b82f6;
-  --primary-light: #1e3a5f;
-
-  --success: #34d399;
-  --success-dark: #10b981;
-  --success-light: #064e3b;
-
-  --warning: #fbbf24;
-  --warning-dark: #f59e0b;
-  --warning-light: #78350f;
-
-  --error: #f87171;
-  --error-dark: #ef4444;
-  --error-light: #7f1d1d;
-
-  --info: #818cf8;
-  --info-dark: #6366f1;
-  --info-light: #312e81;
-
-  --cat-health: #34d399;
-  --cat-fitness: #60a5fa;
-  --cat-mind: #a78bfa;
-  --cat-work: #94a3b8;
-  --cat-faith: #fbbf24;
-}
-
-/* ===== BASE STYLES ===== */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html {
-  font-size: 16px;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-body {
-  font-family: var(--font-body);
-  background: var(--bg-secondary);
-  color: var(--text-primary);
-  line-height: 1.6;
-  min-height: 100vh;
-  transition: background var(--transition), color var(--transition);
-}
-
-/* ===== UTILITY CLASSES ===== */
-.container { max-width: 1400px; margin: 0 auto; padding: 0 1.5rem; }
-.flex { display: flex; }
-.flex-col { flex-direction: column; }
-.flex-wrap { flex-wrap: wrap; }
-.items-center { align-items: center; }
-.items-start { align-items: flex-start; }
-.justify-between { justify-content: space-between; }
-.justify-center { justify-content: center; }
-.gap-1 { gap: 0.25rem; }
-.gap-2 { gap: 0.5rem; }
-.gap-3 { gap: 0.75rem; }
-.gap-4 { gap: 1rem; }
-.gap-6 { gap: 1.5rem; }
-.gap-8 { gap: 2rem; }
-.grid { display: grid; }
-.hidden { display: none; }
-.w-full { width: 100%; }
-.h-full { height: 100%; }
-.text-center { text-align: center; }
-.font-mono { font-family: var(--font-mono); }
-.font-display { font-family: var(--font-display); }
-
-/* ===== BUTTONS ===== */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.625rem 1.25rem;
-  font-family: var(--font-body);
-  font-size: 0.9375rem;
-  font-weight: 600;
-  line-height: 1;
-  border-radius: var(--radius-md);
-  border: none;
-  cursor: pointer;
-  transition: var(--transition);
-  text-decoration: none;
-  white-space: nowrap;
-}
-
-.btn:focus-visible {
-  outline: 2px solid var(--primary);
-  outline-offset: 2px;
-}
-
-.btn-primary {
-  background: var(--primary);
-  color: white;
-}
-.btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
-.btn-primary:active { transform: translateY(0); }
-
-.btn-secondary {
-  background: var(--bg-card);
-  color: var(--text-primary);
-  border: 1px solid var(--border);
-}
-.btn-secondary:hover { background: var(--bg-elevated); border-color: var(--border-dark); }
-
-.btn-ghost {
-  background: transparent;
-  color: var(--text-secondary);
-}
-.btn-ghost:hover { background: var(--bg-elevated); color: var(--text-primary); }
-
-.btn-danger {
-  background: var(--error);
-  color: white;
-}
-.btn-danger:hover { background: var(--error-dark); }
-
-.btn-success {
-  background: var(--success);
-  color: white;
-}
-.btn-success:hover { background: var(--success-dark); }
-
-.btn-icon {
-  padding: 0.625rem;
-  width: 2.75rem;
-  height: 2.75rem;
-}
-
-.btn-lg {
-  padding: 0.875rem 1.75rem;
-  font-size: 1rem;
-}
-
-.btn-sm {
-  padding: 0.375rem 0.875rem;
-  font-size: 0.875rem;
-}
-
-.btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none !important;
-}
-
-/* ===== CARD ===== */
-.card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
-  padding: 1.5rem;
-  box-shadow: var(--shadow-sm);
-  transition: var(--transition);
-}
-
-.card:hover {
-  box-shadow: var(--shadow-md);
-}
-
-.card-sm { padding: 1rem; }
-.card-lg { padding: 2rem; }
-
-/* ===== INPUT ===== */
-.input, .select, .textarea {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  font-family: var(--font-body);
-  font-size: 0.9375rem;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  color: var(--text-primary);
-  transition: var(--transition);
-}
-
-.input:focus, .select:focus, .textarea:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px var(--primary-light);
-}
-
-.input::placeholder, .textarea::placeholder {
-  color: var(--text-muted);
-}
-
-.input:disabled, .select:disabled, .textarea:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.textarea {
-  min-height: 80px;
-  resize: vertical;
-}
-
-/* ===== CHECKBOX & TOGGLE ===== */
-.checkbox {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  cursor: pointer;
-}
-
-.checkbox input[type="checkbox"] {
-  width: 1.25rem;
-  height: 1.25rem;
-  accent-color: var(--primary);
-  cursor: pointer;
-}
-
-.toggle {
-  position: relative;
-  display: inline-block;
-  width: 3rem;
-  height: 1.75rem;
-}
-
-.toggle input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.toggle-slider {
-  position: absolute;
-  inset: 0;
-  background: var(--border);
-  border-radius: var(--radius-full);
-  cursor: pointer;
-  transition: var(--transition);
-}
-
-.toggle-slider::before {
-  content: '';
-  position: absolute;
-  height: 1.375rem;
-  width: 1.375rem;
-  left: 0.1875rem;
-  bottom: 0.1875rem;
-  background: white;
-  border-radius: 50%;
-  transition: var(--transition);
-  box-shadow: var(--shadow-sm);
-}
-
-.toggle input:checked + .toggle-slider {
-  background: var(--primary);
-}
-
-.toggle input:checked + .toggle-slider::before {
-  transform: translateX(1.25rem);
-}
-
-/* ===== BADGE ===== */
-.badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.25rem 0.75rem;
-  font-size: 0.75rem;
-  font-weight: 600;
-  border-radius: var(--radius-full);
-  font-family: var(--font-mono);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.badge-primary { background: var(--primary-light); color: var(--primary-dark); }
-.badge-success { background: var(--success-light); color: var(--success-dark); }
-.badge-warning { background: var(--warning-light); color: var(--warning-dark); }
-.badge-error { background: var(--error-light); color: var(--error-dark); }
-.badge-neutral { background: var(--bg-elevated); color: var(--text-secondary); }
-.badge-info { background: var(--info-light); color: var(--info-dark); }
-
-/* ===== STATUS PILLS ===== */
-.status-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.375rem;
-  padding: 0.375rem 0.75rem;
-  border-radius: var(--radius-full);
-  font-size: 0.8125rem;
-  font-weight: 600;
-}
-
-.status-completed { background: var(--success-light); color: var(--success-dark); }
-.status-pending { background: var(--bg-elevated); color: var(--text-secondary); }
-.status-missed { background: var(--error-light); color: var(--error-dark); }
-.status-skipped { background: var(--warning-light); color: var(--warning-dark); }
-
-/* ===== PROGRESS RING ===== */
-.progress-ring {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.progress-ring svg {
-  transform: rotate(-90deg);
-}
-
-.progress-ring-bg {
-  fill: none;
-  stroke: var(--border);
-}
-
-.progress-ring-fill {
-  fill: none;
-  stroke: var(--primary);
-  stroke-linecap: round;
-  transition: stroke-dashoffset 0.5s ease;
-}
-
-.progress-ring-text {
-  position: absolute;
-  font-family: var(--font-display);
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-/* ===== LAYOUT ===== */
-.app {
-  display: flex;
-  min-height: 100vh;
-}
-
-.sidebar {
-  width: 16rem;
-  background: var(--bg-card);
-  border-right: 1px solid var(--border);
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  position: fixed;
-  height: 100vh;
-  z-index: 20;
-  overflow-y: auto;
-}
-
-.nav-item {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1rem;
-  color: var(--text-secondary);
-  text-decoration: none;
-  border-radius: var(--radius-md);
-  transition: var(--transition);
-  font-weight: 500;
-  cursor: pointer;
-  border: none;
-  background: none;
-  width: 100%;
-  text-align: left;
-}
-
-.nav-item:hover {
-  background: var(--bg-elevated);
-  color: var(--text-primary);
-}
-
-.nav-item.active {
-  background: var(--primary-light);
-  color: var(--primary-dark);
-}
-
-.main {
-  flex: 1;
-  margin-left: 16rem;
-  display: flex;
-  flex-direction: column;
-}
-
-.topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1.25rem 2rem;
-  background: var(--bg-card);
-  border-bottom: 1px solid var(--border);
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-.content {
-  padding: 2rem;
-  flex: 1;
-  overflow-y: auto;
-  max-width: 1400px;
-  width: 100%;
-}
-
-/* ===== AUTH ===== */
-.auth-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  padding: 1.5rem;
-  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--primary-light) 50%, var(--info-light) 100%);
-}
-
-.auth-card {
-  width: 100%;
-  max-width: 440px;
-  padding: 2.5rem;
-}
-
-.auth-logo {
-  margin-bottom: 2rem;
-  text-align: center;
-}
-
-.auth-logo h1 {
-  font-family: var(--font-display);
-  font-size: 2rem;
-  font-weight: 700;
-}
-
-.auth-logo p {
-  color: var(--text-secondary);
-  margin-top: 0.5rem;
-}
-
-.divider {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin: 1.5rem 0;
-}
-
-.divider::before, .divider::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--border);
-}
-
-/* ===== DASHBOARD ===== */
-.metrics-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-}
-
-.metric-card {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.metric-icon {
-  width: 3rem;
-  height: 3rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--radius-lg);
-  flex-shrink: 0;
-}
-
-.metric-value {
-  font-family: var(--font-display);
-  font-size: 2rem;
-  font-weight: 700;
-  line-height: 1;
-}
-
-.metric-label {
-  font-size: 0.875rem;
-  color: var(--text-secondary);
-}
-
-.metric-change {
-  font-size: 0.75rem;
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  margin-top: 0.25rem;
-}
-
-.metric-change.positive { color: var(--success); }
-.metric-change.negative { color: var(--error); }
-
-/* ===== OCCURRENCE ROW ===== */
-.occurrence-row {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  transition: var(--transition);
-}
-
-.occurrence-row:hover {
-  border-color: var(--primary);
-  box-shadow: var(--shadow-md);
-}
-
-.occurrence-accent {
-  width: 4px;
-  height: 100%;
-  border-radius: 2px;
-  flex-shrink: 0;
-}
-
-.occurrence-time {
-  font-family: var(--font-mono);
-  font-size: 1.125rem;
-  font-weight: 600;
-  min-width: 4rem;
-}
-
-.occurrence-content {
-  flex: 1;
-}
-
-.occurrence-title {
-  font-weight: 600;
-  font-size: 1rem;
-}
-
-.occurrence-category {
-  font-size: 0.75rem;
-  color: var(--text-secondary);
-  font-family: var(--font-mono);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.occurrence-actions {
-  display: flex;
-  gap: 0.5rem;
-}
-
-/* ===== ROUTINE CARD ===== */
-.routine-card {
-  border-left: 4px solid;
-  position: relative;
-}
-
-.routine-card .routine-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  margin-bottom: 1rem;
-}
-
-.routine-card .routine-actions {
-  display: flex;
-  gap: 0.25rem;
-}
-
-.routine-card h3 {
-  font-size: 1.125rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-}
-
-.routine-meta {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  color: var(--text-secondary);
-  font-size: 0.875rem;
-}
-
-.routine-meta-item {
-  display: flex;
-  align-items: center;
-  gap: 0.375rem;
-}
-
-/* ===== CALENDAR ===== */
-.calendar-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1.5rem;
-}
-
-.calendar-nav {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.calendar-nav .btn {
-  padding: 0.5rem;
-}
-
-.calendar-title {
-  font-weight: 600;
-  min-width: 150px;
-  text-align: center;
-}
-
-.calendar-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 0.25rem;
-}
-
-.calendar-day-header {
-  text-align: center;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--text-muted);
-  padding: 0.5rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.calendar-day {
-  aspect-ratio: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.875rem;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: var(--transition);
-  position: relative;
-  font-family: var(--font-mono);
-}
-
-.calendar-day:hover:not(.empty):not(.future) {
-  transform: scale(1.1);
-}
-
-.calendar-day.empty {
-  background: transparent;
-  cursor: default;
-}
-
-.calendar-day.today {
-  font-weight: 700;
-  box-shadow: inset 0 0 0 2px var(--primary);
-}
-
-.calendar-day.perfect { background: var(--success); color: white; }
-.calendar-day.good { background: var(--success-light); color: var(--success-dark); }
-.calendar-day.partial { background: var(--warning-light); color: var(--warning-dark); }
-.calendar-day.missed { background: var(--error-light); color: var(--error-dark); }
-.calendar-day.future {
-  background: var(--border);
-  color: var(--text-muted);
-  cursor: default;
-}
-
-/* ===== ANALYTICS ===== */
-.chart-bar {
-  height: 8rem;
-  display: flex;
-  align-items: flex-end;
-  gap: 0.5rem;
-  padding: 1rem 0;
-}
-
-.bar {
-  flex: 1;
-  background: var(--primary);
-  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
-  transition: height 0.3s ease;
-  position: relative;
-  min-height: 4px;
-}
-
-.bar:hover {
-  opacity: 0.8;
-}
-
-.bar-label {
-  position: absolute;
-  bottom: -1.5rem;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 0.625rem;
-  color: var(--text-muted);
-  white-space: nowrap;
-}
-
-.heatmap {
-  display: flex;
-  gap: 0.25rem;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.heatmap-cell {
-  width: 1.25rem;
-  height: 1.25rem;
-  border-radius: var(--radius-sm);
-  background: var(--border);
-  cursor: pointer;
-  transition: var(--transition);
-}
-
-.heatmap-cell:hover {
-  transform: scale(1.2);
-}
-
-.heatmap-cell.level-0 { background: var(--border); }
-.heatmap-cell.level-1 { background: #cfe6da; }
-.heatmap-cell.level-2 { background: #93cdaf; }
-.heatmap-cell.level-3 { background: #4fb083; }
-.heatmap-cell.level-4 { background: #1f9d5b; }
-
-[data-theme="dark"] .heatmap-cell.level-1 { background: #174030; }
-[data-theme="dark"] .heatmap-cell.level-2 { background: #1a6640; }
-[data-theme="dark"] .heatmap-cell.level-3 { background: #1f9d5b; }
-[data-theme="dark"] .heatmap-cell.level-4 { background: #34d399; }
-
-.heatmap-legend {
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-  margin-top: 1rem;
-  font-size: 0.875rem;
-}
-
-.heatmap-legend-item {
-  display: flex;
-  align-items: center;
-  gap: 0.375rem;
-}
-
-.heatmap-legend-dot {
-  width: 0.75rem;
-  height: 0.75rem;
-  border-radius: var(--radius-sm);
-}
-
-/* ===== SETTINGS ===== */
-.settings-section {
-  margin-bottom: 2rem;
-  padding-bottom: 2rem;
-  border-bottom: 1px solid var(--border);
-}
-
-.settings-section:last-child {
-  border-bottom: none;
-  margin-bottom: 0;
-  padding-bottom: 0;
-}
-
-.settings-label {
-  display: block;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  color: var(--text-primary);
-}
-
-.settings-hint {
-  font-size: 0.875rem;
-  color: var(--text-secondary);
-  margin-top: 0.25rem;
-}
-
-.settings-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1rem 0;
-}
-
-/* ===== MODAL ===== */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: var(--bg-overlay);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 50;
-  backdrop-filter: blur(4px);
-  animation: fadeIn 0.2s ease;
-  padding: 1rem;
-}
-
-.modal-content {
-  background: var(--bg-card);
-  border-radius: var(--radius-xl);
-  padding: 2rem;
-  width: 100%;
-  max-width: 500px;
-  max-height: 90vh;
-  overflow-y: auto;
-  animation: slideUp 0.3s ease;
-  box-shadow: var(--shadow-xl);
-}
-
-.modal-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1.5rem;
-}
-
-.modal-title {
-  font-family: var(--font-display);
-  font-size: 1.5rem;
-  font-weight: 700;
-}
-
-.modal-close {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0.5rem;
-  border-radius: var(--radius-md);
-  color: var(--text-secondary);
-  transition: var(--transition);
-}
-
-.modal-close:hover {
-  background: var(--bg-elevated);
-  color: var(--text-primary);
-}
-
-.modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 2rem;
-}
-
-/* ===== TOAST ===== */
-.toast-container {
-  position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  z-index: 100;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.toast {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 1rem 1.25rem;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
-  animation: slideIn 0.3s ease;
-  min-width: 300px;
-}
-
-.toast-success { border-left: 4px solid var(--success); }
-.toast-error { border-left: 4px solid var(--error); }
-.toast-info { border-left: 4px solid var(--info); }
-.toast-warning { border-left: 4px solid var(--warning); }
-
-/* ===== TABS ===== */
-.tabs {
-  display: flex;
-  gap: 0.25rem;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 1.5rem;
-}
-
-.tab {
-  padding: 0.75rem 1.25rem;
-  background: none;
-  border: none;
-  border-bottom: 2px solid transparent;
-  cursor: pointer;
-  font-weight: 500;
-  color: var(--text-secondary);
-  transition: var(--transition);
-}
-
-.tab:hover {
-  color: var(--text-primary);
-}
-
-.tab.active {
-  color: var(--primary);
-  border-bottom-color: var(--primary);
-}
-
-/* ===== EMPTY STATE ===== */
-.empty-state {
-  text-align: center;
-  padding: 4rem 2rem;
-}
-
-.empty-state-icon {
-  font-size: 4rem;
-  margin-bottom: 1rem;
-  opacity: 0.3;
-}
-
-.empty-state-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-}
-
-.empty-state-text {
-  color: var(--text-secondary);
-}
-
-/* ===== FORM ===== */
-.form-group {
-  margin-bottom: 1.25rem;
-}
-
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-}
-
-.form-label {
-  display: block;
-  font-weight: 500;
-  margin-bottom: 0.5rem;
-  color: var(--text-primary);
-}
-
-.form-hint {
-  font-size: 0.875rem;
-  color: var(--text-secondary);
-  margin-top: 0.25rem;
-}
-
-.form-error {
-  font-size: 0.875rem;
-  color: var(--error);
-  margin-top: 0.25rem;
-}
-
-/* ===== SPINNER ===== */
-.spinner {
-  width: 1.5rem;
-  height: 1.5rem;
-  border: 2px solid var(--border);
-  border-top-color: var(--primary);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-/* ===== ANIMATIONS ===== */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes slideIn {
-  from { opacity: 0; transform: translateX(100%); }
-  to { opacity: 1; transform: translateX(0); }
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-/* ===== RESPONSIVE ===== */
-@media (max-width: 1024px) {
-  .sidebar {
-    transform: translateX(-100%);
-    transition: transform 0.3s ease;
-  }
-
-  .sidebar.open {
-    transform: translateX(0);
-  }
-
-  .main {
-    margin-left: 0;
-  }
-
-  .topbar {
-    padding: 1rem;
-  }
-
-  .content {
-    padding: 1rem;
-  }
-
-  .mobile-menu-btn {
-    display: flex;
-  }
-}
-
-@media (max-width: 640px) {
-  .metrics-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .occurrence-row {
-    flex-wrap: wrap;
-  }
-
-  .occurrence-actions {
-    margin-left: auto;
-  }
-
-  .form-row {
-    grid-template-columns: 1fr;
-  }
-
-  .calendar-day {
-    font-size: 0.75rem;
-  }
-}
-
-/* ===== MOBILE MENU BUTTON ===== */
-.mobile-menu-btn {
-  display: none;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0.5rem;
-  color: var(--text-secondary);
-}
-
-@media (max-width: 1024px) {
-  .mobile-menu-btn {
-    display: flex;
-  }
-}
-
-/* ===== CATEGORY DOT ===== */
-.category-dot {
-  width: 0.5rem;
-  height: 0.5rem;
-  border-radius: 50%;
-}
-
-.cat-health { background: var(--cat-health); }
-.cat-fitness { background: var(--cat-fitness); }
-.cat-mind { background: var(--cat-mind); }
-.cat-work { background: var(--cat-work); }
-.cat-faith { background: var(--cat-faith); }
-
-/* ===== EXPORT ===== */
-.export-options {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}
-
-.export-preview {
-  background: var(--bg-secondary);
-  border-radius: var(--radius-md);
-  padding: 1rem;
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  color: var(--text-secondary);
-  max-height: 200px;
-  overflow-y: auto;
-  white-space: pre-wrap;
-  word-break: break-all;
-}
-
-/* ===== OVERLAY BACKDROP ===== */
-.backdrop {
-  position: fixed;
-  inset: 0;
-  background: var(--bg-overlay);
-  z-index: 40;
-}
-
-/* ===== SKIP TO CONTENT (Accessibility) ===== */
-.skip-link {
-  position: absolute;
-  top: -100%;
-  left: 0;
-  background: var(--primary);
-  color: white;
-  padding: 0.5rem 1rem;
-  z-index: 100;
-  transition: top 0.3s;
-}
-
-.skip-link:focus {
-  top: 0;
-}
-
-/* ===== FOCUS VISIBLE ===== */
-:focus-visible {
-  outline: 2px solid var(--primary);
-  outline-offset: 2px;
-}
-
-/* ===== REDUCED MOTION ===== */
-@media (prefers-reduced-motion: reduce) {
-  *, ::before, ::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-</style>
-</head>
-<body>
-<a href="#main-content" class="skip-link">Skip to main content</a>
-<div id="app"></div>
-
-<script>
-// ============================================================================
-// ROUTINEFLOW - Complete Behavioral Tracking System
-// Based on BRD v2.1 Requirements
-// ============================================================================
-
-// ===== STATE MANAGEMENT =====
-const state = {
-  view: 'auth',
-  user: null,
-  isAuthenticated: false,
-  routines: [],
-  occurrences: [],
-  logs: [],
-  settings: {
-    timezone: 'Asia/Dhaka',
-    defaultReminderMinutes: 15,
-    notificationPreferences: {
-      browserNotificationsEnabled: false,
-      overnightNotificationsDisabled: false
-    },
-    theme: 'light',
-    dataRetentionMonths: null
-  },
-  selectedDate: new Date(),
-  analyticsPeriod: 'week',
-  loading: false,
-  calendarDate: new Date()
-};
-
-// ===== SAMPLE DATA GENERATOR =====
-const generateSampleData = () => {
-  const routines = [
-    {
-      id: 'r1',
-      title: 'Morning Prayer',
-      category: 'Faith',
-      scheduledTime: '05:00',
-      recurrenceType: 'daily',
-      recurrenceRules: {},
-      reminderOverride: null,
-      isActive: true
-    },
-    {
-      id: 'r2',
-      title: 'Gym Workout',
-      category: 'Fitness',
-      scheduledTime: '06:30',
-      recurrenceType: 'weekly',
-      recurrenceRules: { daysOfWeek: [1, 3, 5] },
-      reminderOverride: null,
-      isActive: true
-    },
-    {
-      id: 'r3',
-      title: 'Meditation',
-      category: 'Mind',
-      scheduledTime: '07:00',
-      recurrenceType: 'daily',
-      recurrenceRules: {},
-      reminderOverride: null,
-      isActive: true
-    },
-    {
-      id: 'r4',
-      title: 'Deep Work Session',
-      category: 'Work',
-      scheduledTime: '09:00',
-      recurrenceType: 'daily',
-      recurrenceRules: {},
-      reminderOverride: 30,
-      isActive: true
-    },
-    {
-      id: 'r5',
-      title: 'Evening Walk',
-      category: 'Health',
-      scheduledTime: '18:00',
-      recurrenceType: 'daily',
-      recurrenceRules: {},
-      reminderOverride: null,
-      isActive: true
-    },
-    {
-      id: 'r6',
-      title: 'Vitamins',
-      category: 'Health',
-      scheduledTime: '08:00',
-      recurrenceType: 'daily',
-      recurrenceRules: {},
-      reminderOverride: null,
-      isActive: true
-    },
-    {
-      id: 'r7',
-      title: 'Reading',
-      category: 'Mind',
-      scheduledTime: '21:00',
-      recurrenceType: 'daily',
-      recurrenceRules: {},
-      reminderOverride: null,
-      isActive: true
-    },
-    {
-      id: 'r8',
-      title: 'Team Standup',
-      category: 'Work',
-      scheduledTime: '10:00',
-      recurrenceType: 'weekly',
-      recurrenceRules: { daysOfWeek: [1, 2, 3, 4, 5] },
-      reminderOverride: null,
-      isActive: true
-    }
-  ];
-
-  const today = new Date();
-  const todayStr = formatDate(today);
-  const occurrences = [];
-  const logs = [];
-
-  // Generate today's occurrences
-  routines.forEach(routine => {
-    if (routine.isActive && shouldOccurToday(routine, today)) {
-      occurrences.push({
-        id: `occ-${routine.id}-${todayStr}`,
-        routineId: routine.id,
-        date: todayStr,
-        scheduledTime: routine.scheduledTime,
-        scheduledTimeUtc: null,
-        timezoneAtGeneration: state.settings.timezone,
-        status: 'Pending',
-        reminderMinutes: routine.reminderOverride || state.settings.defaultReminderMinutes,
-        notificationDueAt: null,
-        title: routine.title,
-        category: routine.category
-      });
-    }
-  });
-
-  // Generate historical logs (past 90 days)
-  for (let i = 1; i <= 90; i++) {
-    const date = new Date(today);
-    date.setDate(date.getDate() - i);
-    const dateStr = formatDate(date);
-
-    routines.forEach(routine => {
-      if (routine.isActive && shouldOccurOnDate(routine, date)) {
-        const rand = Math.random();
-        let status;
-
-        if (rand < 0.65) {
-          status = 'Completed';
-        } else if (rand < 0.85) {
-          status = 'Missed';
-        } else {
-          status = 'Skipped';
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>RoutineFlow — Complete Behavioral Tracking System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ===== ROUTINEFLOW DESIGN SYSTEM ===== */
+
+      :root {
+        /* Colors */
+        --bg-primary: #ffffff;
+        --bg-secondary: #f8fafc;
+        --bg-card: #ffffff;
+        --bg-elevated: #f1f5f9;
+        --bg-overlay: rgba(15, 23, 42, 0.4);
+
+        --text-primary: #0f172a;
+        --text-secondary: #64748b;
+        --text-muted: #94a3b8;
+        --text-inverse: #ffffff;
+
+        --border: #e2e8f0;
+        --border-light: #f1f5f9;
+        --border-dark: #cbd5e1;
+
+        /* Brand Colors */
+        --primary: #3b82f6;
+        --primary-dark: #2563eb;
+        --primary-light: #dbeafe;
+
+        /* Status Colors */
+        --success: #10b981;
+        --success-dark: #059669;
+        --success-light: #d1fae5;
+
+        --warning: #f59e0b;
+        --warning-dark: #d97706;
+        --warning-light: #fef3c7;
+
+        --error: #ef4444;
+        --error-dark: #dc2626;
+        --error-light: #fee2e2;
+
+        --info: #6366f1;
+        --info-dark: #4f46e5;
+        --info-light: #e0e7ff;
+
+        /* Category Colors */
+        --cat-health: #10b981;
+        --cat-fitness: #3b82f6;
+        --cat-mind: #8b5cf6;
+        --cat-work: #64748b;
+        --cat-faith: #f59e0b;
+
+        /* Effects */
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        --shadow-md:
+          0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-lg:
+          0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        --shadow-xl:
+          0 20px 25px -5px rgba(0, 0, 0, 0.1),
+          0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+        --radius-sm: 0.375rem;
+        --radius-md: 0.5rem;
+        --radius-lg: 0.75rem;
+        --radius-xl: 1rem;
+        --radius-full: 9999px;
+
+        /* Typography */
+        --font-display: "Space Grotesk", system-ui, -apple-system, sans-serif;
+        --font-body: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+        --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", monospace;
+
+        --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      /* ===== DARK MODE ===== */
+      [data-theme="dark"] {
+        --bg-primary: #0f172a;
+        --bg-secondary: #1e293b;
+        --bg-card: #1e293b;
+        --bg-elevated: #334155;
+        --bg-overlay: rgba(0, 0, 0, 0.6);
+
+        --text-primary: #f1f5f9;
+        --text-secondary: #cbd5e1;
+        --text-muted: #64748b;
+        --text-inverse: #0f172a;
+
+        --border: #334155;
+        --border-light: #1e293b;
+        --border-dark: #475569;
+
+        --primary: #60a5fa;
+        --primary-dark: #3b82f6;
+        --primary-light: #1e3a5f;
+
+        --success: #34d399;
+        --success-dark: #10b981;
+        --success-light: #064e3b;
+
+        --warning: #fbbf24;
+        --warning-dark: #f59e0b;
+        --warning-light: #78350f;
+
+        --error: #f87171;
+        --error-dark: #ef4444;
+        --error-light: #7f1d1d;
+
+        --info: #818cf8;
+        --info-dark: #6366f1;
+        --info-light: #312e81;
+
+        --cat-health: #34d399;
+        --cat-fitness: #60a5fa;
+        --cat-mind: #a78bfa;
+        --cat-work: #94a3b8;
+        --cat-faith: #fbbf24;
+      }
+
+      /* ===== BASE STYLES ===== */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html {
+        font-size: 16px;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      body {
+        font-family: var(--font-body);
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        line-height: 1.6;
+        min-height: 100vh;
+        transition:
+          background var(--transition),
+          color var(--transition);
+      }
+
+      /* ===== UTILITY CLASSES ===== */
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+      }
+      .flex {
+        display: flex;
+      }
+      .flex-col {
+        flex-direction: column;
+      }
+      .flex-wrap {
+        flex-wrap: wrap;
+      }
+      .items-center {
+        align-items: center;
+      }
+      .items-start {
+        align-items: flex-start;
+      }
+      .justify-between {
+        justify-content: space-between;
+      }
+      .justify-center {
+        justify-content: center;
+      }
+      .gap-1 {
+        gap: 0.25rem;
+      }
+      .gap-2 {
+        gap: 0.5rem;
+      }
+      .gap-3 {
+        gap: 0.75rem;
+      }
+      .gap-4 {
+        gap: 1rem;
+      }
+      .gap-6 {
+        gap: 1.5rem;
+      }
+      .gap-8 {
+        gap: 2rem;
+      }
+      .grid {
+        display: grid;
+      }
+      .hidden {
+        display: none;
+      }
+      .w-full {
+        width: 100%;
+      }
+      .h-full {
+        height: 100%;
+      }
+      .text-center {
+        text-align: center;
+      }
+      .font-mono {
+        font-family: var(--font-mono);
+      }
+      .font-display {
+        font-family: var(--font-display);
+      }
+
+      /* ===== BUTTONS ===== */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.625rem 1.25rem;
+        font-family: var(--font-body);
+        font-size: 0.9375rem;
+        font-weight: 600;
+        line-height: 1;
+        border-radius: var(--radius-md);
+        border: none;
+        cursor: pointer;
+        transition: var(--transition);
+        text-decoration: none;
+        white-space: nowrap;
+      }
+
+      .btn:focus-visible {
+        outline: 2px solid var(--primary);
+        outline-offset: 2px;
+      }
+
+      .btn-primary {
+        background: var(--primary);
+        color: white;
+      }
+      .btn-primary:hover {
+        background: var(--primary-dark);
+        transform: translateY(-1px);
+      }
+      .btn-primary:active {
+        transform: translateY(0);
+      }
+
+      .btn-secondary {
+        background: var(--bg-card);
+        color: var(--text-primary);
+        border: 1px solid var(--border);
+      }
+      .btn-secondary:hover {
+        background: var(--bg-elevated);
+        border-color: var(--border-dark);
+      }
+
+      .btn-ghost {
+        background: transparent;
+        color: var(--text-secondary);
+      }
+      .btn-ghost:hover {
+        background: var(--bg-elevated);
+        color: var(--text-primary);
+      }
+
+      .btn-danger {
+        background: var(--error);
+        color: white;
+      }
+      .btn-danger:hover {
+        background: var(--error-dark);
+      }
+
+      .btn-success {
+        background: var(--success);
+        color: white;
+      }
+      .btn-success:hover {
+        background: var(--success-dark);
+      }
+
+      .btn-icon {
+        padding: 0.625rem;
+        width: 2.75rem;
+        height: 2.75rem;
+      }
+
+      .btn-lg {
+        padding: 0.875rem 1.75rem;
+        font-size: 1rem;
+      }
+
+      .btn-sm {
+        padding: 0.375rem 0.875rem;
+        font-size: 0.875rem;
+      }
+
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none !important;
+      }
+
+      /* ===== CARD ===== */
+      .card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-xl);
+        padding: 1.5rem;
+        box-shadow: var(--shadow-sm);
+        transition: var(--transition);
+      }
+
+      .card:hover {
+        box-shadow: var(--shadow-md);
+      }
+
+      .card-sm {
+        padding: 1rem;
+      }
+      .card-lg {
+        padding: 2rem;
+      }
+
+      /* ===== INPUT ===== */
+      .input,
+      .select,
+      .textarea {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        font-family: var(--font-body);
+        font-size: 0.9375rem;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        color: var(--text-primary);
+        transition: var(--transition);
+      }
+
+      .input:focus,
+      .select:focus,
+      .textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px var(--primary-light);
+      }
+
+      .input::placeholder,
+      .textarea::placeholder {
+        color: var(--text-muted);
+      }
+
+      .input:disabled,
+      .select:disabled,
+      .textarea:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .textarea {
+        min-height: 80px;
+        resize: vertical;
+      }
+
+      /* ===== CHECKBOX & TOGGLE ===== */
+      .checkbox {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        cursor: pointer;
+      }
+
+      .checkbox input[type="checkbox"] {
+        width: 1.25rem;
+        height: 1.25rem;
+        accent-color: var(--primary);
+        cursor: pointer;
+      }
+
+      .toggle {
+        position: relative;
+        display: inline-block;
+        width: 3rem;
+        height: 1.75rem;
+      }
+
+      .toggle input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .toggle-slider {
+        position: absolute;
+        inset: 0;
+        background: var(--border);
+        border-radius: var(--radius-full);
+        cursor: pointer;
+        transition: var(--transition);
+      }
+
+      .toggle-slider::before {
+        content: "";
+        position: absolute;
+        height: 1.375rem;
+        width: 1.375rem;
+        left: 0.1875rem;
+        bottom: 0.1875rem;
+        background: white;
+        border-radius: 50%;
+        transition: var(--transition);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .toggle input:checked + .toggle-slider {
+        background: var(--primary);
+      }
+
+      .toggle input:checked + .toggle-slider::before {
+        transform: translateX(1.25rem);
+      }
+
+      /* ===== BADGE ===== */
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.25rem 0.75rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        border-radius: var(--radius-full);
+        font-family: var(--font-mono);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .badge-primary {
+        background: var(--primary-light);
+        color: var(--primary-dark);
+      }
+      .badge-success {
+        background: var(--success-light);
+        color: var(--success-dark);
+      }
+      .badge-warning {
+        background: var(--warning-light);
+        color: var(--warning-dark);
+      }
+      .badge-error {
+        background: var(--error-light);
+        color: var(--error-dark);
+      }
+      .badge-neutral {
+        background: var(--bg-elevated);
+        color: var(--text-secondary);
+      }
+      .badge-info {
+        background: var(--info-light);
+        color: var(--info-dark);
+      }
+
+      /* ===== STATUS PILLS ===== */
+      .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        padding: 0.375rem 0.75rem;
+        border-radius: var(--radius-full);
+        font-size: 0.8125rem;
+        font-weight: 600;
+      }
+
+      .status-completed {
+        background: var(--success-light);
+        color: var(--success-dark);
+      }
+      .status-pending {
+        background: var(--bg-elevated);
+        color: var(--text-secondary);
+      }
+      .status-missed {
+        background: var(--error-light);
+        color: var(--error-dark);
+      }
+      .status-skipped {
+        background: var(--warning-light);
+        color: var(--warning-dark);
+      }
+
+      /* ===== PROGRESS RING ===== */
+      .progress-ring {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .progress-ring svg {
+        transform: rotate(-90deg);
+      }
+
+      .progress-ring-bg {
+        fill: none;
+        stroke: var(--border);
+      }
+
+      .progress-ring-fill {
+        fill: none;
+        stroke: var(--primary);
+        stroke-linecap: round;
+        transition: stroke-dashoffset 0.5s ease;
+      }
+
+      .progress-ring-text {
+        position: absolute;
+        font-family: var(--font-display);
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-primary);
+      }
+
+      /* ===== LAYOUT ===== */
+      .app {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      .sidebar {
+        width: 16rem;
+        background: var(--bg-card);
+        border-right: 1px solid var(--border);
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        height: 100vh;
+        z-index: 20;
+        overflow-y: auto;
+      }
+
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        border-radius: var(--radius-md);
+        transition: var(--transition);
+        font-weight: 500;
+        cursor: pointer;
+        border: none;
+        background: none;
+        width: 100%;
+        text-align: left;
+      }
+
+      .nav-item:hover {
+        background: var(--bg-elevated);
+        color: var(--text-primary);
+      }
+
+      .nav-item.active {
+        background: var(--primary-light);
+        color: var(--primary-dark);
+      }
+
+      .main {
+        flex: 1;
+        margin-left: 16rem;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1.25rem 2rem;
+        background: var(--bg-card);
+        border-bottom: 1px solid var(--border);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+
+      .content {
+        padding: 2rem;
+        flex: 1;
+        overflow-y: auto;
+        max-width: 1400px;
+        width: 100%;
+      }
+
+      /* ===== AUTH ===== */
+      .auth-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        padding: 1.5rem;
+        background: linear-gradient(
+          135deg,
+          var(--bg-secondary) 0%,
+          var(--primary-light) 50%,
+          var(--info-light) 100%
+        );
+      }
+
+      .auth-card {
+        width: 100%;
+        max-width: 440px;
+        padding: 2.5rem;
+      }
+
+      .auth-logo {
+        margin-bottom: 2rem;
+        text-align: center;
+      }
+
+      .auth-logo h1 {
+        font-family: var(--font-display);
+        font-size: 2rem;
+        font-weight: 700;
+      }
+
+      .auth-logo p {
+        color: var(--text-secondary);
+        margin-top: 0.5rem;
+      }
+
+      .divider {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin: 1.5rem 0;
+      }
+
+      .divider::before,
+      .divider::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: var(--border);
+      }
+
+      /* ===== DASHBOARD ===== */
+      .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .metric-card {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .metric-icon {
+        width: 3rem;
+        height: 3rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: var(--radius-lg);
+        flex-shrink: 0;
+      }
+
+      .metric-value {
+        font-family: var(--font-display);
+        font-size: 2rem;
+        font-weight: 700;
+        line-height: 1;
+      }
+
+      .metric-label {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+      }
+
+      .metric-change {
+        font-size: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        margin-top: 0.25rem;
+      }
+
+      .metric-change.positive {
+        color: var(--success);
+      }
+      .metric-change.negative {
+        color: var(--error);
+      }
+
+      /* ===== OCCURRENCE ROW ===== */
+      .occurrence-row {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        transition: var(--transition);
+      }
+
+      .occurrence-row:hover {
+        border-color: var(--primary);
+        box-shadow: var(--shadow-md);
+      }
+
+      .occurrence-accent {
+        width: 4px;
+        height: 100%;
+        border-radius: 2px;
+        flex-shrink: 0;
+      }
+
+      .occurrence-time {
+        font-family: var(--font-mono);
+        font-size: 1.125rem;
+        font-weight: 600;
+        min-width: 4rem;
+      }
+
+      .occurrence-content {
+        flex: 1;
+      }
+
+      .occurrence-title {
+        font-weight: 600;
+        font-size: 1rem;
+      }
+
+      .occurrence-category {
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+        font-family: var(--font-mono);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .occurrence-actions {
+        display: flex;
+        gap: 0.5rem;
+      }
+
+      /* ===== ROUTINE CARD ===== */
+      .routine-card {
+        border-left: 4px solid;
+        position: relative;
+      }
+
+      .routine-card .routine-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+      }
+
+      .routine-card .routine-actions {
+        display: flex;
+        gap: 0.25rem;
+      }
+
+      .routine-card h3 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+      }
+
+      .routine-meta {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+      }
+
+      .routine-meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+      }
+
+      /* ===== CALENDAR ===== */
+      .calendar-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+      }
+
+      .calendar-nav {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .calendar-nav .btn {
+        padding: 0.5rem;
+      }
+
+      .calendar-title {
+        font-weight: 600;
+        min-width: 150px;
+        text-align: center;
+      }
+
+      .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 0.25rem;
+      }
+
+      .calendar-day-header {
+        text-align: center;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        padding: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .calendar-day {
+        aspect-ratio: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.875rem;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: var(--transition);
+        position: relative;
+        font-family: var(--font-mono);
+      }
+
+      .calendar-day:hover:not(.empty):not(.future) {
+        transform: scale(1.1);
+      }
+
+      .calendar-day.empty {
+        background: transparent;
+        cursor: default;
+      }
+
+      .calendar-day.today {
+        font-weight: 700;
+        box-shadow: inset 0 0 0 2px var(--primary);
+      }
+
+      .calendar-day.perfect {
+        background: var(--success);
+        color: white;
+      }
+      .calendar-day.good {
+        background: var(--success-light);
+        color: var(--success-dark);
+      }
+      .calendar-day.partial {
+        background: var(--warning-light);
+        color: var(--warning-dark);
+      }
+      .calendar-day.missed {
+        background: var(--error-light);
+        color: var(--error-dark);
+      }
+      .calendar-day.future {
+        background: var(--border);
+        color: var(--text-muted);
+        cursor: default;
+      }
+
+      /* ===== ANALYTICS ===== */
+      .chart-bar {
+        height: 8rem;
+        display: flex;
+        align-items: flex-end;
+        gap: 0.5rem;
+        padding: 1rem 0;
+      }
+
+      .bar {
+        flex: 1;
+        background: var(--primary);
+        border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+        transition: height 0.3s ease;
+        position: relative;
+        min-height: 4px;
+      }
+
+      .bar:hover {
+        opacity: 0.8;
+      }
+
+      .bar-label {
+        position: absolute;
+        bottom: -1.5rem;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.625rem;
+        color: var(--text-muted);
+        white-space: nowrap;
+      }
+
+      .heatmap {
+        display: flex;
+        gap: 0.25rem;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .heatmap-cell {
+        width: 1.25rem;
+        height: 1.25rem;
+        border-radius: var(--radius-sm);
+        background: var(--border);
+        cursor: pointer;
+        transition: var(--transition);
+      }
+
+      .heatmap-cell:hover {
+        transform: scale(1.2);
+      }
+
+      .heatmap-cell.level-0 {
+        background: var(--border);
+      }
+      .heatmap-cell.level-1 {
+        background: #cfe6da;
+      }
+      .heatmap-cell.level-2 {
+        background: #93cdaf;
+      }
+      .heatmap-cell.level-3 {
+        background: #4fb083;
+      }
+      .heatmap-cell.level-4 {
+        background: #1f9d5b;
+      }
+
+      [data-theme="dark"] .heatmap-cell.level-1 {
+        background: #174030;
+      }
+      [data-theme="dark"] .heatmap-cell.level-2 {
+        background: #1a6640;
+      }
+      [data-theme="dark"] .heatmap-cell.level-3 {
+        background: #1f9d5b;
+      }
+      [data-theme="dark"] .heatmap-cell.level-4 {
+        background: #34d399;
+      }
+
+      .heatmap-legend {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 1rem;
+        font-size: 0.875rem;
+      }
+
+      .heatmap-legend-item {
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+      }
+
+      .heatmap-legend-dot {
+        width: 0.75rem;
+        height: 0.75rem;
+        border-radius: var(--radius-sm);
+      }
+
+      /* ===== SETTINGS ===== */
+      .settings-section {
+        margin-bottom: 2rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .settings-section:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+      }
+
+      .settings-label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--text-primary);
+      }
+
+      .settings-hint {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        margin-top: 0.25rem;
+      }
+
+      .settings-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 0;
+      }
+
+      /* ===== MODAL ===== */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: var(--bg-overlay);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 50;
+        backdrop-filter: blur(4px);
+        animation: fadeIn 0.2s ease;
+        padding: 1rem;
+      }
+
+      .modal-content {
+        background: var(--bg-card);
+        border-radius: var(--radius-xl);
+        padding: 2rem;
+        width: 100%;
+        max-width: 500px;
+        max-height: 90vh;
+        overflow-y: auto;
+        animation: slideUp 0.3s ease;
+        box-shadow: var(--shadow-xl);
+      }
+
+      .modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+      }
+
+      .modal-title {
+        font-family: var(--font-display);
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
+
+      .modal-close {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0.5rem;
+        border-radius: var(--radius-md);
+        color: var(--text-secondary);
+        transition: var(--transition);
+      }
+
+      .modal-close:hover {
+        background: var(--bg-elevated);
+        color: var(--text-primary);
+      }
+
+      .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        margin-top: 2rem;
+      }
+
+      /* ===== TOAST ===== */
+      .toast-container {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        z-index: 100;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      .toast {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem 1.25rem;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-lg);
+        animation: slideIn 0.3s ease;
+        min-width: 300px;
+      }
+
+      .toast-success {
+        border-left: 4px solid var(--success);
+      }
+      .toast-error {
+        border-left: 4px solid var(--error);
+      }
+      .toast-info {
+        border-left: 4px solid var(--info);
+      }
+      .toast-warning {
+        border-left: 4px solid var(--warning);
+      }
+
+      /* ===== TABS ===== */
+      .tabs {
+        display: flex;
+        gap: 0.25rem;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 1.5rem;
+      }
+
+      .tab {
+        padding: 0.75rem 1.25rem;
+        background: none;
+        border: none;
+        border-bottom: 2px solid transparent;
+        cursor: pointer;
+        font-weight: 500;
+        color: var(--text-secondary);
+        transition: var(--transition);
+      }
+
+      .tab:hover {
+        color: var(--text-primary);
+      }
+
+      .tab.active {
+        color: var(--primary);
+        border-bottom-color: var(--primary);
+      }
+
+      /* ===== EMPTY STATE ===== */
+      .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+      }
+
+      .empty-state-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        opacity: 0.3;
+      }
+
+      .empty-state-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+      }
+
+      .empty-state-text {
+        color: var(--text-secondary);
+      }
+
+      /* ===== FORM ===== */
+      .form-group {
+        margin-bottom: 1.25rem;
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .form-label {
+        display: block;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        color: var(--text-primary);
+      }
+
+      .form-hint {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        margin-top: 0.25rem;
+      }
+
+      .form-error {
+        font-size: 0.875rem;
+        color: var(--error);
+        margin-top: 0.25rem;
+      }
+
+      /* ===== SPINNER ===== */
+      .spinner {
+        width: 1.5rem;
+        height: 1.5rem;
+        border: 2px solid var(--border);
+        border-top-color: var(--primary);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+
+      /* ===== ANIMATIONS ===== */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateX(100%);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* ===== RESPONSIVE ===== */
+      @media (max-width: 1024px) {
+        .sidebar {
+          transform: translateX(-100%);
+          transition: transform 0.3s ease;
         }
 
-        const delayMinutes = status === 'Completed' ? Math.floor(Math.random() * 40 - 10) : null;
+        .sidebar.open {
+          transform: translateX(0);
+        }
 
-        logs.push({
-          id: `log-${routine.id}-${dateStr}`,
-          routineId: routine.id,
-          routineTitleAtLog: routine.title,
-          routineCategoryAtLog: routine.category,
-          scheduleTypeAtLog: 'fixed',
-          recurrenceTypeAtLog: routine.recurrenceType,
-          recurrenceRulesAtLog: routine.recurrenceRules,
-          reminderMinutesAtLog: routine.reminderOverride || state.settings.defaultReminderMinutes,
-          date: dateStr,
-          scheduledTime: routine.scheduledTime,
-          scheduledTimeUtc: null,
-          completedAt: status === 'Completed' ? date.toISOString() : null,
-          timezoneAtLog: state.settings.timezone,
-          status: status,
-          delayMinutes: delayMinutes
-        });
+        .main {
+          margin-left: 0;
+        }
+
+        .topbar {
+          padding: 1rem;
+        }
+
+        .content {
+          padding: 1rem;
+        }
+
+        .mobile-menu-btn {
+          display: flex;
+        }
       }
-    });
-  }
 
-  return { routines, occurrences, logs };
-};
+      @media (max-width: 640px) {
+        .metrics-grid {
+          grid-template-columns: 1fr 1fr;
+        }
 
-const shouldOccurToday = (routine, date) => {
-  return shouldOccurOnDate(routine, date);
-};
+        .occurrence-row {
+          flex-wrap: wrap;
+        }
 
-const shouldOccurOnDate = (routine, date) => {
-  if (!routine.isActive) return false;
+        .occurrence-actions {
+          margin-left: auto;
+        }
 
-  switch (routine.recurrenceType) {
-    case 'daily':
-      return true;
-    case 'weekly':
-      const dayOfWeek = date.getDay(); // 0 = Sunday, 1 = Monday, etc.
-      return routine.recurrenceRules.daysOfWeek?.includes(dayOfWeek);
-    case 'monthly':
-      const dayOfMonth = date.getDate();
-      return routine.recurrenceRules.daysOfMonth?.includes(dayOfMonth);
-    default:
-      return true;
-  }
-};
+        .form-row {
+          grid-template-columns: 1fr;
+        }
 
-// ===== UTILITIES =====
-const formatDate = (date) => {
-  return date.toISOString().split('T')[0];
-};
+        .calendar-day {
+          font-size: 0.75rem;
+        }
+      }
 
-const formatTime = (date) => {
-  return date.toTimeString().slice(0, 5);
-};
+      /* ===== MOBILE MENU BUTTON ===== */
+      .mobile-menu-btn {
+        display: none;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0.5rem;
+        color: var(--text-secondary);
+      }
 
-const formatDisplayDate = (dateStr, timezone = state.settings.timezone) => {
-  const date = new Date(dateStr + 'T00:00:00');
-  return date.toLocaleDateString('en-US', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    timeZone: timezone
-  });
-};
+      @media (max-width: 1024px) {
+        .mobile-menu-btn {
+          display: flex;
+        }
+      }
 
-const getCategoryClass = (category) => {
-  const classes = {
-    'Faith': 'cat-faith',
-    'Fitness': 'cat-fitness',
-    'Mind': 'cat-mind',
-    'Work': 'cat-work',
-    'Health': 'cat-health'
-  };
-  return classes[category] || '';
-};
+      /* ===== CATEGORY DOT ===== */
+      .category-dot {
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: 50%;
+      }
 
-const getCategoryColor = (category) => {
-  const colors = {
-    'Faith': 'var(--cat-faith)',
-    'Fitness': 'var(--cat-fitness)',
-    'Mind': 'var(--cat-mind)',
-    'Work': 'var(--cat-work)',
-    'Health': 'var(--cat-health)'
-  };
-  return colors[category] || 'var(--border)';
-};
+      .cat-health {
+        background: var(--cat-health);
+      }
+      .cat-fitness {
+        background: var(--cat-fitness);
+      }
+      .cat-mind {
+        background: var(--cat-mind);
+      }
+      .cat-work {
+        background: var(--cat-work);
+      }
+      .cat-faith {
+        background: var(--cat-faith);
+      }
 
-// ===== TOAST NOTIFICATIONS =====
-const showToast = (message, type = 'info', duration = 4000) => {
-  const container = getToastContainer();
-  const toast = document.createElement('div');
-  toast.className = `toast toast-${type}`;
-  toast.innerHTML = `
+      /* ===== EXPORT ===== */
+      .export-options {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .export-preview {
+        background: var(--bg-secondary);
+        border-radius: var(--radius-md);
+        padding: 1rem;
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+        max-height: 200px;
+        overflow-y: auto;
+        white-space: pre-wrap;
+        word-break: break-all;
+      }
+
+      /* ===== OVERLAY BACKDROP ===== */
+      .backdrop {
+        position: fixed;
+        inset: 0;
+        background: var(--bg-overlay);
+        z-index: 40;
+      }
+
+      /* ===== SKIP TO CONTENT (Accessibility) ===== */
+      .skip-link {
+        position: absolute;
+        top: -100%;
+        left: 0;
+        background: var(--primary);
+        color: white;
+        padding: 0.5rem 1rem;
+        z-index: 100;
+        transition: top 0.3s;
+      }
+
+      .skip-link:focus {
+        top: 0;
+      }
+
+      /* ===== FOCUS VISIBLE ===== */
+      :focus-visible {
+        outline: 2px solid var(--primary);
+        outline-offset: 2px;
+      }
+
+      /* ===== REDUCED MOTION ===== */
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        ::before,
+        ::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <div id="app"></div>
+
+    <script>
+      // ============================================================================
+      // ROUTINEFLOW - Complete Behavioral Tracking System
+      // Based on BRD v2.1 Requirements
+      // ============================================================================
+
+      // ===== STATE MANAGEMENT =====
+      const state = {
+        view: "auth",
+        user: null,
+        isAuthenticated: false,
+        routines: [],
+        occurrences: [],
+        logs: [],
+        settings: {
+          timezone: "Asia/Dhaka",
+          defaultReminderMinutes: 15,
+          notificationPreferences: {
+            browserNotificationsEnabled: false,
+            overnightNotificationsDisabled: false,
+          },
+          theme: "light",
+          dataRetentionMonths: null,
+        },
+        selectedDate: new Date(),
+        analyticsPeriod: "week",
+        loading: false,
+        calendarDate: new Date(),
+      }
+
+      // ===== SAMPLE DATA GENERATOR =====
+      const generateSampleData = () => {
+        const routines = [
+          {
+            id: "r1",
+            title: "Morning Prayer",
+            category: "Faith",
+            scheduledTime: "05:00",
+            recurrenceType: "daily",
+            recurrenceRules: {},
+            reminderOverride: null,
+            isActive: true,
+          },
+          {
+            id: "r2",
+            title: "Gym Workout",
+            category: "Fitness",
+            scheduledTime: "06:30",
+            recurrenceType: "weekly",
+            recurrenceRules: { daysOfWeek: [1, 3, 5] },
+            reminderOverride: null,
+            isActive: true,
+          },
+          {
+            id: "r3",
+            title: "Meditation",
+            category: "Mind",
+            scheduledTime: "07:00",
+            recurrenceType: "daily",
+            recurrenceRules: {},
+            reminderOverride: null,
+            isActive: true,
+          },
+          {
+            id: "r4",
+            title: "Deep Work Session",
+            category: "Work",
+            scheduledTime: "09:00",
+            recurrenceType: "daily",
+            recurrenceRules: {},
+            reminderOverride: 30,
+            isActive: true,
+          },
+          {
+            id: "r5",
+            title: "Evening Walk",
+            category: "Health",
+            scheduledTime: "18:00",
+            recurrenceType: "daily",
+            recurrenceRules: {},
+            reminderOverride: null,
+            isActive: true,
+          },
+          {
+            id: "r6",
+            title: "Vitamins",
+            category: "Health",
+            scheduledTime: "08:00",
+            recurrenceType: "daily",
+            recurrenceRules: {},
+            reminderOverride: null,
+            isActive: true,
+          },
+          {
+            id: "r7",
+            title: "Reading",
+            category: "Mind",
+            scheduledTime: "21:00",
+            recurrenceType: "daily",
+            recurrenceRules: {},
+            reminderOverride: null,
+            isActive: true,
+          },
+          {
+            id: "r8",
+            title: "Team Standup",
+            category: "Work",
+            scheduledTime: "10:00",
+            recurrenceType: "weekly",
+            recurrenceRules: { daysOfWeek: [1, 2, 3, 4, 5] },
+            reminderOverride: null,
+            isActive: true,
+          },
+        ]
+
+        const today = new Date()
+        const todayStr = formatDate(today)
+        const occurrences = []
+        const logs = []
+
+        // Generate today's occurrences
+        routines.forEach((routine) => {
+          if (routine.isActive && shouldOccurToday(routine, today)) {
+            occurrences.push({
+              id: `occ-${routine.id}-${todayStr}`,
+              routineId: routine.id,
+              date: todayStr,
+              scheduledTime: routine.scheduledTime,
+              scheduledTimeUtc: null,
+              timezoneAtGeneration: state.settings.timezone,
+              status: "Pending",
+              reminderMinutes:
+                routine.reminderOverride ||
+                state.settings.defaultReminderMinutes,
+              notificationDueAt: null,
+              title: routine.title,
+              category: routine.category,
+            })
+          }
+        })
+
+        // Generate historical logs (past 90 days)
+        for (let i = 1; i <= 90; i++) {
+          const date = new Date(today)
+          date.setDate(date.getDate() - i)
+          const dateStr = formatDate(date)
+
+          routines.forEach((routine) => {
+            if (routine.isActive && shouldOccurOnDate(routine, date)) {
+              const rand = Math.random()
+              let status
+
+              if (rand < 0.65) {
+                status = "Completed"
+              } else if (rand < 0.85) {
+                status = "Missed"
+              } else {
+                status = "Skipped"
+              }
+
+              const delayMinutes =
+                status === "Completed"
+                  ? Math.floor(Math.random() * 40 - 10)
+                  : null
+
+              logs.push({
+                id: `log-${routine.id}-${dateStr}`,
+                routineId: routine.id,
+                routineTitleAtLog: routine.title,
+                routineCategoryAtLog: routine.category,
+                scheduleTypeAtLog: "fixed",
+                recurrenceTypeAtLog: routine.recurrenceType,
+                recurrenceRulesAtLog: routine.recurrenceRules,
+                reminderMinutesAtLog:
+                  routine.reminderOverride ||
+                  state.settings.defaultReminderMinutes,
+                date: dateStr,
+                scheduledTime: routine.scheduledTime,
+                scheduledTimeUtc: null,
+                completedAt: status === "Completed" ? date.toISOString() : null,
+                timezoneAtLog: state.settings.timezone,
+                status: status,
+                delayMinutes: delayMinutes,
+              })
+            }
+          })
+        }
+
+        return { routines, occurrences, logs }
+      }
+
+      const shouldOccurToday = (routine, date) => {
+        return shouldOccurOnDate(routine, date)
+      }
+
+      const shouldOccurOnDate = (routine, date) => {
+        if (!routine.isActive) return false
+
+        switch (routine.recurrenceType) {
+          case "daily":
+            return true
+          case "weekly":
+            const dayOfWeek = date.getDay() // 0 = Sunday, 1 = Monday, etc.
+            return routine.recurrenceRules.daysOfWeek?.includes(dayOfWeek)
+          case "monthly":
+            const dayOfMonth = date.getDate()
+            return routine.recurrenceRules.daysOfMonth?.includes(dayOfMonth)
+          default:
+            return true
+        }
+      }
+
+      // ===== UTILITIES =====
+      const formatDate = (date) => {
+        return date.toISOString().split("T")[0]
+      }
+
+      const formatTime = (date) => {
+        return date.toTimeString().slice(0, 5)
+      }
+
+      const formatDisplayDate = (
+        dateStr,
+        timezone = state.settings.timezone
+      ) => {
+        const date = new Date(dateStr + "T00:00:00")
+        return date.toLocaleDateString("en-US", {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          timeZone: timezone,
+        })
+      }
+
+      const getCategoryClass = (category) => {
+        const classes = {
+          Faith: "cat-faith",
+          Fitness: "cat-fitness",
+          Mind: "cat-mind",
+          Work: "cat-work",
+          Health: "cat-health",
+        }
+        return classes[category] || ""
+      }
+
+      const getCategoryColor = (category) => {
+        const colors = {
+          Faith: "var(--cat-faith)",
+          Fitness: "var(--cat-fitness)",
+          Mind: "var(--cat-mind)",
+          Work: "var(--cat-work)",
+          Health: "var(--cat-health)",
+        }
+        return colors[category] || "var(--border)"
+      }
+
+      // ===== TOAST NOTIFICATIONS =====
+      const showToast = (message, type = "info", duration = 4000) => {
+        const container = getToastContainer()
+        const toast = document.createElement("div")
+        toast.className = `toast toast-${type}`
+        toast.innerHTML = `
     ${getToastIcon(type)}
     <span style="flex: 1;">${message}</span>
     <button onclick="this.parentElement.remove()" style="background: none; border: none; cursor: pointer; padding: 0.25rem;">
@@ -1473,77 +1671,80 @@ const showToast = (message, type = 'info', duration = 4000) => {
         <line x1="6" y1="6" x2="18" y2="18"/>
       </svg>
     </button>
-  `;
-  container.appendChild(toast);
+  `
+        container.appendChild(toast)
 
-  setTimeout(() => {
-    toast.style.opacity = '0';
-    toast.style.transform = 'translateX(100%)';
-    setTimeout(() => toast.remove(), 300);
-  }, duration);
-};
+        setTimeout(() => {
+          toast.style.opacity = "0"
+          toast.style.transform = "translateX(100%)"
+          setTimeout(() => toast.remove(), 300)
+        }, duration)
+      }
 
-const getToastContainer = () => {
-  let container = document.querySelector('.toast-container');
-  if (!container) {
-    container = document.createElement('div');
-    container.className = 'toast-container';
-    document.body.appendChild(container);
-  }
-  return container;
-};
+      const getToastContainer = () => {
+        let container = document.querySelector(".toast-container")
+        if (!container) {
+          container = document.createElement("div")
+          container.className = "toast-container"
+          document.body.appendChild(container)
+        }
+        return container
+      }
 
-const getToastIcon = (type) => {
-  const icons = {
-    success: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>',
-    error: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>',
-    info: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>',
-    warning: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
-  };
-  return icons[type] || icons.info;
-};
+      const getToastIcon = (type) => {
+        const icons = {
+          success:
+            '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>',
+          error:
+            '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>',
+          info: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>',
+          warning:
+            '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+        }
+        return icons[type] || icons.info
+      }
 
-// ===== MODAL SYSTEM =====
-const showModal = (content, options = {}) => {
-  // Remove existing modal
-  closeModal();
+      // ===== MODAL SYSTEM =====
+      const showModal = (content, options = {}) => {
+        // Remove existing modal
+        closeModal()
 
-  const overlay = document.createElement('div');
-  overlay.className = 'modal-overlay';
-  overlay.innerHTML = `
-    <div class="modal-content" style="max-width: ${options.maxWidth || '500px'}">
+        const overlay = document.createElement("div")
+        overlay.className = "modal-overlay"
+        overlay.innerHTML = `
+    <div class="modal-content" style="max-width: ${options.maxWidth || "500px"}">
       ${content}
     </div>
-  `;
+  `
 
-  overlay.addEventListener('click', (e) => {
-    if (e.target === overlay && options.closeOnBackdrop !== false) {
-      closeModal();
-    }
-  });
+        overlay.addEventListener("click", (e) => {
+          if (e.target === overlay && options.closeOnBackdrop !== false) {
+            closeModal()
+          }
+        })
 
-  document.body.appendChild(overlay);
-  document.body.style.overflow = 'hidden';
+        document.body.appendChild(overlay)
+        document.body.style.overflow = "hidden"
 
-  return overlay;
-};
+        return overlay
+      }
 
-const closeModal = () => {
-  const overlay = document.querySelector('.modal-overlay');
-  if (overlay) {
-    overlay.remove();
-    document.body.style.overflow = '';
-  }
-};
+      const closeModal = () => {
+        const overlay = document.querySelector(".modal-overlay")
+        if (overlay) {
+          overlay.remove()
+          document.body.style.overflow = ""
+        }
+      }
 
-// Close modal on Escape key
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') closeModal();
-});
+      // Close modal on Escape key
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeModal()
+      })
 
-// ===== CONFIRMATION DIALOG =====
-const confirmAction = (title, message, onConfirm, options = {}) => {
-  const content = `
+      // ===== CONFIRMATION DIALOG =====
+      const confirmAction = (title, message, onConfirm, options = {}) => {
+        const content = `
     <div class="modal-header">
       <h2 class="modal-title">${title}</h2>
       <button class="modal-close" onclick="closeModal()">
@@ -1558,240 +1759,263 @@ const confirmAction = (title, message, onConfirm, options = {}) => {
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-      <button class="btn ${options.danger ? 'btn-danger' : 'btn-primary'}" id="confirm-btn">
-        ${options.confirmText || 'Confirm'}
+      <button class="btn ${options.danger ? "btn-danger" : "btn-primary"}" id="confirm-btn">
+        ${options.confirmText || "Confirm"}
       </button>
     </div>
-  `;
+  `
 
-  showModal(content);
+        showModal(content)
 
-  document.getElementById('confirm-btn').addEventListener('click', () => {
-    closeModal();
-    onConfirm();
-  });
-};
+        document.getElementById("confirm-btn").addEventListener("click", () => {
+          closeModal()
+          onConfirm()
+        })
+      }
 
-// ===== ROUTINE FUNCTIONS =====
-const createOccurrence = (routine, date) => {
-  return {
-    id: `occ-${routine.id}-${formatDate(date)}`,
-    routineId: routine.id,
-    date: formatDate(date),
-    scheduledTime: routine.scheduledTime,
-    scheduledTimeUtc: null,
-    timezoneAtGeneration: state.settings.timezone,
-    status: 'Pending',
-    reminderMinutes: routine.reminderOverride || state.settings.defaultReminderMinutes,
-    notificationDueAt: null,
-    title: routine.title,
-    category: routine.category
-  };
-};
+      // ===== ROUTINE FUNCTIONS =====
+      const createOccurrence = (routine, date) => {
+        return {
+          id: `occ-${routine.id}-${formatDate(date)}`,
+          routineId: routine.id,
+          date: formatDate(date),
+          scheduledTime: routine.scheduledTime,
+          scheduledTimeUtc: null,
+          timezoneAtGeneration: state.settings.timezone,
+          status: "Pending",
+          reminderMinutes:
+            routine.reminderOverride || state.settings.defaultReminderMinutes,
+          notificationDueAt: null,
+          title: routine.title,
+          category: routine.category,
+        }
+      }
 
-const completeOccurrence = (occurrenceId) => {
-  const occ = state.occurrences.find(o => o.id === occurrenceId);
-  if (!occ || occ.status !== 'Pending') return;
+      const completeOccurrence = (occurrenceId) => {
+        const occ = state.occurrences.find((o) => o.id === occurrenceId)
+        if (!occ || occ.status !== "Pending") return
 
-  occ.status = 'Completed';
-  const now = new Date();
-  occ.completedAt = now.toISOString();
+        occ.status = "Completed"
+        const now = new Date()
+        occ.completedAt = now.toISOString()
 
-  // Calculate delay (simplified - would use proper time zones in production)
-  const [hours, mins] = occ.scheduledTime.split(':').map(Number);
-  const scheduledDate = new Date(occ.date);
-  scheduledDate.setHours(hours, mins, 0, 0);
-  const delayMinutes = Math.round((now - scheduledDate) / 60000);
-  occ.delayMinutes = delayMinutes;
+        // Calculate delay (simplified - would use proper time zones in production)
+        const [hours, mins] = occ.scheduledTime.split(":").map(Number)
+        const scheduledDate = new Date(occ.date)
+        scheduledDate.setHours(hours, mins, 0, 0)
+        const delayMinutes = Math.round((now - scheduledDate) / 60000)
+        occ.delayMinutes = delayMinutes
 
-  // Create log
-  const log = {
-    id: `log-${occ.id}`,
-    occurrenceId: occ.id,
-    routineId: occ.routineId,
-    routineTitleAtLog: occ.title,
-    routineCategoryAtLog: occ.category,
-    scheduleTypeAtLog: 'fixed',
-    recurrenceTypeAtLog: 'daily',
-    recurrenceRulesAtLog: {},
-    reminderMinutesAtLog: occ.reminderMinutes,
-    date: occ.date,
-    scheduledTime: occ.scheduledTime,
-    scheduledTimeUtc: occ.scheduledTimeUtc,
-    completedAt: occ.completedAt,
-    timezoneAtLog: state.settings.timezone,
-    status: 'Completed',
-    delayMinutes: delayMinutes
-  };
+        // Create log
+        const log = {
+          id: `log-${occ.id}`,
+          occurrenceId: occ.id,
+          routineId: occ.routineId,
+          routineTitleAtLog: occ.title,
+          routineCategoryAtLog: occ.category,
+          scheduleTypeAtLog: "fixed",
+          recurrenceTypeAtLog: "daily",
+          recurrenceRulesAtLog: {},
+          reminderMinutesAtLog: occ.reminderMinutes,
+          date: occ.date,
+          scheduledTime: occ.scheduledTime,
+          scheduledTimeUtc: occ.scheduledTimeUtc,
+          completedAt: occ.completedAt,
+          timezoneAtLog: state.settings.timezone,
+          status: "Completed",
+          delayMinutes: delayMinutes,
+        }
 
-  state.logs.unshift(log);
+        state.logs.unshift(log)
 
-  // Show toast with delay info
-  const delayText = delayMinutes > 0 ? `+${delayMinutes}m late` : delayMinutes < 0 ? `${delayMinutes}m early` : 'on time';
-  showToast(`${occ.title} completed! (${delayText})`, 'success');
-};
+        // Show toast with delay info
+        const delayText =
+          delayMinutes > 0
+            ? `+${delayMinutes}m late`
+            : delayMinutes < 0
+              ? `${delayMinutes}m early`
+              : "on time"
+        showToast(`${occ.title} completed! (${delayText})`, "success")
+      }
 
-const skipOccurrence = (occurrenceId) => {
-  const occ = state.occurrences.find(o => o.id === occurrenceId);
-  if (!occ || occ.status !== 'Pending') return;
+      const skipOccurrence = (occurrenceId) => {
+        const occ = state.occurrences.find((o) => o.id === occurrenceId)
+        if (!occ || occ.status !== "Pending") return
 
-  occ.status = 'Skipped';
+        occ.status = "Skipped"
 
-  // Create log
-  const log = {
-    id: `log-${occ.id}`,
-    occurrenceId: occ.id,
-    routineId: occ.routineId,
-    routineTitleAtLog: occ.title,
-    routineCategoryAtLog: occ.category,
-    scheduleTypeAtLog: 'fixed',
-    recurrenceTypeAtLog: 'daily',
-    recurrenceRulesAtLog: {},
-    reminderMinutesAtLog: occ.reminderMinutes,
-    date: occ.date,
-    scheduledTime: occ.scheduledTime,
-    scheduledTimeUtc: occ.scheduledTimeUtc,
-    completedAt: null,
-    timezoneAtLog: state.settings.timezone,
-    status: 'Skipped',
-    delayMinutes: null
-  };
+        // Create log
+        const log = {
+          id: `log-${occ.id}`,
+          occurrenceId: occ.id,
+          routineId: occ.routineId,
+          routineTitleAtLog: occ.title,
+          routineCategoryAtLog: occ.category,
+          scheduleTypeAtLog: "fixed",
+          recurrenceTypeAtLog: "daily",
+          recurrenceRulesAtLog: {},
+          reminderMinutesAtLog: occ.reminderMinutes,
+          date: occ.date,
+          scheduledTime: occ.scheduledTime,
+          scheduledTimeUtc: occ.scheduledTimeUtc,
+          completedAt: null,
+          timezoneAtLog: state.settings.timezone,
+          status: "Skipped",
+          delayMinutes: null,
+        }
 
-  state.logs.unshift(log);
-  showToast(`${occ.title} skipped`, 'info');
-};
+        state.logs.unshift(log)
+        showToast(`${occ.title} skipped`, "info")
+      }
 
-// ===== ANALYTICS FUNCTIONS =====
-const calculateAnalytics = (period = 'week') => {
-  const logs = state.logs;
-  const now = new Date();
-  let startDate, filteredLogs;
+      // ===== ANALYTICS FUNCTIONS =====
+      const calculateAnalytics = (period = "week") => {
+        const logs = state.logs
+        const now = new Date()
+        let startDate, filteredLogs
 
-  switch (period) {
-    case 'day':
-      startDate = new Date(now);
-      startDate.setDate(startDate.getDate() - 1);
-      break;
-    case 'week':
-      startDate = new Date(now);
-      startDate.setDate(startDate.getDate() - 7);
-      break;
-    case 'month':
-      startDate = new Date(now);
-      startDate.setMonth(startDate.getMonth() - 1);
-      break;
-    case 'year':
-      startDate = new Date(now);
-      startDate.setFullYear(startDate.getFullYear() - 1);
-      break;
-    default:
-      startDate = new Date(now);
-      startDate.setDate(startDate.getDate() - 7);
-  }
+        switch (period) {
+          case "day":
+            startDate = new Date(now)
+            startDate.setDate(startDate.getDate() - 1)
+            break
+          case "week":
+            startDate = new Date(now)
+            startDate.setDate(startDate.getDate() - 7)
+            break
+          case "month":
+            startDate = new Date(now)
+            startDate.setMonth(startDate.getMonth() - 1)
+            break
+          case "year":
+            startDate = new Date(now)
+            startDate.setFullYear(startDate.getFullYear() - 1)
+            break
+          default:
+            startDate = new Date(now)
+            startDate.setDate(startDate.getDate() - 7)
+        }
 
-  const startDateStr = formatDate(startDate);
-  filteredLogs = logs.filter(l => l.date >= startDateStr && l.date <= formatDate(now));
+        const startDateStr = formatDate(startDate)
+        filteredLogs = logs.filter(
+          (l) => l.date >= startDateStr && l.date <= formatDate(now)
+        )
 
-  const completed = filteredLogs.filter(l => l.status === 'Completed');
-  const missed = filteredLogs.filter(l => l.status === 'Missed');
-  const skipped = filteredLogs.filter(l => l.status === 'Skipped');
-  const total = filteredLogs.length;
+        const completed = filteredLogs.filter((l) => l.status === "Completed")
+        const missed = filteredLogs.filter((l) => l.status === "Missed")
+        const skipped = filteredLogs.filter((l) => l.status === "Skipped")
+        const total = filteredLogs.length
 
-  const completionRate = total > 0 ? Math.round((completed.length / total) * 100) : 0;
+        const completionRate =
+          total > 0 ? Math.round((completed.length / total) * 100) : 0
 
-  // Average delay
-  const completedWithDelay = completed.filter(l => l.delayMinutes !== null);
-  const avgDelay = completedWithDelay.length > 0
-    ? Math.round(completedWithDelay.reduce((sum, l) => sum + (l.delayMinutes || 0), 0) / completedWithDelay.length)
-    : 0;
+        // Average delay
+        const completedWithDelay = completed.filter(
+          (l) => l.delayMinutes !== null
+        )
+        const avgDelay =
+          completedWithDelay.length > 0
+            ? Math.round(
+                completedWithDelay.reduce(
+                  (sum, l) => sum + (l.delayMinutes || 0),
+                  0
+                ) / completedWithDelay.length
+              )
+            : 0
 
-  // Consistency by routine
-  const routineStats = {};
-  filteredLogs.forEach(log => {
-    if (!routineStats[log.routineTitleAtLog]) {
-      routineStats[log.routineTitleAtLog] = {
-        total: 0,
-        completed: 0,
-        category: log.routineCategoryAtLog
-      };
-    }
-    routineStats[log.routineTitleAtLog].total++;
-    if (log.status === 'Completed') routineStats[log.routineTitleAtLog].completed++;
-  });
+        // Consistency by routine
+        const routineStats = {}
+        filteredLogs.forEach((log) => {
+          if (!routineStats[log.routineTitleAtLog]) {
+            routineStats[log.routineTitleAtLog] = {
+              total: 0,
+              completed: 0,
+              category: log.routineCategoryAtLog,
+            }
+          }
+          routineStats[log.routineTitleAtLog].total++
+          if (log.status === "Completed")
+            routineStats[log.routineTitleAtLog].completed++
+        })
 
-  const consistency = Object.entries(routineStats)
-    .map(([title, stats]) => ({
-      title,
-      category: stats.category,
-      consistency: stats.total > 0 ? stats.completed / stats.total : 0,
-      total: stats.total
-    }))
-    .sort((a, b) => b.consistency - a.consistency);
+        const consistency = Object.entries(routineStats)
+          .map(([title, stats]) => ({
+            title,
+            category: stats.category,
+            consistency: stats.total > 0 ? stats.completed / stats.total : 0,
+            total: stats.total,
+          }))
+          .sort((a, b) => b.consistency - a.consistency)
 
-  // Discipline score (0-100)
-  // Formula: (completionRate * 0.45) + (consistencyScore * 0.35) + (delayScore * 0.20)
-  const consistencyScore = consistency.length > 0
-    ? consistency.reduce((sum, r) => sum + r.consistency, 0) / consistency.length
-    : 0;
+        // Discipline score (0-100)
+        // Formula: (completionRate * 0.45) + (consistencyScore * 0.35) + (delayScore * 0.20)
+        const consistencyScore =
+          consistency.length > 0
+            ? consistency.reduce((sum, r) => sum + r.consistency, 0) /
+              consistency.length
+            : 0
 
-  const delayScore = Math.max(0, 100 - Math.abs(avgDelay)); // 100 at 0 delay, 0 at 100+ minutes off
-  const disciplineScore = Math.round(
-    (completionRate * 0.45) +
-    (consistencyScore * 100 * 0.35) +
-    (delayScore * 0.20)
-  );
+        const delayScore = Math.max(0, 100 - Math.abs(avgDelay)) // 100 at 0 delay, 0 at 100+ minutes off
+        const disciplineScore = Math.round(
+          completionRate * 0.45 +
+            consistencyScore * 100 * 0.35 +
+            delayScore * 0.2
+        )
 
-  return {
-    completionRate,
-    completedCount: completed.length,
-    missedCount: missed.length,
-    skippedCount: skipped.length,
-    totalCount: total,
-    avgDelay,
-    consistency,
-    disciplineScore,
-    period
-  };
-};
+        return {
+          completionRate,
+          completedCount: completed.length,
+          missedCount: missed.length,
+          skippedCount: skipped.length,
+          totalCount: total,
+          avgDelay,
+          consistency,
+          disciplineScore,
+          period,
+        }
+      }
 
-// ===== RENDER FUNCTIONS =====
-const render = () => {
-  const app = document.getElementById('app');
+      // ===== RENDER FUNCTIONS =====
+      const render = () => {
+        const app = document.getElementById("app")
 
-  // Apply theme
-  document.documentElement.setAttribute('data-theme', state.settings.theme);
+        // Apply theme
+        document.documentElement.setAttribute(
+          "data-theme",
+          state.settings.theme
+        )
 
-  switch (state.view) {
-    case 'auth':
-      app.innerHTML = renderAuth();
-      break;
-    case 'dashboard':
-      app.innerHTML = renderApp(renderDashboard());
-      break;
-    case 'routines':
-      app.innerHTML = renderApp(renderRoutines());
-      break;
-    case 'calendar':
-      app.innerHTML = renderApp(renderCalendar());
-      break;
-    case 'analytics':
-      app.innerHTML = renderApp(renderAnalytics());
-      break;
-    case 'settings':
-      app.innerHTML = renderApp(renderSettings());
-      break;
-    case 'export':
-      app.innerHTML = renderApp(renderExport());
-      break;
-    default:
-      app.innerHTML = renderAuth();
-  }
+        switch (state.view) {
+          case "auth":
+            app.innerHTML = renderAuth()
+            break
+          case "dashboard":
+            app.innerHTML = renderApp(renderDashboard())
+            break
+          case "routines":
+            app.innerHTML = renderApp(renderRoutines())
+            break
+          case "calendar":
+            app.innerHTML = renderApp(renderCalendar())
+            break
+          case "analytics":
+            app.innerHTML = renderApp(renderAnalytics())
+            break
+          case "settings":
+            app.innerHTML = renderApp(renderSettings())
+            break
+          case "export":
+            app.innerHTML = renderApp(renderExport())
+            break
+          default:
+            app.innerHTML = renderAuth()
+        }
 
-  attachEventListeners();
-};
+        attachEventListeners()
+      }
 
-const renderAuth = () => {
-  return `
+      const renderAuth = () => {
+        return `
     <div class="auth-container">
       <div class="card auth-card">
         <div class="auth-logo">
@@ -1835,11 +2059,11 @@ const renderAuth = () => {
         </div>
       </div>
     </div>
-  `;
-};
+  `
+      }
 
-const renderApp = (content) => {
-  return `
+      const renderApp = (content) => {
+        return `
     <div class="app">
       <aside class="sidebar" id="sidebar">
         <div style="margin-bottom: 2rem;">
@@ -1849,7 +2073,7 @@ const renderApp = (content) => {
         </div>
 
         <nav style="flex: 1; display: flex; flex-direction: column; gap: 0.25rem;">
-          <button class="nav-item ${state.view === 'dashboard' ? 'active' : ''}" data-view="dashboard">
+          <button class="nav-item ${state.view === "dashboard" ? "active" : ""}" data-view="dashboard">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <rect x="3" y="3" width="7" height="7"/>
               <rect x="14" y="3" width="7" height="5"/>
@@ -1858,7 +2082,7 @@ const renderApp = (content) => {
             </svg>
             Dashboard
           </button>
-          <button class="nav-item ${state.view === 'routines' ? 'active' : ''}" data-view="routines">
+          <button class="nav-item ${state.view === "routines" ? "active" : ""}" data-view="routines">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M12 2L2 7l10 5 10-5-10-5z"/>
               <path d="M2 17l10 5 10-5"/>
@@ -1867,20 +2091,20 @@ const renderApp = (content) => {
             Routines
             <span class="badge badge-neutral" style="margin-left: auto;">${state.routines.length}</span>
           </button>
-          <button class="nav-item ${state.view === 'calendar' ? 'active' : ''}" data-view="calendar">
+          <button class="nav-item ${state.view === "calendar" ? "active" : ""}" data-view="calendar">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <rect x="3" y="4" width="18" height="18" rx="2"/>
               <path d="M16 2v6M8 2v6M3 10h18"/>
             </svg>
             Calendar
           </button>
-          <button class="nav-item ${state.view === 'analytics' ? 'active' : ''}" data-view="analytics">
+          <button class="nav-item ${state.view === "analytics" ? "active" : ""}" data-view="analytics">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M18 20V10M12 20V4M6 20v-6"/>
             </svg>
             Analytics
           </button>
-          <button class="nav-item ${state.view === 'export' ? 'active' : ''}" data-view="export">
+          <button class="nav-item ${state.view === "export" ? "active" : ""}" data-view="export">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
               <polyline points="7,10 12,15 17,10"/>
@@ -1888,7 +2112,7 @@ const renderApp = (content) => {
             </svg>
             Export
           </button>
-          <button class="nav-item ${state.view === 'settings' ? 'active' : ''}" data-view="settings">
+          <button class="nav-item ${state.view === "settings" ? "active" : ""}" data-view="settings">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="12" cy="12" r="3"/>
               <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
@@ -1931,7 +2155,9 @@ const renderApp = (content) => {
 
           <div class="flex items-center gap-4">
             <button class="btn btn-icon btn-ghost" id="theme-toggle" title="Toggle theme">
-              ${state.settings.theme === 'light' ? `
+              ${
+                state.settings.theme === "light"
+                  ? `
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <circle cx="12" cy="12" r="5"/>
                   <line x1="12" y1="1" x2="12" y2="3"/>
@@ -1943,14 +2169,16 @@ const renderApp = (content) => {
                   <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
                   <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
                 </svg>
-              ` : `
+              `
+                  : `
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
                 </svg>
-              `}
+              `
+              }
             </button>
-            <div style="width: 2.25rem; height: 2.25rem; background: var(--primary); border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;" title="${state.user?.email || ''}">
-              ${state.user?.name?.charAt(0)?.toUpperCase() || 'U'}
+            <div style="width: 2.25rem; height: 2.25rem; background: var(--primary); border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;" title="${state.user?.email || ""}">
+              ${state.user?.name?.charAt(0)?.toUpperCase() || "U"}
             </div>
           </div>
         </header>
@@ -1960,35 +2188,42 @@ const renderApp = (content) => {
         </div>
       </main>
     </div>
-  `;
-};
+  `
+      }
 
-const renderDashboard = () => {
-  const today = new Date();
-  const todayStr = formatDate(today);
-  const todayOccurrences = state.occurrences.filter(o => o.date === todayStr);
-  const completedCount = todayOccurrences.filter(o => o.status === 'Completed').length;
-  const totalCount = todayOccurrences.length;
-  const completionRate = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+      const renderDashboard = () => {
+        const today = new Date()
+        const todayStr = formatDate(today)
+        const todayOccurrences = state.occurrences.filter(
+          (o) => o.date === todayStr
+        )
+        const completedCount = todayOccurrences.filter(
+          (o) => o.status === "Completed"
+        ).length
+        const totalCount = todayOccurrences.length
+        const completionRate =
+          totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0
 
-  const weekLogs = state.logs.filter(l => {
-    const logDate = new Date(l.date);
-    const weekAgo = new Date(today);
-    weekAgo.setDate(weekAgo.getDate() - 7);
-    return logDate >= weekAgo && logDate <= today;
-  });
+        const weekLogs = state.logs.filter((l) => {
+          const logDate = new Date(l.date)
+          const weekAgo = new Date(today)
+          weekAgo.setDate(weekAgo.getDate() - 7)
+          return logDate >= weekAgo && logDate <= today
+        })
 
-  const weekCompleted = weekLogs.filter(l => l.status === 'Completed').length;
-  const weekMissed = weekLogs.filter(l => l.status === 'Missed').length;
-  const weekTotal = weekLogs.length;
+        const weekCompleted = weekLogs.filter(
+          (l) => l.status === "Completed"
+        ).length
+        const weekMissed = weekLogs.filter((l) => l.status === "Missed").length
+        const weekTotal = weekLogs.length
 
-  return `
+        return `
     <div class="flex items-center justify-between" style="margin-bottom: 2rem;">
       <div>
         <h1 class="font-display" style="font-size: 2rem; font-weight: 700; margin-bottom: 0.25rem;">
-          ${getGreeting()}, ${state.user?.name || 'User'}${state.user?.name ? '!' : ''}
+          ${getGreeting()}, ${state.user?.name || "User"}${state.user?.name ? "!" : ""}
         </h1>
-        <p style="color: var(--text-secondary);">${today.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+        <p style="color: var(--text-secondary);">${today.toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}</p>
       </div>
       <button class="btn btn-primary" id="quick-add-btn">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -2062,7 +2297,7 @@ const renderDashboard = () => {
           </svg>
         </div>
         <div>
-          <div class="metric-value">${calculateAnalytics('week').disciplineScore}</div>
+          <div class="metric-value">${calculateAnalytics("week").disciplineScore}</div>
           <div class="metric-label">Discipline Score</div>
           <div class="metric-change positive">
             Based on last 7 days
@@ -2075,14 +2310,20 @@ const renderDashboard = () => {
     <div style="margin-bottom: 2rem;">
       <div class="flex items-center justify-between" style="margin-bottom: 1rem;">
         <h2 class="font-display" style="font-size: 1.25rem; font-weight: 600;">Today's Schedule</h2>
-        ${todayOccurrences.some(o => o.status === 'Pending') ? `
+        ${
+          todayOccurrences.some((o) => o.status === "Pending")
+            ? `
           <button class="btn btn-secondary btn-sm" id="complete-all-btn">
             Complete All Visible
           </button>
-        ` : ''}
+        `
+            : ""
+        }
       </div>
 
-      ${todayOccurrences.length === 0 ? `
+      ${
+        todayOccurrences.length === 0
+          ? `
         <div class="empty-state">
           <div class="empty-state-icon">📋</div>
           <div class="empty-state-title">No routines scheduled today</div>
@@ -2091,7 +2332,11 @@ const renderDashboard = () => {
             Create Your First Routine
           </button>
         </div>
-      ` : todayOccurrences.sort((a, b) => a.scheduledTime.localeCompare(b.scheduledTime)).map(occ => `
+      `
+          : todayOccurrences
+              .sort((a, b) => a.scheduledTime.localeCompare(b.scheduledTime))
+              .map(
+                (occ) => `
         <div class="occurrence-row" style="margin-bottom: 0.75rem;" data-id="${occ.id}">
           <div class="occurrence-accent ${getCategoryClass(occ.category)}" style="background: ${getCategoryColor(occ.category)};"></div>
           <div class="occurrence-time">${occ.scheduledTime}</div>
@@ -2099,7 +2344,9 @@ const renderDashboard = () => {
             <div class="occurrence-title">${occ.title}</div>
             <div class="occurrence-category">${occ.category}</div>
           </div>
-          ${occ.status === 'Pending' ? `
+          ${
+            occ.status === "Pending"
+              ? `
             <div class="occurrence-actions">
               <button class="btn btn-icon btn-ghost" data-action="skip" data-id="${occ.id}" title="Skip">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -2112,18 +2359,27 @@ const renderDashboard = () => {
                 </svg>
               </button>
             </div>
-          ` : `
+          `
+              : `
             <span class="status-pill status-${occ.status.toLowerCase()}">
-              ${occ.status === 'Completed' && occ.delayMinutes !== null ? `
+              ${
+                occ.status === "Completed" && occ.delayMinutes !== null
+                  ? `
                 ${occ.status}
                 <span class="font-mono" style="margin-left: 0.25rem; opacity: 0.8;">
-                  ${occ.delayMinutes > 0 ? '+' : ''}${occ.delayMinutes}m
+                  ${occ.delayMinutes > 0 ? "+" : ""}${occ.delayMinutes}m
                 </span>
-              ` : occ.status}
+              `
+                  : occ.status
+              }
             </span>
-          `}
+          `
+          }
         </div>
-      `).join('')}
+      `
+              )
+              .join("")
+      }
     </div>
 
     <!-- Weekly Chart -->
@@ -2133,49 +2389,55 @@ const renderDashboard = () => {
         ${renderWeeklyChart()}
       </div>
     </div>
-  `;
-};
+  `
+      }
 
-const renderWeeklyChart = () => {
-  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-  const today = new Date();
-  const weekData = [];
+      const renderWeeklyChart = () => {
+        const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+        const today = new Date()
+        const weekData = []
 
-  // Start from Monday of current week
-  const monday = new Date(today);
-  const dayOfWeek = today.getDay();
-  const diff = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-  monday.setDate(today.getDate() - diff);
+        // Start from Monday of current week
+        const monday = new Date(today)
+        const dayOfWeek = today.getDay()
+        const diff = dayOfWeek === 0 ? 6 : dayOfWeek - 1
+        monday.setDate(today.getDate() - diff)
 
-  for (let i = 0; i < 7; i++) {
-    const date = new Date(monday);
-    date.setDate(monday.getDate() + i);
-    const dateStr = formatDate(date);
+        for (let i = 0; i < 7; i++) {
+          const date = new Date(monday)
+          date.setDate(monday.getDate() + i)
+          const dateStr = formatDate(date)
 
-    const dayLogs = state.logs.filter(l => l.date === dateStr);
-    const total = dayLogs.length;
-    const completed = dayLogs.filter(l => l.status === 'Completed').length;
-    const rate = total > 0 ? completed / total : 0;
-    const isToday = dateStr === formatDate(today);
+          const dayLogs = state.logs.filter((l) => l.date === dateStr)
+          const total = dayLogs.length
+          const completed = dayLogs.filter(
+            (l) => l.status === "Completed"
+          ).length
+          const rate = total > 0 ? completed / total : 0
+          const isToday = dateStr === formatDate(today)
 
-    weekData.push({
-      day: days[i],
-      rate: rate,
-      isToday: isToday,
-      total: total,
-      completed: completed
-    });
-  }
+          weekData.push({
+            day: days[i],
+            rate: rate,
+            isToday: isToday,
+            total: total,
+            completed: completed,
+          })
+        }
 
-  return weekData.map(d => `
-    <div class="bar" style="height: ${Math.max(d.rate * 100, 4)}%; background: ${d.isToday ? 'var(--primary)' : 'var(--success)'};" title="${d.day}: ${d.completed}/${d.total} completed">
+        return weekData
+          .map(
+            (d) => `
+    <div class="bar" style="height: ${Math.max(d.rate * 100, 4)}%; background: ${d.isToday ? "var(--primary)" : "var(--success)"};" title="${d.day}: ${d.completed}/${d.total} completed">
       <span class="bar-label">${d.day}</span>
     </div>
-  `).join('');
-};
+  `
+          )
+          .join("")
+      }
 
-const renderRoutines = () => {
-  return `
+      const renderRoutines = () => {
+        return `
     <div class="flex items-center justify-between" style="margin-bottom: 2rem;">
       <h1 class="font-display" style="font-size: 2rem; font-weight: 700;">Routines</h1>
       <button class="btn btn-primary" id="add-routine-btn">
@@ -2188,7 +2450,9 @@ const renderRoutines = () => {
     </div>
 
     <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem;">
-      ${state.routines.map(routine => `
+      ${state.routines
+        .map(
+          (routine) => `
         <div class="card routine-card" style="border-left-color: ${getCategoryColor(routine.category)};">
           <div class="routine-header">
             <div class="badge badge-neutral">${routine.category}</div>
@@ -2219,7 +2483,9 @@ const renderRoutines = () => {
               ${routine.scheduledTime}
             </span>
             <span class="badge badge-neutral">${routine.recurrenceType}</span>
-            ${routine.reminderOverride ? `
+            ${
+              routine.reminderOverride
+                ? `
               <span class="routine-meta-item" title="Custom reminder">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h14s-3-2-3-9"/>
@@ -2227,87 +2493,110 @@ const renderRoutines = () => {
                 </svg>
                 ${routine.reminderOverride}m
               </span>
-            ` : ''}
+            `
+                : ""
+            }
           </div>
 
           <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border);">
             <label class="checkbox" style="font-size: 0.875rem;">
-              <input type="checkbox" ${routine.isActive ? 'checked' : ''} data-action="toggle-routine" data-id="${routine.id}">
-              <span>Active ${routine.recurrenceType === 'daily' ? 'routine' : `on ${getRecurrenceDisplay(routine)}`}</span>
+              <input type="checkbox" ${routine.isActive ? "checked" : ""} data-action="toggle-routine" data-id="${routine.id}">
+              <span>Active ${routine.recurrenceType === "daily" ? "routine" : `on ${getRecurrenceDisplay(routine)}`}</span>
             </label>
           </div>
         </div>
-      `).join('')}
+      `
+        )
+        .join("")}
     </div>
-  `;
-};
-
-const getRecurrenceDisplay = (routine) => {
-  switch (routine.recurrenceType) {
-    case 'weekly':
-      const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-      return routine.recurrenceRules.daysOfWeek?.map(d => days[d]).join(', ') || 'weekdays';
-    case 'monthly':
-      return `day${routine.recurrenceRules.daysOfMonth?.[0] || 1} of month`;
-    default:
-      return 'every day';
-  }
-};
-
-const renderCalendar = () => {
-  const calDate = state.calendarDate || new Date();
-  const year = calDate.getFullYear();
-  const month = calDate.getMonth();
-  const firstDay = new Date(year, month, 1);
-  const lastDay = new Date(year, month + 1, 0);
-  const startDay = (firstDay.getDay() + 6) % 7; // Monday start
-  const totalDays = lastDay.getDate();
-  const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-  const today = new Date();
-  const todayStr = formatDate(today);
-
-  const calendarDays = [];
-
-  // Empty cells before first day
-  for (let i = 0; i < startDay; i++) {
-    calendarDays.push({ type: 'empty' });
-  }
-
-  // Calendar days
-  for (let day = 1; day <= totalDays; day++) {
-    const date = new Date(year, month, day);
-    const dateStr = formatDate(date);
-    const dayLogs = state.logs.filter(l => l.date === dateStr);
-    const isToday = dateStr === todayStr;
-    const isFuture = date > today;
-
-    let status = 'future';
-    if (!isFuture) {
-      if (dayLogs.length === 0) {
-        status = 'missed';
-      } else {
-        const completed = dayLogs.filter(l => l.status === 'Completed').length;
-        const total = dayLogs.length;
-        const rate = completed / total;
-
-        if (rate === 1) status = 'perfect';
-        else if (rate >= 0.7) status = 'good';
-        else if (rate >= 0.3) status = 'partial';
-        else status = 'missed';
+  `
       }
-    }
 
-    calendarDays.push({
-      type: 'day',
-      day,
-      dateStr,
-      status,
-      isToday,
-      logs: dayLogs
-    });
-  }
+      const getRecurrenceDisplay = (routine) => {
+        switch (routine.recurrenceType) {
+          case "weekly":
+            const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+            return (
+              routine.recurrenceRules.daysOfWeek
+                ?.map((d) => days[d])
+                .join(", ") || "weekdays"
+            )
+          case "monthly":
+            return `day${routine.recurrenceRules.daysOfMonth?.[0] || 1} of month`
+          default:
+            return "every day"
+        }
+      }
 
-  return `
+      const renderCalendar = () => {
+        const calDate = state.calendarDate || new Date()
+        const year = calDate.getFullYear()
+        const month = calDate.getMonth()
+        const firstDay = new Date(year, month, 1)
+        const lastDay = new Date(year, month + 1, 0)
+        const startDay = (firstDay.getDay() + 6) % 7 // Monday start
+        const totalDays = lastDay.getDate()
+        const monthNames = [
+          "January",
+          "February",
+          "March",
+          "April",
+          "May",
+          "June",
+          "July",
+          "August",
+          "September",
+          "October",
+          "November",
+          "December",
+        ]
+        const today = new Date()
+        const todayStr = formatDate(today)
+
+        const calendarDays = []
+
+        // Empty cells before first day
+        for (let i = 0; i < startDay; i++) {
+          calendarDays.push({ type: "empty" })
+        }
+
+        // Calendar days
+        for (let day = 1; day <= totalDays; day++) {
+          const date = new Date(year, month, day)
+          const dateStr = formatDate(date)
+          const dayLogs = state.logs.filter((l) => l.date === dateStr)
+          const isToday = dateStr === todayStr
+          const isFuture = date > today
+
+          let status = "future"
+          if (!isFuture) {
+            if (dayLogs.length === 0) {
+              status = "missed"
+            } else {
+              const completed = dayLogs.filter(
+                (l) => l.status === "Completed"
+              ).length
+              const total = dayLogs.length
+              const rate = completed / total
+
+              if (rate === 1) status = "perfect"
+              else if (rate >= 0.7) status = "good"
+              else if (rate >= 0.3) status = "partial"
+              else status = "missed"
+            }
+          }
+
+          calendarDays.push({
+            type: "day",
+            day,
+            dateStr,
+            status,
+            isToday,
+            logs: dayLogs,
+          })
+        }
+
+        return `
     <div class="calendar-header">
       <h1 class="font-display" style="font-size: 2rem; font-weight: 700;">Calendar</h1>
 
@@ -2329,18 +2618,28 @@ const renderCalendar = () => {
 
     <div class="card">
       <div class="calendar-grid" style="margin-bottom: 0;">
-        ${['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(d => `
+        ${["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+          .map(
+            (d) => `
           <div class="calendar-day-header">${d}</div>
-        `).join('')}
+        `
+          )
+          .join("")}
       </div>
       <div class="calendar-grid">
-        ${calendarDays.map(d => d.type === 'empty' ? `
+        ${calendarDays
+          .map((d) =>
+            d.type === "empty"
+              ? `
           <div class="calendar-day empty"></div>
-        ` : `
-          <div class="calendar-day ${d.status} ${d.isToday ? 'today' : ''}" data-date="${d.dateStr}" title="${d.dateStr}: ${d.logs.length} routines">
+        `
+              : `
+          <div class="calendar-day ${d.status} ${d.isToday ? "today" : ""}" data-date="${d.dateStr}" title="${d.dateStr}: ${d.logs.length} routines">
             ${d.day}
           </div>
-        `).join('')}
+        `
+          )
+          .join("")}
       </div>
 
       <div class="heatmap-legend" style="margin-top: 1.5rem;">
@@ -2368,19 +2667,23 @@ const renderCalendar = () => {
     </div>
 
     <div id="day-details" style="margin-top: 2rem;"></div>
-  `;
-};
+  `
+      }
 
-const renderAnalytics = () => {
-  const analytics = calculateAnalytics(state.analyticsPeriod);
+      const renderAnalytics = () => {
+        const analytics = calculateAnalytics(state.analyticsPeriod)
 
-  return `
+        return `
     <div class="flex items-center justify-between" style="margin-bottom: 2rem;">
       <h1 class="font-display" style="font-size: 2rem; font-weight: 700;">Analytics</h1>
       <div class="tabs">
-        ${['day', 'week', 'month', 'year'].map(p => `
-          <button class="tab ${state.analyticsPeriod === p ? 'active' : ''}" data-period="${p}">${p.charAt(0).toUpperCase() + p.slice(1)}</button>
-        `).join('')}
+        ${["day", "week", "month", "year"]
+          .map(
+            (p) => `
+          <button class="tab ${state.analyticsPeriod === p ? "active" : ""}" data-period="${p}">${p.charAt(0).toUpperCase() + p.slice(1)}</button>
+        `
+          )
+          .join("")}
       </div>
     </div>
 
@@ -2406,7 +2709,7 @@ const renderAnalytics = () => {
 
         <div class="card">
           <div class="metric-label">Discipline Score</div>
-          <div class="metric-value" style="color: ${analytics.disciplineScore >= 70 ? 'var(--success)' : analytics.disciplineScore >= 40 ? 'var(--warning)' : 'var(--error)'};">
+          <div class="metric-value" style="color: ${analytics.disciplineScore >= 70 ? "var(--success)" : analytics.disciplineScore >= 40 ? "var(--warning)" : "var(--error)"};">
             ${analytics.disciplineScore}
           </div>
           <div class="metric-label">Overall behavioral consistency</div>
@@ -2446,7 +2749,10 @@ const renderAnalytics = () => {
         <div class="card">
           <h3 style="font-size: 1rem; font-weight: 600; margin-bottom: 1rem;">Routine Consistency</h3>
           <div style="display: flex; flex-direction: column; gap: 1rem;">
-            ${analytics.consistency.slice(0, 6).map(r => `
+            ${analytics.consistency
+              .slice(0, 6)
+              .map(
+                (r) => `
               <div>
                 <div class="flex items-center justify-between" style="margin-bottom: 0.25rem; font-size: 0.875rem;">
                   <span class="flex items-center gap-2">
@@ -2459,7 +2765,9 @@ const renderAnalytics = () => {
                   <div style="width: ${r.consistency * 100}%; height: 100%; background: var(--success); border-radius: var(--radius-full); transition: width 0.5s ease;"></div>
                 </div>
               </div>
-            `).join('')}
+            `
+              )
+              .join("")}
           </div>
         </div>
       </div>
@@ -2478,36 +2786,49 @@ const renderAnalytics = () => {
         </div>
       </div>
     </div>
-  `;
-};
+  `
+      }
 
-const renderYearlyHeatmap = () => {
-  const cells = [];
-  const today = new Date();
-  const yearStart = new Date(today.getFullYear(), 0, 1);
+      const renderYearlyHeatmap = () => {
+        const cells = []
+        const today = new Date()
+        const yearStart = new Date(today.getFullYear(), 0, 1)
 
-  for (let i = 0; i < 365; i++) {
-    const date = new Date(yearStart);
-    date.setDate(date.getDate() + i);
-    const dateStr = formatDate(date);
-    const dayLogs = state.logs.filter(l => l.date === dateStr);
-    const isFuture = date > today;
+        for (let i = 0; i < 365; i++) {
+          const date = new Date(yearStart)
+          date.setDate(date.getDate() + i)
+          const dateStr = formatDate(date)
+          const dayLogs = state.logs.filter((l) => l.date === dateStr)
+          const isFuture = date > today
 
-    let level = 0;
-    if (!isFuture && dayLogs.length > 0) {
-      const completed = dayLogs.filter(l => l.status === 'Completed').length;
-      const rate = completed / dayLogs.length;
-      level = rate <= 0 ? 0 : rate < 0.25 ? 1 : rate < 0.5 ? 2 : rate < 0.75 ? 3 : 4;
-    }
+          let level = 0
+          if (!isFuture && dayLogs.length > 0) {
+            const completed = dayLogs.filter(
+              (l) => l.status === "Completed"
+            ).length
+            const rate = completed / dayLogs.length
+            level =
+              rate <= 0
+                ? 0
+                : rate < 0.25
+                  ? 1
+                  : rate < 0.5
+                    ? 2
+                    : rate < 0.75
+                      ? 3
+                      : 4
+          }
 
-    cells.push(`<div class="heatmap-cell level-${level}" title="${dateStr}: ${dayLogs.length} routines"></div>`);
-  }
+          cells.push(
+            `<div class="heatmap-cell level-${level}" title="${dateStr}: ${dayLogs.length} routines"></div>`
+          )
+        }
 
-  return cells.join('');
-};
+        return cells.join("")
+      }
 
-const renderSettings = () => {
-  return `
+      const renderSettings = () => {
+        return `
     <h1 class="font-display" style="font-size: 2rem; font-weight: 700; margin-bottom: 2rem;">Settings</h1>
 
     <div class="card">
@@ -2516,11 +2837,11 @@ const renderSettings = () => {
         <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem;">Profile</h3>
         <div class="form-group">
           <label class="form-label">Name</label>
-          <input type="text" class="input" value="${state.user?.name || ''}" id="settings-name" placeholder="Your name" />
+          <input type="text" class="input" value="${state.user?.name || ""}" id="settings-name" placeholder="Your name" />
         </div>
         <div class="form-group">
           <label class="form-label">Email</label>
-          <input type="email" class="input" value="${state.user?.email || ''}" disabled style="opacity: 0.6;" />
+          <input type="email" class="input" value="${state.user?.email || ""}" disabled style="opacity: 0.6;" />
           <div class="form-hint">Email cannot be changed</div>
         </div>
         <button class="btn btn-primary" id="save-profile-btn">Save Profile</button>
@@ -2533,9 +2854,24 @@ const renderSettings = () => {
         <div class="form-group">
           <label class="form-label">Timezone</label>
           <select class="select" id="settings-timezone">
-            ${['Asia/Dhaka', 'America/New_York', 'America/Los_Angeles', 'America/Chicago', 'Europe/London', 'Europe/Paris', 'Asia/Tokyo', 'Asia/Singapore', 'Australia/Sydney', 'Pacific/Auckland'].map(tz => `
-              <option value="${tz}" ${state.settings.timezone === tz ? 'selected' : ''}>${tz}</option>
-            `).join('')}
+            ${[
+              "Asia/Dhaka",
+              "America/New_York",
+              "America/Los_Angeles",
+              "America/Chicago",
+              "Europe/London",
+              "Europe/Paris",
+              "Asia/Tokyo",
+              "Asia/Singapore",
+              "Australia/Sydney",
+              "Pacific/Auckland",
+            ]
+              .map(
+                (tz) => `
+              <option value="${tz}" ${state.settings.timezone === tz ? "selected" : ""}>${tz}</option>
+            `
+              )
+              .join("")}
           </select>
           <div class="form-hint">All times will be displayed in this timezone</div>
         </div>
@@ -2543,9 +2879,13 @@ const renderSettings = () => {
         <div class="form-group">
           <label class="form-label">Default Reminder</label>
           <select class="select" id="settings-reminder">
-            ${[5, 10, 15, 20, 30, 45, 60].map(min => `
-              <option value="${min}" ${state.settings.defaultReminderMinutes === min ? 'selected' : ''}>${min} minutes before</option>
-            `).join('')}
+            ${[5, 10, 15, 20, 30, 45, 60]
+              .map(
+                (min) => `
+              <option value="${min}" ${state.settings.defaultReminderMinutes === min ? "selected" : ""}>${min} minutes before</option>
+            `
+              )
+              .join("")}
           </select>
           <div class="form-hint">Applied to all new routines</div>
         </div>
@@ -2558,10 +2898,10 @@ const renderSettings = () => {
         <div class="settings-row">
           <div>
             <div class="settings-label">Browser Notifications</div>
-            <div class="settings-hint">${'Notification' in window ? (Notification.permission === 'granted' ? 'Enabled' : Notification.permission === 'denied' ? 'Blocked' : 'Not enabled') : 'Not supported'}</div>
+            <div class="settings-hint">${"Notification" in window ? (Notification.permission === "granted" ? "Enabled" : Notification.permission === "denied" ? "Blocked" : "Not enabled") : "Not supported"}</div>
           </div>
           <label class="toggle">
-            <input type="checkbox" ${state.settings.notificationPreferences.browserNotificationsEnabled ? 'checked' : ''} id="settings-notifications">
+            <input type="checkbox" ${state.settings.notificationPreferences.browserNotificationsEnabled ? "checked" : ""} id="settings-notifications">
             <span class="toggle-slider"></span>
           </label>
         </div>
@@ -2572,7 +2912,7 @@ const renderSettings = () => {
             <div class="settings-hint">Disable notifications between 10PM - 6AM</div>
           </div>
           <label class="toggle">
-            <input type="checkbox" ${state.settings.notificationPreferences.overnightNotificationsDisabled ? 'checked' : ''} id="settings-overnight">
+            <input type="checkbox" ${state.settings.notificationPreferences.overnightNotificationsDisabled ? "checked" : ""} id="settings-overnight">
             <span class="toggle-slider"></span>
           </label>
         </div>
@@ -2588,7 +2928,7 @@ const renderSettings = () => {
             <div class="settings-hint">Switch between light and dark themes</div>
           </div>
           <label class="toggle">
-            <input type="checkbox" ${state.settings.theme === 'dark' ? 'checked' : ''} id="settings-theme">
+            <input type="checkbox" ${state.settings.theme === "dark" ? "checked" : ""} id="settings-theme">
             <span class="toggle-slider"></span>
           </label>
         </div>
@@ -2601,10 +2941,14 @@ const renderSettings = () => {
         <div class="form-group">
           <label class="form-label">Data Retention</label>
           <select class="select" id="settings-retention">
-            <option value="" ${state.settings.dataRetentionMonths === null ? 'selected' : ''}>Keep forever</option>
-            ${[3, 6, 12, 24, 36, 60].map(m => `
-              <option value="${m}" ${state.settings.dataRetentionMonths === m ? 'selected' : ''}>${m} months</option>
-            `).join('')}
+            <option value="" ${state.settings.dataRetentionMonths === null ? "selected" : ""}>Keep forever</option>
+            ${[3, 6, 12, 24, 36, 60]
+              .map(
+                (m) => `
+              <option value="${m}" ${state.settings.dataRetentionMonths === m ? "selected" : ""}>${m} months</option>
+            `
+              )
+              .join("")}
           </select>
           <div class="form-hint">Logs older than this will be automatically deleted</div>
         </div>
@@ -2632,11 +2976,11 @@ const renderSettings = () => {
         </button>
       </div>
     </div>
-  `;
-};
+  `
+      }
 
-const renderExport = () => {
-  return `
+      const renderExport = () => {
+        return `
     <h1 class="font-display" style="font-size: 2rem; font-weight: 700; margin-bottom: 2rem;">Export Data</h1>
 
     <div class="card">
@@ -2665,7 +3009,7 @@ const renderExport = () => {
           <label class="form-label">Filter by Routine</label>
           <select class="select" id="export-routine">
             <option value="">All Routines</option>
-            ${state.routines.map(r => `<option value="${r.id}">${r.title}</option>`).join('')}
+            ${state.routines.map((r) => `<option value="${r.id}">${r.title}</option>`).join("")}
           </select>
         </div>
       </div>
@@ -2694,9 +3038,13 @@ const renderExport = () => {
         <h3 style="font-size: 1rem; font-weight: 600; margin-bottom: 0.75rem;">Preview</h3>
         <div class="export-preview">
 Date | Routine | Category | Scheduled | Status | Delay | Timezone
-${state.logs.slice(0, 5).map(log =>
-  `${log.date} | ${log.routineTitleAtLog} | ${log.routineCategoryAtLog} | ${log.scheduledTime} | ${log.status} | ${log.delayMinutes !== null ? log.delayMinutes + 'm' : 'N/A'} | ${log.timezoneAtLog}`
-).join('\n')}
+${state.logs
+  .slice(0, 5)
+  .map(
+    (log) =>
+      `${log.date} | ${log.routineTitleAtLog} | ${log.routineCategoryAtLog} | ${log.scheduledTime} | ${log.status} | ${log.delayMinutes !== null ? log.delayMinutes + "m" : "N/A"} | ${log.timezoneAtLog}`
+  )
+  .join("\n")}
 ...
         </div>
       </div>
@@ -2719,50 +3067,51 @@ ${state.logs.slice(0, 5).map(log =>
         <div class="empty-state-text">Your export history will appear here</div>
       </div>
     </div>
-  `;
-};
-
-// ===== EVENT LISTENERS =====
-const attachEventListeners = () => {
-  // Theme toggle
-  const themeToggle = document.getElementById('theme-toggle');
-  if (themeToggle) {
-    themeToggle.addEventListener('click', () => {
-      state.settings.theme = state.settings.theme === 'light' ? 'dark' : 'light';
-      render();
-    });
-  }
-
-  // Mobile menu
-  const menuToggle = document.getElementById('menu-toggle');
-  const sidebar = document.getElementById('sidebar');
-  if (menuToggle && sidebar) {
-    menuToggle.addEventListener('click', () => {
-      sidebar.classList.toggle('open');
-    });
-  }
-
-  // Navigation
-  document.querySelectorAll('[data-view]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      state.view = btn.dataset.view;
-      render();
-      // Close mobile menu
-      const sidebar = document.getElementById('sidebar');
-      if (sidebar && window.innerWidth <= 1024) {
-        sidebar.classList.remove('open');
+  `
       }
-    });
-  });
 
-  // Auth handlers
-  const sendOtpBtn = document.getElementById('send-otp-btn');
-  if (sendOtpBtn) {
-    sendOtpBtn.addEventListener('click', () => {
-      const email = document.getElementById('auth-email').value;
-      if (email && validateEmail(email)) {
-        showToast(`Verification code sent to ${email}`, 'success');
-        document.getElementById('auth-content').innerHTML = `
+      // ===== EVENT LISTENERS =====
+      const attachEventListeners = () => {
+        // Theme toggle
+        const themeToggle = document.getElementById("theme-toggle")
+        if (themeToggle) {
+          themeToggle.addEventListener("click", () => {
+            state.settings.theme =
+              state.settings.theme === "light" ? "dark" : "light"
+            render()
+          })
+        }
+
+        // Mobile menu
+        const menuToggle = document.getElementById("menu-toggle")
+        const sidebar = document.getElementById("sidebar")
+        if (menuToggle && sidebar) {
+          menuToggle.addEventListener("click", () => {
+            sidebar.classList.toggle("open")
+          })
+        }
+
+        // Navigation
+        document.querySelectorAll("[data-view]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            state.view = btn.dataset.view
+            render()
+            // Close mobile menu
+            const sidebar = document.getElementById("sidebar")
+            if (sidebar && window.innerWidth <= 1024) {
+              sidebar.classList.remove("open")
+            }
+          })
+        })
+
+        // Auth handlers
+        const sendOtpBtn = document.getElementById("send-otp-btn")
+        if (sendOtpBtn) {
+          sendOtpBtn.addEventListener("click", () => {
+            const email = document.getElementById("auth-email").value
+            if (email && validateEmail(email)) {
+              showToast(`Verification code sent to ${email}`, "success")
+              document.getElementById("auth-content").innerHTML = `
           <div class="form-group">
             <label class="form-label">Enter Verification Code</label>
             <input type="text" class="input" id="otp-code" placeholder="123456" maxlength="6" style="font-family: var(--font-mono); letter-spacing: 0.25em; text-align: center; font-size: 1.25rem;" autofocus />
@@ -2770,289 +3119,334 @@ const attachEventListeners = () => {
           </div>
           <button class="btn btn-primary w-full" id="verify-otp-btn">Verify & Continue</button>
           <button class="btn btn-ghost w-full" id="back-to-email" style="margin-top: 0.5rem;">← Back to email</button>
-        `;
-        attachEventListeners();
-        document.getElementById('otp-code').focus();
-      } else {
-        showToast('Please enter a valid email address', 'error');
+        `
+              attachEventListeners()
+              document.getElementById("otp-code").focus()
+            } else {
+              showToast("Please enter a valid email address", "error")
+            }
+          })
+        }
+
+        const verifyOtpBtn = document.getElementById("verify-otp-btn")
+        if (verifyOtpBtn) {
+          verifyOtpBtn.addEventListener("click", () => {
+            const code = document.getElementById("otp-code").value
+            const email =
+              document.querySelector('.auth-container input[type="text"]')
+                ?.value || "user@example.com"
+            if (code && code.length === 6) {
+              state.user = { name: "Demo User", email: email }
+              state.isAuthenticated = true
+              const data = generateSampleData()
+              state.routines = data.routines
+              state.occurrences = data.occurrences
+              state.logs = data.logs
+              state.view = "dashboard"
+              showToast("Welcome to RoutineFlow!", "success")
+              render()
+            } else {
+              showToast("Please enter a valid 6-digit code", "error")
+            }
+          })
+        }
+
+        const backToEmail = document.getElementById("back-to-email")
+        if (backToEmail) {
+          backToEmail.addEventListener("click", () => {
+            render()
+          })
+        }
+
+        const googleLoginBtn = document.getElementById("google-login-btn")
+        if (googleLoginBtn) {
+          googleLoginBtn.addEventListener("click", () => {
+            showToast("Google login would be handled by Better Auth", "info")
+          })
+        }
+
+        // Occurrence actions
+        document.querySelectorAll('[data-action="complete"]').forEach((btn) => {
+          btn.addEventListener("click", () => {
+            completeOccurrence(btn.dataset.id)
+            render()
+          })
+        })
+
+        document.querySelectorAll('[data-action="skip"]').forEach((btn) => {
+          btn.addEventListener("click", () => {
+            skipOccurrence(btn.dataset.id)
+            render()
+          })
+        })
+
+        // Quick add
+        const quickAddBtn = document.getElementById("quick-add-btn")
+        if (quickAddBtn) {
+          quickAddBtn.addEventListener("click", () => {
+            showRoutineModal()
+          })
+        }
+
+        // Add routine
+        const addRoutineBtn = document.getElementById("add-routine-btn")
+        if (addRoutineBtn) {
+          addRoutineBtn.addEventListener("click", () => {
+            showRoutineModal()
+          })
+        }
+
+        // Complete all
+        const completeAllBtn = document.getElementById("complete-all-btn")
+        if (completeAllBtn) {
+          completeAllBtn.addEventListener("click", () => {
+            confirmAction(
+              "Complete All Routines",
+              "This will mark all pending routines for today as completed. Continue?",
+              () => {
+                const today = new Date()
+                const todayStr = formatDate(today)
+                state.occurrences
+                  .filter((o) => o.date === todayStr && o.status === "Pending")
+                  .forEach((occ) => completeOccurrence(occ.id))
+                render()
+              },
+              { confirmText: "Complete All" }
+            )
+          })
+        }
+
+        // Routine actions
+        document
+          .querySelectorAll('[data-action="edit-routine"]')
+          .forEach((btn) => {
+            btn.addEventListener("click", () => {
+              const routine = state.routines.find(
+                (r) => r.id === btn.dataset.id
+              )
+              if (routine) showRoutineModal(routine)
+            })
+          })
+
+        document
+          .querySelectorAll('[data-action="delete-routine"]')
+          .forEach((btn) => {
+            btn.addEventListener("click", () => {
+              const routine = state.routines.find(
+                (r) => r.id === btn.dataset.id
+              )
+              if (routine) {
+                confirmAction(
+                  `Delete "${routine.title}"?`,
+                  "This will soft delete the routine. Historical data will be preserved, but future occurrences will not be generated.",
+                  () => {
+                    state.routines = state.routines.filter(
+                      (r) => r.id !== btn.dataset.id
+                    )
+                    // Remove pending occurrences
+                    state.occurrences = state.occurrences.filter(
+                      (o) =>
+                        o.routineId !== btn.dataset.id || o.status !== "Pending"
+                    )
+                    showToast(`${routine.title} deleted`, "success")
+                    render()
+                  },
+                  { danger: true, confirmText: "Delete" }
+                )
+              }
+            })
+          })
+
+        document
+          .querySelectorAll('[data-action="toggle-routine"]')
+          .forEach((checkbox) => {
+            checkbox.addEventListener("change", () => {
+              const routine = state.routines.find(
+                (r) => r.id === checkbox.dataset.id
+              )
+              if (routine) {
+                routine.isActive = checkbox.checked
+                showToast(
+                  `${routine.title} ${routine.isActive ? "activated" : "deactivated"}`,
+                  "info"
+                )
+              }
+            })
+          })
+
+        // Analytics tabs
+        document.querySelectorAll("[data-period]").forEach((tab) => {
+          tab.addEventListener("click", () => {
+            state.analyticsPeriod = tab.dataset.period
+            render()
+          })
+        })
+
+        // Calendar navigation
+        const prevMonthBtn = document.getElementById("prev-month")
+        const nextMonthBtn = document.getElementById("next-month")
+        const todayBtn = document.getElementById("today-btn")
+
+        if (prevMonthBtn) {
+          prevMonthBtn.addEventListener("click", () => {
+            state.calendarDate = new Date(
+              state.calendarDate.getFullYear(),
+              state.calendarDate.getMonth() - 1,
+              1
+            )
+            render()
+          })
+        }
+
+        if (nextMonthBtn) {
+          nextMonthBtn.addEventListener("click", () => {
+            state.calendarDate = new Date(
+              state.calendarDate.getFullYear(),
+              state.calendarDate.getMonth() + 1,
+              1
+            )
+            render()
+          })
+        }
+
+        if (todayBtn) {
+          todayBtn.addEventListener("click", () => {
+            state.calendarDate = new Date()
+            render()
+          })
+        }
+
+        // Calendar day click
+        document.querySelectorAll("[data-date]").forEach((cell) => {
+          cell.addEventListener("click", () => {
+            showDayDetails(cell.dataset.date)
+          })
+        })
+
+        // Settings handlers
+        const settingsTheme = document.getElementById("settings-theme")
+        if (settingsTheme) {
+          settingsTheme.addEventListener("change", () => {
+            state.settings.theme = settingsTheme.checked ? "dark" : "light"
+            render()
+          })
+        }
+
+        const settingsTimezone = document.getElementById("settings-timezone")
+        if (settingsTimezone) {
+          settingsTimezone.addEventListener("change", () => {
+            state.settings.timezone = settingsTimezone.value
+            showToast("Timezone updated", "success")
+            render()
+          })
+        }
+
+        const settingsReminder = document.getElementById("settings-reminder")
+        if (settingsReminder) {
+          settingsReminder.addEventListener("change", () => {
+            state.settings.defaultReminderMinutes = parseInt(
+              settingsReminder.value
+            )
+            showToast("Default reminder updated", "success")
+          })
+        }
+
+        const settingsNotifications = document.getElementById(
+          "settings-notifications"
+        )
+        if (settingsNotifications) {
+          settingsNotifications.addEventListener("change", () => {
+            state.settings.notificationPreferences.browserNotificationsEnabled =
+              settingsNotifications.checked
+            if (
+              settingsNotifications.checked &&
+              "Notification" in window &&
+              Notification.permission === "default"
+            ) {
+              Notification.requestPermission().then((permission) => {
+                if (permission === "granted") {
+                  showToast("Notifications enabled", "success")
+                } else {
+                  showToast("Notifications blocked by browser", "warning")
+                  settingsNotifications.checked = false
+                }
+              })
+            }
+            render()
+          })
+        }
+
+        const exportRange = document.getElementById("export-range")
+        if (exportRange) {
+          exportRange.addEventListener("change", () => {
+            const customSection = document.getElementById(
+              "custom-range-section"
+            )
+            if (customSection) {
+              customSection.classList.toggle(
+                "hidden",
+                exportRange.value !== "custom"
+              )
+            }
+          })
+        }
+
+        const generateExportBtn = document.getElementById("generate-export-btn")
+        if (generateExportBtn) {
+          generateExportBtn.addEventListener("click", () => {
+            const format =
+              document.getElementById("export-format")?.value || "xlsx"
+            showToast(`Generating ${format.toUpperCase()} export...`, "info")
+            setTimeout(() => {
+              showToast(`Export downloaded successfully!`, "success")
+            }, 2000)
+          })
+        }
+
+        // Logout
+        const logoutBtn = document.getElementById("logout-btn")
+        if (logoutBtn) {
+          logoutBtn.addEventListener("click", () => {
+            confirmAction(
+              "Logout",
+              "Are you sure you want to logout?",
+              () => {
+                state.view = "auth"
+                state.user = null
+                state.isAuthenticated = false
+                state.routines = []
+                state.occurrences = []
+                state.logs = []
+                render()
+              },
+              { confirmText: "Logout" }
+            )
+          })
+        }
+
+        // Save profile
+        const saveProfileBtn = document.getElementById("save-profile-btn")
+        if (saveProfileBtn) {
+          saveProfileBtn.addEventListener("click", () => {
+            const name = document.getElementById("settings-name")?.value
+            if (name) {
+              state.user.name = name
+              showToast("Profile saved", "success")
+              render()
+            }
+          })
+        }
       }
-    });
-  }
 
-  const verifyOtpBtn = document.getElementById('verify-otp-btn');
-  if (verifyOtpBtn) {
-    verifyOtpBtn.addEventListener('click', () => {
-      const code = document.getElementById('otp-code').value;
-      const email = document.querySelector('.auth-container input[type="text"]')?.value || 'user@example.com';
-      if (code && code.length === 6) {
-        state.user = { name: 'Demo User', email: email };
-        state.isAuthenticated = true;
-        const data = generateSampleData();
-        state.routines = data.routines;
-        state.occurrences = data.occurrences;
-        state.logs = data.logs;
-        state.view = 'dashboard';
-        showToast('Welcome to RoutineFlow!', 'success');
-        render();
-      } else {
-        showToast('Please enter a valid 6-digit code', 'error');
-      }
-    });
-  }
+      // ===== ROUTINE MODAL =====
+      const showRoutineModal = (routine = null) => {
+        const isEdit = routine !== null
+        const categories = ["Health", "Fitness", "Mind", "Work", "Faith"]
+        const recurrenceTypes = ["daily", "weekly", "monthly"]
 
-  const backToEmail = document.getElementById('back-to-email');
-  if (backToEmail) {
-    backToEmail.addEventListener('click', () => {
-      render();
-    });
-  }
-
-  const googleLoginBtn = document.getElementById('google-login-btn');
-  if (googleLoginBtn) {
-    googleLoginBtn.addEventListener('click', () => {
-      showToast('Google login would be handled by Better Auth', 'info');
-    });
-  }
-
-  // Occurrence actions
-  document.querySelectorAll('[data-action="complete"]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      completeOccurrence(btn.dataset.id);
-      render();
-    });
-  });
-
-  document.querySelectorAll('[data-action="skip"]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      skipOccurrence(btn.dataset.id);
-      render();
-    });
-  });
-
-  // Quick add
-  const quickAddBtn = document.getElementById('quick-add-btn');
-  if (quickAddBtn) {
-    quickAddBtn.addEventListener('click', () => {
-      showRoutineModal();
-    });
-  }
-
-  // Add routine
-  const addRoutineBtn = document.getElementById('add-routine-btn');
-  if (addRoutineBtn) {
-    addRoutineBtn.addEventListener('click', () => {
-      showRoutineModal();
-    });
-  }
-
-  // Complete all
-  const completeAllBtn = document.getElementById('complete-all-btn');
-  if (completeAllBtn) {
-    completeAllBtn.addEventListener('click', () => {
-      confirmAction(
-        'Complete All Routines',
-        'This will mark all pending routines for today as completed. Continue?',
-        () => {
-          const today = new Date();
-          const todayStr = formatDate(today);
-          state.occurrences
-            .filter(o => o.date === todayStr && o.status === 'Pending')
-            .forEach(occ => completeOccurrence(occ.id));
-          render();
-        },
-        { confirmText: 'Complete All' }
-      );
-    });
-  }
-
-  // Routine actions
-  document.querySelectorAll('[data-action="edit-routine"]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const routine = state.routines.find(r => r.id === btn.dataset.id);
-      if (routine) showRoutineModal(routine);
-    });
-  });
-
-  document.querySelectorAll('[data-action="delete-routine"]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const routine = state.routines.find(r => r.id === btn.dataset.id);
-      if (routine) {
-        confirmAction(
-          `Delete "${routine.title}"?`,
-          'This will soft delete the routine. Historical data will be preserved, but future occurrences will not be generated.',
-          () => {
-            state.routines = state.routines.filter(r => r.id !== btn.dataset.id);
-            // Remove pending occurrences
-            state.occurrences = state.occurrences.filter(o => o.routineId !== btn.dataset.id || o.status !== 'Pending');
-            showToast(`${routine.title} deleted`, 'success');
-            render();
-          },
-          { danger: true, confirmText: 'Delete' }
-        );
-      }
-    });
-  });
-
-  document.querySelectorAll('[data-action="toggle-routine"]').forEach(checkbox => {
-    checkbox.addEventListener('change', () => {
-      const routine = state.routines.find(r => r.id === checkbox.dataset.id);
-      if (routine) {
-        routine.isActive = checkbox.checked;
-        showToast(`${routine.title} ${routine.isActive ? 'activated' : 'deactivated'}`, 'info');
-      }
-    });
-  });
-
-  // Analytics tabs
-  document.querySelectorAll('[data-period]').forEach(tab => {
-    tab.addEventListener('click', () => {
-      state.analyticsPeriod = tab.dataset.period;
-      render();
-    });
-  });
-
-  // Calendar navigation
-  const prevMonthBtn = document.getElementById('prev-month');
-  const nextMonthBtn = document.getElementById('next-month');
-  const todayBtn = document.getElementById('today-btn');
-
-  if (prevMonthBtn) {
-    prevMonthBtn.addEventListener('click', () => {
-      state.calendarDate = new Date(state.calendarDate.getFullYear(), state.calendarDate.getMonth() - 1, 1);
-      render();
-    });
-  }
-
-  if (nextMonthBtn) {
-    nextMonthBtn.addEventListener('click', () => {
-      state.calendarDate = new Date(state.calendarDate.getFullYear(), state.calendarDate.getMonth() + 1, 1);
-      render();
-    });
-  }
-
-  if (todayBtn) {
-    todayBtn.addEventListener('click', () => {
-      state.calendarDate = new Date();
-      render();
-    });
-  }
-
-  // Calendar day click
-  document.querySelectorAll('[data-date]').forEach(cell => {
-    cell.addEventListener('click', () => {
-      showDayDetails(cell.dataset.date);
-    });
-  });
-
-  // Settings handlers
-  const settingsTheme = document.getElementById('settings-theme');
-  if (settingsTheme) {
-    settingsTheme.addEventListener('change', () => {
-      state.settings.theme = settingsTheme.checked ? 'dark' : 'light';
-      render();
-    });
-  }
-
-  const settingsTimezone = document.getElementById('settings-timezone');
-  if (settingsTimezone) {
-    settingsTimezone.addEventListener('change', () => {
-      state.settings.timezone = settingsTimezone.value;
-      showToast('Timezone updated', 'success');
-      render();
-    });
-  }
-
-  const settingsReminder = document.getElementById('settings-reminder');
-  if (settingsReminder) {
-    settingsReminder.addEventListener('change', () => {
-      state.settings.defaultReminderMinutes = parseInt(settingsReminder.value);
-      showToast('Default reminder updated', 'success');
-    });
-  }
-
-  const settingsNotifications = document.getElementById('settings-notifications');
-  if (settingsNotifications) {
-    settingsNotifications.addEventListener('change', () => {
-      state.settings.notificationPreferences.browserNotificationsEnabled = settingsNotifications.checked;
-      if (settingsNotifications.checked && 'Notification' in window && Notification.permission === 'default') {
-        Notification.requestPermission().then(permission => {
-          if (permission === 'granted') {
-            showToast('Notifications enabled', 'success');
-          } else {
-            showToast('Notifications blocked by browser', 'warning');
-            settingsNotifications.checked = false;
-          }
-        });
-      }
-      render();
-    });
-  }
-
-  const exportRange = document.getElementById('export-range');
-  if (exportRange) {
-    exportRange.addEventListener('change', () => {
-      const customSection = document.getElementById('custom-range-section');
-      if (customSection) {
-        customSection.classList.toggle('hidden', exportRange.value !== 'custom');
-      }
-    });
-  }
-
-  const generateExportBtn = document.getElementById('generate-export-btn');
-  if (generateExportBtn) {
-    generateExportBtn.addEventListener('click', () => {
-      const format = document.getElementById('export-format')?.value || 'xlsx';
-      showToast(`Generating ${format.toUpperCase()} export...`, 'info');
-      setTimeout(() => {
-        showToast(`Export downloaded successfully!`, 'success');
-      }, 2000);
-    });
-  }
-
-  // Logout
-  const logoutBtn = document.getElementById('logout-btn');
-  if (logoutBtn) {
-    logoutBtn.addEventListener('click', () => {
-      confirmAction(
-        'Logout',
-        'Are you sure you want to logout?',
-        () => {
-          state.view = 'auth';
-          state.user = null;
-          state.isAuthenticated = false;
-          state.routines = [];
-          state.occurrences = [];
-          state.logs = [];
-          render();
-        },
-        { confirmText: 'Logout' }
-      );
-    });
-  }
-
-  // Save profile
-  const saveProfileBtn = document.getElementById('save-profile-btn');
-  if (saveProfileBtn) {
-    saveProfileBtn.addEventListener('click', () => {
-      const name = document.getElementById('settings-name')?.value;
-      if (name) {
-        state.user.name = name;
-        showToast('Profile saved', 'success');
-        render();
-      }
-    });
-  }
-};
-
-// ===== ROUTINE MODAL =====
-const showRoutineModal = (routine = null) => {
-  const isEdit = routine !== null;
-  const categories = ['Health', 'Fitness', 'Mind', 'Work', 'Faith'];
-  const recurrenceTypes = ['daily', 'weekly', 'monthly'];
-
-  const content = `
+        const content = `
     <div class="modal-header">
-      <h2 class="modal-title">${isEdit ? 'Edit Routine' : 'Create Routine'}</h2>
+      <h2 class="modal-title">${isEdit ? "Edit Routine" : "Create Routine"}</h2>
       <button class="modal-close" onclick="closeModal()">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <line x1="18" y1="6" x2="6" y2="18"/>
@@ -3064,20 +3458,20 @@ const showRoutineModal = (routine = null) => {
     <form id="routine-form">
       <div class="form-group">
         <label class="form-label">Title</label>
-        <input type="text" class="input" id="routine-title" value="${routine?.title || ''}" placeholder="e.g., Morning Gym" required autofocus />
+        <input type="text" class="input" id="routine-title" value="${routine?.title || ""}" placeholder="e.g., Morning Gym" required autofocus />
       </div>
 
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Category</label>
           <select class="select" id="routine-category">
-            ${categories.map(c => `<option value="${c}" ${routine?.category === c ? 'selected' : ''}>${c}</option>`).join('')}
+            ${categories.map((c) => `<option value="${c}" ${routine?.category === c ? "selected" : ""}>${c}</option>`).join("")}
           </select>
         </div>
 
         <div class="form-group">
           <label class="form-label">Scheduled Time</label>
-          <input type="time" class="input" id="routine-time" value="${routine?.scheduledTime || '07:00'}" required />
+          <input type="time" class="input" id="routine-time" value="${routine?.scheduledTime || "07:00"}" required />
         </div>
       </div>
 
@@ -3085,7 +3479,7 @@ const showRoutineModal = (routine = null) => {
         <div class="form-group">
           <label class="form-label">Recurrence</label>
           <select class="select" id="routine-recurrence">
-            ${recurrenceTypes.map(r => `<option value="${r}" ${routine?.recurrenceType === r ? 'selected' : ''}>${r.charAt(0).toUpperCase() + r.slice(1)}</option>`).join('')}
+            ${recurrenceTypes.map((r) => `<option value="${r}" ${routine?.recurrenceType === r ? "selected" : ""}>${r.charAt(0).toUpperCase() + r.slice(1)}</option>`).join("")}
           </select>
         </div>
 
@@ -3093,77 +3487,84 @@ const showRoutineModal = (routine = null) => {
           <label class="form-label">Reminder Override</label>
           <select class="select" id="routine-reminder">
             <option value="">Use Default (${state.settings.defaultReminderMinutes}m)</option>
-            ${[5, 10, 15, 20, 30, 45, 60].map(m => `<option value="${m}" ${routine?.reminderOverride === m ? 'selected' : ''}>${m} minutes</option>`).join('')}
+            ${[5, 10, 15, 20, 30, 45, 60].map((m) => `<option value="${m}" ${routine?.reminderOverride === m ? "selected" : ""}>${m} minutes</option>`).join("")}
           </select>
         </div>
       </div>
 
       <div class="form-group">
         <label class="checkbox">
-          <input type="checkbox" id="routine-active" ${routine?.isActive !== false ? 'checked' : ''}>
+          <input type="checkbox" id="routine-active" ${routine?.isActive !== false ? "checked" : ""}>
           <span>Active immediately</span>
         </label>
       </div>
 
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-        <button type="submit" class="btn btn-primary">${isEdit ? 'Save Changes' : 'Create Routine'}</button>
+        <button type="submit" class="btn btn-primary">${isEdit ? "Save Changes" : "Create Routine"}</button>
       </div>
     </form>
-  `;
+  `
 
-  showModal(content, { maxWidth: '500px' });
+        showModal(content, { maxWidth: "500px" })
 
-  // Form handler
-  const form = document.getElementById('routine-form');
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
+        // Form handler
+        const form = document.getElementById("routine-form")
+        form.addEventListener("submit", (e) => {
+          e.preventDefault()
 
-    const newRoutine = {
-      id: routine?.id || `r${Date.now()}`,
-      title: document.getElementById('routine-title').value,
-      category: document.getElementById('routine-category').value,
-      scheduledTime: document.getElementById('routine-time').value,
-      recurrenceType: document.getElementById('routine-recurrence').value,
-      recurrenceRules: {},
-      reminderOverride: document.getElementById('routine-reminder').value || null,
-      isActive: document.getElementById('routine-active').checked
-    };
+          const newRoutine = {
+            id: routine?.id || `r${Date.now()}`,
+            title: document.getElementById("routine-title").value,
+            category: document.getElementById("routine-category").value,
+            scheduledTime: document.getElementById("routine-time").value,
+            recurrenceType: document.getElementById("routine-recurrence").value,
+            recurrenceRules: {},
+            reminderOverride:
+              document.getElementById("routine-reminder").value || null,
+            isActive: document.getElementById("routine-active").checked,
+          }
 
-    if (isEdit) {
-      const index = state.routines.findIndex(r => r.id === routine.id);
-      if (index !== -1) {
-        state.routines[index] = { ...state.routines[index], ...newRoutine };
+          if (isEdit) {
+            const index = state.routines.findIndex((r) => r.id === routine.id)
+            if (index !== -1) {
+              state.routines[index] = {
+                ...state.routines[index],
+                ...newRoutine,
+              }
+            }
+            showToast("Routine updated", "success")
+          } else {
+            state.routines.push(newRoutine)
+
+            // Generate occurrence for today if active
+            if (
+              newRoutine.isActive &&
+              shouldOccurToday(newRoutine, new Date())
+            ) {
+              state.occurrences.push(createOccurrence(newRoutine, new Date()))
+            }
+
+            showToast("Routine created", "success")
+          }
+
+          closeModal()
+          render()
+        })
       }
-      showToast('Routine updated', 'success');
-    } else {
-      state.routines.push(newRoutine);
 
-      // Generate occurrence for today if active
-      if (newRoutine.isActive && shouldOccurToday(newRoutine, new Date())) {
-        state.occurrences.push(createOccurrence(newRoutine, new Date()));
-      }
+      // ===== DAY DETAILS MODAL =====
+      const showDayDetails = (dateStr) => {
+        const dayLogs = state.logs.filter((l) => l.date === dateStr)
+        const date = new Date(dateStr + "T00:00:00")
+        const formattedDate = date.toLocaleDateString("en-US", {
+          weekday: "long",
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+        })
 
-      showToast('Routine created', 'success');
-    }
-
-    closeModal();
-    render();
-  });
-};
-
-// ===== DAY DETAILS MODAL =====
-const showDayDetails = (dateStr) => {
-  const dayLogs = state.logs.filter(l => l.date === dateStr);
-  const date = new Date(dateStr + 'T00:00:00');
-  const formattedDate = date.toLocaleDateString('en-US', {
-    weekday: 'long',
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric'
-  });
-
-  const content = `
+        const content = `
     <div class="modal-header">
       <h2 class="modal-title">${formattedDate}</h2>
       <button class="modal-close" onclick="closeModal()">
@@ -3174,11 +3575,16 @@ const showDayDetails = (dateStr) => {
       </button>
     </div>
 
-    ${dayLogs.length === 0 ? `
+    ${
+      dayLogs.length === 0
+        ? `
       <div class="empty-state" style="padding: 2rem;">
         <p style="color: var(--text-secondary);">No activity recorded for this day</p>
       </div>
-    ` : dayLogs.map(log => `
+    `
+        : dayLogs
+            .map(
+              (log) => `
       <div class="occurrence-row" style="margin-bottom: 0.5rem;">
         <div class="occurrence-time">${log.scheduledTime}</div>
         <div class="occurrence-content">
@@ -3186,58 +3592,69 @@ const showDayDetails = (dateStr) => {
           <div class="occurrence-category">${log.routineCategoryAtLog}</div>
         </div>
         <span class="status-pill status-${log.status.toLowerCase()}">${log.status}</span>
-        ${log.delayMinutes !== null ? `
-          <span class="font-mono" style="font-size: 0.75rem;">${log.delayMinutes >= 0 ? '+' : ''}${log.delayMinutes}m</span>
-        ` : ''}
+        ${
+          log.delayMinutes !== null
+            ? `
+          <span class="font-mono" style="font-size: 0.75rem;">${log.delayMinutes >= 0 ? "+" : ""}${log.delayMinutes}m</span>
+        `
+            : ""
+        }
       </div>
-    `).join('')}
+    `
+            )
+            .join("")
+    }
 
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal()">Close</button>
     </div>
-  `;
+  `
 
-  showModal(content);
-};
+        showModal(content)
+      }
 
-// ===== UTILITIES =====
-const validateEmail = (email) => {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-};
+      // ===== UTILITIES =====
+      const validateEmail = (email) => {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+      }
 
-const getGreeting = () => {
-  const hour = new Date().getHours();
-  if (hour < 12) return 'Good morning';
-  if (hour < 17) return 'Good afternoon';
-  return 'Good evening';
-};
+      const getGreeting = () => {
+        const hour = new Date().getHours()
+        if (hour < 12) return "Good morning"
+        if (hour < 17) return "Good afternoon"
+        return "Good evening"
+      }
 
-// ===== INIT =====
-// Check for saved theme preference
-const savedTheme = localStorage.getItem('routineflow_theme');
-if (savedTheme) {
-  state.settings.theme = savedTheme;
-}
+      // ===== INIT =====
+      // Check for saved theme preference
+      const savedTheme = localStorage.getItem("routineflow_theme")
+      if (savedTheme) {
+        state.settings.theme = savedTheme
+      }
 
-// Check system preference
-if (!savedTheme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-  state.settings.theme = 'dark';
-}
+      // Check system preference
+      if (
+        !savedTheme &&
+        window.matchMedia &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches
+      ) {
+        state.settings.theme = "dark"
+      }
 
-// Request notification permission on load
-if ('Notification' in window && Notification.permission === 'default') {
-  // Don't request automatically, wait for user to enable in settings
-}
+      // Request notification permission on load
+      if ("Notification" in window && Notification.permission === "default") {
+        // Don't request automatically, wait for user to enable in settings
+      }
 
-// Initialize app
-render();
+      // Initialize app
+      render()
 
-// Save theme preference on change
-const originalRender = render;
-render = function() {
-  originalRender();
-  localStorage.setItem('routineflow_theme', state.settings.theme);
-};
-</script>
-</body>
+      // Save theme preference on change
+      const originalRender = render
+      render = function () {
+        originalRender()
+        localStorage.setItem("routineflow_theme", state.settings.theme)
+      }
+    </script>
+  </body>
 </html>

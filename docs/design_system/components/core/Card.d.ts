@@ -1,4 +1,4 @@
-import * as React from 'react';
+import * as React from "react"
 
 /**
  * Base surface panel. Hairline border by default; shadows for raised/overlay.
@@ -6,15 +6,15 @@ import * as React from 'react';
  * @startingPoint section="Layout" subtitle="Surface container panel" viewport="700x200"
  */
 export interface CardProps {
-  children?: React.ReactNode;
+  children?: React.ReactNode
   /** @default "md" */
-  padding?: 'none' | 'sm' | 'md' | 'lg';
+  padding?: "none" | "sm" | "md" | "lg"
   /** @default "hairline" */
-  elevation?: 'flat' | 'hairline' | 'sm' | 'md' | 'lg';
+  elevation?: "flat" | "hairline" | "sm" | "md" | "lg"
   /** Adds hover lift + pointer cursor. */
-  interactive?: boolean;
-  onClick?: (e: React.MouseEvent<HTMLDivElement>) => void;
-  style?: React.CSSProperties;
+  interactive?: boolean
+  onClick?: (e: React.MouseEvent<HTMLDivElement>) => void
+  style?: React.CSSProperties
 }
 
-export function Card(props: CardProps): JSX.Element;
+export function Card(props: CardProps): JSX.Element

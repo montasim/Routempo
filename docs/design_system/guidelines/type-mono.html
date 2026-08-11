@@ -1,31 +1,80 @@
 <!-- @dsCard group="Type" viewport="700x190" name="Mono — IBM Plex Mono" subtitle="The measurement DNA: time, delay, timestamps, data" -->
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<link rel="stylesheet" href="../styles.css">
-<style>
-  body { margin: 0; font-family: var(--font-mono); background: var(--surface-card); color: var(--text-primary); }
-  .wrap { padding: var(--space-7) var(--space-8); }
-  .eyebrow { font-size: var(--text-2xs); letter-spacing: var(--tracking-caps); text-transform: uppercase; color: var(--text-muted); margin-bottom: var(--space-5); }
-  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-6); }
-  .k { font-size: var(--text-2xs); color: var(--text-muted); text-transform: uppercase; letter-spacing: var(--tracking-caps); }
-  .v { font-size: var(--text-2xl); font-weight: var(--weight-medium); letter-spacing: var(--tracking-mono); margin-top: var(--space-2); }
-  .pos { color: var(--status-missed); }
-  .neg { color: var(--status-completed); }
-</style>
-</head>
-<body>
-  <div class="wrap">
-    <div class="eyebrow">IBM Plex Mono · tabular numerics</div>
-    <div class="grid">
-      <div><div class="k">Scheduled</div><div class="v">07:00</div></div>
-      <div><div class="k">Completed</div><div class="v">07:04</div></div>
-      <div><div class="k">Delay</div><div class="v pos">+4m</div></div>
-      <div><div class="k">Streak</div><div class="v">28d</div></div>
-      <div><div class="k">Discipline</div><div class="v neg">86</div></div>
-      <div><div class="k">Timezone</div><div class="v" style="font-size:var(--text-md)">Asia/Dhaka</div></div>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../styles.css" />
+    <style>
+      body {
+        margin: 0;
+        font-family: var(--font-mono);
+        background: var(--surface-card);
+        color: var(--text-primary);
+      }
+      .wrap {
+        padding: var(--space-7) var(--space-8);
+      }
+      .eyebrow {
+        font-size: var(--text-2xs);
+        letter-spacing: var(--tracking-caps);
+        text-transform: uppercase;
+        color: var(--text-muted);
+        margin-bottom: var(--space-5);
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--space-6);
+      }
+      .k {
+        font-size: var(--text-2xs);
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: var(--tracking-caps);
+      }
+      .v {
+        font-size: var(--text-2xl);
+        font-weight: var(--weight-medium);
+        letter-spacing: var(--tracking-mono);
+        margin-top: var(--space-2);
+      }
+      .pos {
+        color: var(--status-missed);
+      }
+      .neg {
+        color: var(--status-completed);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="eyebrow">IBM Plex Mono · tabular numerics</div>
+      <div class="grid">
+        <div>
+          <div class="k">Scheduled</div>
+          <div class="v">07:00</div>
+        </div>
+        <div>
+          <div class="k">Completed</div>
+          <div class="v">07:04</div>
+        </div>
+        <div>
+          <div class="k">Delay</div>
+          <div class="v pos">+4m</div>
+        </div>
+        <div>
+          <div class="k">Streak</div>
+          <div class="v">28d</div>
+        </div>
+        <div>
+          <div class="k">Discipline</div>
+          <div class="v neg">86</div>
+        </div>
+        <div>
+          <div class="k">Timezone</div>
+          <div class="v" style="font-size: var(--text-md)">Asia/Dhaka</div>
+        </div>
+      </div>
     </div>
-  </div>
-</body>
+  </body>
 </html>

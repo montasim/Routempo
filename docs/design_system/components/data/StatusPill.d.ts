@@ -1,4 +1,4 @@
-import * as React from 'react';
+import * as React from "react"
 
 /**
  * Canonical occurrence-status pill — the four system states with status-specific glyph.
@@ -7,10 +7,10 @@ import * as React from 'react';
  */
 export interface StatusPillProps {
   /** @default "Pending" */
-  status?: 'Completed' | 'Pending' | 'Missed' | 'Skipped';
+  status?: "Completed" | "Pending" | "Missed" | "Skipped"
   /** Delay in minutes (shown only when Completed). Negative = early. */
-  delay?: number | null;
-  style?: React.CSSProperties;
+  delay?: number | null
+  style?: React.CSSProperties
 }
 
-export function StatusPill(props: StatusPillProps): JSX.Element;
+export function StatusPill(props: StatusPillProps): JSX.Element

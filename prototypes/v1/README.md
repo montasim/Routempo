@@ -1,39 +1,37 @@
-# Routempo workflow prototype v1
+# Routempo product prototype v1
 
-Throwaway HTML prototype for answering one question: which daily workflow makes Routempo immediately understandable?
+Throwaway, single-file prototype aligned with the current Routempo web UI. It answers one question: does the current workflow remain understandable from an empty first-login state through the first recorded routine?
 
 Open `index.html` directly, or serve the repository root and visit:
 
-- `prototypes/v1/index.html?variant=A` for Guided home
-- `prototypes/v1/index.html?variant=B` for Day timeline
-- `prototypes/v1/index.html?variant=C` for Focus mode
-- `prototypes/v1/index.html?variant=A&page=login` for the shared login flow
+- `prototypes/v1/?page=login`
+- `prototypes/v1/?page=today`
+- `prototypes/v1/?page=plan`
+- `prototypes/v1/?page=insights`
+- `prototypes/v1/?page=logs`
+- `prototypes/v1/?page=settings`
 
-Use the floating switcher or the left and right arrow keys to compare variants. Routine completion, skipping, adding a routine, theme switching, and responsive layouts are interactive. All state is in memory and resets when the page reloads.
+The retired `variant` parameter is removed automatically. The floating A/B/C prototype switcher is no longer part of v1.
 
-Each variant includes six working, URL-addressable pages:
+## What is interactive
 
-- `&page=login` for Google sign-in
-- `&page=today` for completing or skipping today's routines
-- `&page=plan` for the weekly schedule and recurring-routine controls
-- `&page=insights` for completion patterns and activity history
-- `&page=logs` for the read-only, auditable behavior ledger
-- `&page=settings` for profile, reminders, notifications, appearance, account controls, and feedback examples
+- Google sign-in simulation and account-menu sign-out confirmation
+- empty first-login states with guided calls to action
+- adding, completing, skipping, pausing, and scheduling routines
+- Today, Plan, Insights, Logs, and Settings navigation
+- categories, notification preferences, device timezone, and default reminder
+- Routempo JSON export and replace-with-confirmation import
+- light and dark themes
 
-For example: `index.html?variant=A&page=plan`.
+State is intentionally kept in memory and resets on reload. No production APIs, authentication, database, or notification service are used.
 
-The login page uses a single simulated Google sign-in action. The Logs page records only finalized occurrences and exposes immutable event IDs, timestamps, timezone and routine snapshots, actor/source metadata, filtering, and expandable evidence details. The Settings page includes explicit controls for previewing success and error toasts and a confirmation alert. Confirmation is required before skipping or pausing a routine, changing timezone, or signing out. Frequent and reversible actions stay one-click.
+## Current product alignment
 
-This is prototype code. It is intentionally separate from the production Next.js app.
+- 255.2px desktop sidebar with progress anchored at the bottom
+- account avatar and menu in the top navigation
+- full-width page content with matching 32px desktop gutters
+- no seeded routines, categories, insights, or behavior logs
+- current page names, headings, empty-state guidance, confirmation dialogs, and settings cards
+- Manrope interface type, DM Mono measured values, Routempo green-gray tokens, 10px controls, and 14px panels
 
-## Visual system
-
-The prototype follows the repository's Routempo design system:
-
-- Manrope for headings and interface text, with DM Mono reserved for times and measured values
-- A balanced green-gray neutral scale for surfaces and readable deep ink text
-- An accessible forest-green scale from soft tints through deep action states
-- Regular body text, medium controls, and semibold headings instead of heavy bold defaults
-- A restrained display scale: 26–31px dashboard headings, 37px page titles, and a 64px maximum in Focus mode
-- Completed green, Skipped amber, and Missed red reserved for semantic feedback
-- A 4px spacing grid, 10px controls, 14px panels, hairline borders, and restrained shadows
+This is prototype code. It is intentionally separate from the production application.

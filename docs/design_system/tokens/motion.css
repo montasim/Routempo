@@ -4,17 +4,17 @@
    short, confident slides — the feel of an instrument responding.
    ============================================================ */
 :root {
-  --duration-instant: 80ms;  /* @kind other */
-  --duration-fast:    140ms;  /* @kind other */
-  --duration-base:    220ms;  /* @kind other */
-  --duration-slow:    320ms;  /* @kind other */
+  --duration-instant: 80ms; /* @kind other */
+  --duration-fast: 140ms; /* @kind other */
+  --duration-base: 220ms; /* @kind other */
+  --duration-slow: 320ms; /* @kind other */
 
   /* Easing — standard material-ish, but no spring/bounce (default UI / enter / exit) */
   --ease-standard: cubic-bezier(0.2, 0, 0, 1); /* @kind other */
-  --ease-out:      cubic-bezier(0.16, 1, 0.3, 1); /* @kind other */
-  --ease-in:       cubic-bezier(0.4, 0, 1, 1); /* @kind other */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1); /* @kind other */
+  --ease-in: cubic-bezier(0.4, 0, 1, 1); /* @kind other */
 
   /* Interaction state deltas: press = subtle shrink (never grow), cards lift 1px on hover */
   --press-scale: 0.97; /* @kind other */
-  --hover-lift:  -1px; /* @kind spacing */
+  --hover-lift: -1px; /* @kind spacing */
 }

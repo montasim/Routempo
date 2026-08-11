@@ -1,50 +1,130 @@
 <!-- @dsCard group="Components" viewport="700x300" name="Core" subtitle="Card, Badge, Tabs, Avatar" -->
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<link rel="stylesheet" href="../../styles.css">
-<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
-<script src="../../_ds_bundle.js"></script>
-<style>
-  body { margin: 0; font-family: var(--font-text); background: var(--surface-app); color: var(--text-primary); }
-  .wrap { padding: var(--space-7); display: flex; flex-direction: column; gap: var(--space-6); }
-  .row { display: flex; align-items: center; gap: var(--space-4); flex-wrap: wrap; }
-</style>
-</head>
-<body>
-  <div id="root"></div>
-  <script type="text/babel">
-    const { Card, Badge, Tabs, Avatar } = window.RoutineFlowDesignSystem_4781a2;
-    function Demo() {
-      const [tab, setTab] = React.useState('week');
-      return (
-        <div className="wrap">
-          <div className="row">
-            <Badge tone="completed" dot>Completed</Badge>
-            <Badge tone="missed" dot>Missed</Badge>
-            <Badge tone="signal">Fitness</Badge>
-            <Badge tone="neutral" mono>28d</Badge>
-            <Avatar name="Demo User" size={36} />
-            <Avatar name="Sara Khan" size={36} />
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../styles.css" />
+    <script
+      src="https://unpkg.com/react@18.3.1/umd/react.development.js"
+      integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"
+      integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"
+      integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y"
+      crossorigin="anonymous"
+    ></script>
+    <script src="../../_ds_bundle.js"></script>
+    <style>
+      body {
+        margin: 0;
+        font-family: var(--font-text);
+        background: var(--surface-app);
+        color: var(--text-primary);
+      }
+      .wrap {
+        padding: var(--space-7);
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-6);
+      }
+      .row {
+        display: flex;
+        align-items: center;
+        gap: var(--space-4);
+        flex-wrap: wrap;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="text/babel">
+      const { Card, Badge, Tabs, Avatar } =
+        window.RoutineFlowDesignSystem_4781a2
+      function Demo() {
+        const [tab, setTab] = React.useState("week")
+        return (
+          <div className="wrap">
+            <div className="row">
+              <Badge tone="completed" dot>
+                Completed
+              </Badge>
+              <Badge tone="missed" dot>
+                Missed
+              </Badge>
+              <Badge tone="signal">Fitness</Badge>
+              <Badge tone="neutral" mono>
+                28d
+              </Badge>
+              <Avatar name="Demo User" size={36} />
+              <Avatar name="Sara Khan" size={36} />
+            </div>
+            <Tabs
+              value={tab}
+              onChange={setTab}
+              items={[
+                { value: "day", label: "Daily" },
+                { value: "week", label: "Weekly" },
+                { value: "month", label: "Monthly", count: 4 },
+                { value: "year", label: "Yearly" },
+              ]}
+            />
+            <div className="row" style={{ alignItems: "stretch" }}>
+              <Card padding="md" style={{ flex: 1, minWidth: 200 }}>
+                <div
+                  style={{
+                    fontFamily: "var(--font-display)",
+                    fontWeight: 600,
+                    fontSize: "var(--text-lg)",
+                  }}
+                >
+                  Hairline card
+                </div>
+                <div
+                  style={{
+                    color: "var(--text-secondary)",
+                    fontSize: "var(--text-sm)",
+                    marginTop: 6,
+                  }}
+                >
+                  Default flat panel with a 1px border.
+                </div>
+              </Card>
+              <Card
+                padding="md"
+                elevation="md"
+                interactive
+                style={{ flex: 1, minWidth: 200 }}
+              >
+                <div
+                  style={{
+                    fontFamily: "var(--font-display)",
+                    fontWeight: 600,
+                    fontSize: "var(--text-lg)",
+                  }}
+                >
+                  Interactive card
+                </div>
+                <div
+                  style={{
+                    color: "var(--text-secondary)",
+                    fontSize: "var(--text-sm)",
+                    marginTop: 6,
+                  }}
+                >
+                  Hover to lift 1px. Raised shadow.
+                </div>
+              </Card>
+            </div>
           </div>
-          <Tabs value={tab} onChange={setTab} items={[{value:'day',label:'Daily'},{value:'week',label:'Weekly'},{value:'month',label:'Monthly',count:4},{value:'year',label:'Yearly'}]} />
-          <div className="row" style={{alignItems:'stretch'}}>
-            <Card padding="md" style={{flex:1, minWidth:200}}>
-              <div style={{fontFamily:'var(--font-display)',fontWeight:600,fontSize:'var(--text-lg)'}}>Hairline card</div>
-              <div style={{color:'var(--text-secondary)',fontSize:'var(--text-sm)',marginTop:6}}>Default flat panel with a 1px border.</div>
-            </Card>
-            <Card padding="md" elevation="md" interactive style={{flex:1, minWidth:200}}>
-              <div style={{fontFamily:'var(--font-display)',fontWeight:600,fontSize:'var(--text-lg)'}}>Interactive card</div>
-              <div style={{color:'var(--text-secondary)',fontSize:'var(--text-sm)',marginTop:6}}>Hover to lift 1px. Raised shadow.</div>
-            </Card>
-          </div>
-        </div>
-      );
-    }
-    ReactDOM.createRoot(document.getElementById('root')).render(<Demo/>);
-  </script>
-</body>
+        )
+      }
+      ReactDOM.createRoot(document.getElementById("root")).render(<Demo />)
+    </script>
+  </body>
 </html>

@@ -1,32 +1,77 @@
 <!-- @dsCard group="Colors" viewport="700x150" name="Discipline ramp" subtitle="Five-step consistency ramp for the yearly heatmap" -->
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<link rel="stylesheet" href="../styles.css">
-<style>
-  body { margin: 0; font-family: var(--font-text); background: var(--surface-card); color: var(--text-primary); }
-  .wrap { padding: var(--space-7); }
-  .ramp { display: flex; gap: var(--space-2); }
-  .step { flex: 1; height: 48px; border-radius: var(--radius-sm); box-shadow: var(--ring-hairline); }
-  .axis { display: flex; justify-content: space-between; margin-top: var(--space-3); font-family: var(--font-mono); font-size: var(--text-2xs); color: var(--text-muted); }
-  .grid { display: flex; gap: 3px; margin-top: var(--space-5); }
-  .cell { width: 13px; height: 13px; border-radius: 3px; }
-</style>
-</head>
-<body>
-  <div class="wrap">
-    <div class="ramp">
-      <div class="step" style="background:var(--ramp-0)"></div>
-      <div class="step" style="background:var(--ramp-1)"></div>
-      <div class="step" style="background:var(--ramp-2)"></div>
-      <div class="step" style="background:var(--ramp-3)"></div>
-      <div class="step" style="background:var(--ramp-4)"></div>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../styles.css" />
+    <style>
+      body {
+        margin: 0;
+        font-family: var(--font-text);
+        background: var(--surface-card);
+        color: var(--text-primary);
+      }
+      .wrap {
+        padding: var(--space-7);
+      }
+      .ramp {
+        display: flex;
+        gap: var(--space-2);
+      }
+      .step {
+        flex: 1;
+        height: 48px;
+        border-radius: var(--radius-sm);
+        box-shadow: var(--ring-hairline);
+      }
+      .axis {
+        display: flex;
+        justify-content: space-between;
+        margin-top: var(--space-3);
+        font-family: var(--font-mono);
+        font-size: var(--text-2xs);
+        color: var(--text-muted);
+      }
+      .grid {
+        display: flex;
+        gap: 3px;
+        margin-top: var(--space-5);
+      }
+      .cell {
+        width: 13px;
+        height: 13px;
+        border-radius: 3px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="ramp">
+        <div class="step" style="background: var(--ramp-0)"></div>
+        <div class="step" style="background: var(--ramp-1)"></div>
+        <div class="step" style="background: var(--ramp-2)"></div>
+        <div class="step" style="background: var(--ramp-3)"></div>
+        <div class="step" style="background: var(--ramp-4)"></div>
+      </div>
+      <div class="axis">
+        <span>0% — no completion</span><span>100% — full consistency</span>
+      </div>
+      <div class="grid">
+        <div class="cell" style="background: var(--ramp-4)"></div>
+        <div class="cell" style="background: var(--ramp-3)"></div>
+        <div class="cell" style="background: var(--ramp-2)"></div>
+        <div class="cell" style="background: var(--ramp-0)"></div>
+        <div class="cell" style="background: var(--ramp-4)"></div>
+        <div class="cell" style="background: var(--ramp-4)"></div>
+        <div class="cell" style="background: var(--ramp-1)"></div>
+        <div class="cell" style="background: var(--ramp-3)"></div>
+        <div class="cell" style="background: var(--ramp-4)"></div>
+        <div class="cell" style="background: var(--ramp-2)"></div>
+        <div class="cell" style="background: var(--ramp-0)"></div>
+        <div class="cell" style="background: var(--ramp-4)"></div>
+        <div class="cell" style="background: var(--ramp-3)"></div>
+        <div class="cell" style="background: var(--ramp-4)"></div>
+      </div>
     </div>
-    <div class="axis"><span>0% — no completion</span><span>100% — full consistency</span></div>
-    <div class="grid">
-      <div class="cell" style="background:var(--ramp-4)"></div><div class="cell" style="background:var(--ramp-3)"></div><div class="cell" style="background:var(--ramp-2)"></div><div class="cell" style="background:var(--ramp-0)"></div><div class="cell" style="background:var(--ramp-4)"></div><div class="cell" style="background:var(--ramp-4)"></div><div class="cell" style="background:var(--ramp-1)"></div><div class="cell" style="background:var(--ramp-3)"></div><div class="cell" style="background:var(--ramp-4)"></div><div class="cell" style="background:var(--ramp-2)"></div><div class="cell" style="background:var(--ramp-0)"></div><div class="cell" style="background:var(--ramp-4)"></div><div class="cell" style="background:var(--ramp-3)"></div><div class="cell" style="background:var(--ramp-4)"></div>
-    </div>
-  </div>
-</body>
+  </body>
 </html>

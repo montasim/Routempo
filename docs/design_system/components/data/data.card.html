@@ -1,58 +1,138 @@
 <!-- @dsCard group="Components" viewport="700x320" name="Data" subtitle="StatusPill, MetricTile, ProgressRing, StreakChip, HeatmapCell" -->
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<link rel="stylesheet" href="../../styles.css">
-<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
-<script src="../../_ds_bundle.js"></script>
-<style>
-  body { margin: 0; font-family: var(--font-text); background: var(--surface-app); color: var(--text-primary); }
-  .wrap { padding: var(--space-7); display: flex; flex-direction: column; gap: var(--space-6); }
-  .row { display: flex; align-items: center; gap: var(--space-4); flex-wrap: wrap; }
-  .lbl { font-family: var(--font-mono); font-size: var(--text-2xs); text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--text-muted); margin-bottom: 10px; }
-</style>
-</head>
-<body>
-  <div id="root"></div>
-  <script type="text/babel">
-    const { StatusPill, MetricTile, ProgressRing, StreakChip, HeatmapCell } = window.RoutineFlowDesignSystem_4781a2;
-    function Demo() {
-      const weeks = Array.from({length:20}, (_,c) => Array.from({length:7}, (_,r) => ({ rate: Math.max(0, Math.min(1, ((c*7+r)*37%100)/100)) })));
-      return (
-        <div className="wrap">
-          <div>
-            <div className="lbl">Status pills</div>
-            <div className="row">
-              <StatusPill status="Completed" delay={4} />
-              <StatusPill status="Completed" delay={-3} />
-              <StatusPill status="Pending" />
-              <StatusPill status="Missed" />
-              <StatusPill status="Skipped" />
-              <StreakChip days={28} best={28} />
-              <StreakChip days={0} />
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../styles.css" />
+    <script
+      src="https://unpkg.com/react@18.3.1/umd/react.development.js"
+      integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"
+      integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"
+      integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y"
+      crossorigin="anonymous"
+    ></script>
+    <script src="../../_ds_bundle.js"></script>
+    <style>
+      body {
+        margin: 0;
+        font-family: var(--font-text);
+        background: var(--surface-app);
+        color: var(--text-primary);
+      }
+      .wrap {
+        padding: var(--space-7);
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-6);
+      }
+      .row {
+        display: flex;
+        align-items: center;
+        gap: var(--space-4);
+        flex-wrap: wrap;
+      }
+      .lbl {
+        font-family: var(--font-mono);
+        font-size: var(--text-2xs);
+        text-transform: uppercase;
+        letter-spacing: var(--tracking-caps);
+        color: var(--text-muted);
+        margin-bottom: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="text/babel">
+      const { StatusPill, MetricTile, ProgressRing, StreakChip, HeatmapCell } =
+        window.RoutineFlowDesignSystem_4781a2
+      function Demo() {
+        const weeks = Array.from({ length: 20 }, (_, c) =>
+          Array.from({ length: 7 }, (_, r) => ({
+            rate: Math.max(0, Math.min(1, (((c * 7 + r) * 37) % 100) / 100)),
+          }))
+        )
+        return (
+          <div className="wrap">
+            <div>
+              <div className="lbl">Status pills</div>
+              <div className="row">
+                <StatusPill status="Completed" delay={4} />
+                <StatusPill status="Completed" delay={-3} />
+                <StatusPill status="Pending" />
+                <StatusPill status="Missed" />
+                <StatusPill status="Skipped" />
+                <StreakChip days={28} best={28} />
+                <StreakChip days={0} />
+              </div>
+            </div>
+            <div className="row" style={{ alignItems: "stretch" }}>
+              <MetricTile
+                label="Completion"
+                value="86"
+                unit="%"
+                delta="+4%"
+                deltaDirection="up"
+                style={{ flex: 1, minWidth: 140 }}
+              />
+              <MetricTile
+                label="Avg delay"
+                value="6"
+                unit="min"
+                delta="2m"
+                deltaDirection="down"
+                tone="completed"
+                style={{ flex: 1, minWidth: 140 }}
+              />
+              <MetricTile
+                label="Missed"
+                value="3"
+                delta="1"
+                deltaDirection="down"
+                tone="missed"
+                style={{ flex: 1, minWidth: 140 }}
+              />
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: "8px 16px",
+                  background: "var(--surface-card)",
+                  borderRadius: "var(--radius-lg)",
+                  boxShadow: "var(--ring-hairline)",
+                }}
+              >
+                <ProgressRing value={86} label="Discipline" size={88} />
+              </div>
+            </div>
+            <div>
+              <div className="lbl">Yearly heatmap</div>
+              <div style={{ display: "flex", gap: 3 }}>
+                {weeks.map((wk, i) => (
+                  <div
+                    key={i}
+                    style={{ display: "flex", flexDirection: "column", gap: 3 }}
+                  >
+                    {wk.map((d, j) => (
+                      <HeatmapCell key={j} rate={d.rate} />
+                    ))}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-          <div className="row" style={{alignItems:'stretch'}}>
-            <MetricTile label="Completion" value="86" unit="%" delta="+4%" deltaDirection="up" style={{flex:1, minWidth:140}} />
-            <MetricTile label="Avg delay" value="6" unit="min" delta="2m" deltaDirection="down" tone="completed" style={{flex:1, minWidth:140}} />
-            <MetricTile label="Missed" value="3" delta="1" deltaDirection="down" tone="missed" style={{flex:1, minWidth:140}} />
-            <div style={{display:'flex',alignItems:'center',justifyContent:'center',padding:'8px 16px',background:'var(--surface-card)',borderRadius:'var(--radius-lg)',boxShadow:'var(--ring-hairline)'}}>
-              <ProgressRing value={86} label="Discipline" size={88} />
-            </div>
-          </div>
-          <div>
-            <div className="lbl">Yearly heatmap</div>
-            <div style={{display:'flex',gap:3}}>
-              {weeks.map((wk,i)=>(<div key={i} style={{display:'flex',flexDirection:'column',gap:3}}>{wk.map((d,j)=><HeatmapCell key={j} rate={d.rate} />)}</div>))}
-            </div>
-          </div>
-        </div>
-      );
-    }
-    ReactDOM.createRoot(document.getElementById('root')).render(<Demo/>);
-  </script>
-</body>
+        )
+      }
+      ReactDOM.createRoot(document.getElementById("root")).render(<Demo />)
+    </script>
+  </body>
 </html>

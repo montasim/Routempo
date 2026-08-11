@@ -1,24 +1,59 @@
 <!-- @dsCard group="Spacing" viewport="700x170" name="Elevation" subtitle="Tight, low-spread shadows — precision panels, not floating cards" -->
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<link rel="stylesheet" href="../styles.css">
-<style>
-  body { margin: 0; font-family: var(--font-mono); background: var(--surface-app); color: var(--text-primary); }
-  .row { display: flex; gap: var(--space-7); padding: var(--space-8); }
-  .sw { text-align: center; }
-  .box { width: 96px; height: 64px; background: var(--surface-card); border-radius: var(--radius-lg); }
-  .tok { font-size: var(--text-2xs); color: var(--text-muted); margin-top: var(--space-4); }
-</style>
-</head>
-<body>
-  <div class="row">
-    <div class="sw"><div class="box" style="box-shadow:var(--ring-hairline)"></div><div class="tok">hairline</div></div>
-    <div class="sw"><div class="box" style="box-shadow:var(--shadow-sm)"></div><div class="tok">shadow-sm</div></div>
-    <div class="sw"><div class="box" style="box-shadow:var(--shadow-md)"></div><div class="tok">shadow-md</div></div>
-    <div class="sw"><div class="box" style="box-shadow:var(--shadow-lg)"></div><div class="tok">shadow-lg</div></div>
-    <div class="sw"><div class="box" style="box-shadow:var(--shadow-pop)"></div><div class="tok">shadow-pop</div></div>
-  </div>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../styles.css" />
+    <style>
+      body {
+        margin: 0;
+        font-family: var(--font-mono);
+        background: var(--surface-app);
+        color: var(--text-primary);
+      }
+      .row {
+        display: flex;
+        gap: var(--space-7);
+        padding: var(--space-8);
+      }
+      .sw {
+        text-align: center;
+      }
+      .box {
+        width: 96px;
+        height: 64px;
+        background: var(--surface-card);
+        border-radius: var(--radius-lg);
+      }
+      .tok {
+        font-size: var(--text-2xs);
+        color: var(--text-muted);
+        margin-top: var(--space-4);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="row">
+      <div class="sw">
+        <div class="box" style="box-shadow: var(--ring-hairline)"></div>
+        <div class="tok">hairline</div>
+      </div>
+      <div class="sw">
+        <div class="box" style="box-shadow: var(--shadow-sm)"></div>
+        <div class="tok">shadow-sm</div>
+      </div>
+      <div class="sw">
+        <div class="box" style="box-shadow: var(--shadow-md)"></div>
+        <div class="tok">shadow-md</div>
+      </div>
+      <div class="sw">
+        <div class="box" style="box-shadow: var(--shadow-lg)"></div>
+        <div class="tok">shadow-lg</div>
+      </div>
+      <div class="sw">
+        <div class="box" style="box-shadow: var(--shadow-pop)"></div>
+        <div class="tok">shadow-pop</div>
+      </div>
+    </div>
+  </body>
 </html>
