@@ -61,6 +61,13 @@ function RootDocument({ children }: { children: ReactNode }) {
           {children}
           <Toaster richColors position="top-center" />
         </AppProvider>
+        <script
+          src="https://www.supportkori.com/widget.js"
+          data-id="montasim"
+          data-message="Support montasim"
+          data-color="#FFDD00"
+          data-position="right"
+        ></script>
         <Scripts />
       </body>
     </html>
