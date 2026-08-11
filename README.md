@@ -6,7 +6,7 @@ Routempo helps people build repeatable daily rhythms. Users can schedule one-off
 
 This repository contains the full-stack web application, its Neon PostgreSQL schema and migrations, an interactive product prototype, a reusable design system, and automated unit and browser tests.
 
-**[Review the v1 prototype](prototypes/v1/README.md) · [Explore the design system](docs/design_system/readme.md) · [Report an issue](https://github.com/montasim/routine-flow-web/issues)**
+**[Review the v1 prototype](prototypes/v1/README.md) · [Explore the design system](docs/design_system/readme.md) · [Report an issue](https://github.com/montasim/Routempo/issues)**
 
 > [!NOTE]
 > Routempo is under active development. This repository does not currently declare a public production deployment.
@@ -104,8 +104,8 @@ Sync is batch-oriented rather than continuous two-way synchronization. A single 
 ### 1. Clone and install
 
 ```bash
-git clone https://github.com/montasim/routine-flow-web.git
-cd routine-flow-web
+git clone https://github.com/montasim/Routempo.git
+cd Routempo
 pnpm install --frozen-lockfile
 ```
 
@@ -325,7 +325,7 @@ docs/research/         Evidence-backed architecture research
 
 ## Support and security
 
-Use [GitHub Issues](https://github.com/montasim/routine-flow-web/issues) for reproducible, non-sensitive bugs and feature requests. Include the affected route, browser, timezone, expected behavior, actual behavior, and reproduction steps.
+Use [GitHub Issues](https://github.com/montasim/Routempo/issues) for reproducible, non-sensitive bugs and feature requests. Include the affected route, browser, timezone, expected behavior, actual behavior, and reproduction steps.
 
 Do not disclose credentials, OAuth tokens, database URLs, push subscription details, private routine content, or vulnerabilities in a public issue. The repository does not yet include a dedicated `SECURITY.md` or private vulnerability-reporting address; contact the repository owner privately through [GitHub](https://github.com/montasim) until one is established.
 
