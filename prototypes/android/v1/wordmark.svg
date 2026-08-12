@@ -1,0 +1,11 @@
+<svg width="292" height="64" viewBox="0 0 292 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="routempo-wordmark-title">
+  <title id="routempo-wordmark-title">Routempo</title>
+  <g transform="translate(0 12) scale(0.4166667)">
+    <rect width="96" height="96" rx="24" fill="#14532D"/>
+    <path d="M29 70H67" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/>
+    <path d="M33 67L43 30H53L63 67" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M48 53L61 29" stroke="#86EFAC" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="62" cy="27" r="6" fill="#86EFAC"/>
+  </g>
+  <text x="52" y="42" font-family="Manrope, Arial, sans-serif" font-size="27" font-weight="600" letter-spacing="-0.6" fill="#17201A">Rou<tspan fill="#15803D">tempo</tspan></text>
+</svg>

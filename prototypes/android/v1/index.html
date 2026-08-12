@@ -1,0 +1,1268 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#f5f8f5" />
+    <meta
+      name="description"
+      content="Three switchable Android UI concepts for Routempo."
+    />
+    <title>Routempo Android prototype v1</title>
+    <!-- Three Android Today variants, switchable with ?variant=A, B, or C. -->
+    <!-- Design read: calm daily utility, Material 3-inspired, preserving Routempo's green brand. -->
+    <!-- Dials: DESIGN_VARIANCE 3, MOTION_INTENSITY 2, VISUAL_DENSITY 6. -->
+    <!-- Spacing rhythm: 4px base; 8px related, 12px inline, 16px component, 20px sheet block, 24px section. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              canvas: "var(--canvas)",
+              surface: "var(--surface)",
+              elevated: "var(--elevated)",
+              soft: "var(--soft)",
+              line: "var(--line)",
+              ink: "var(--ink)",
+              muted: "var(--muted)",
+              brand: {
+                50: "var(--brand-50)",
+                100: "var(--brand-100)",
+                500: "var(--brand-500)",
+                600: "var(--brand-600)",
+                700: "var(--brand-700)",
+                900: "var(--brand-900)",
+              },
+              done: "var(--done)",
+              skipped: "var(--skipped)",
+              missed: "var(--missed)",
+            },
+            fontFamily: {
+              sans: ["Manrope", "system-ui", "sans-serif"],
+              mono: ["DM Mono", "monospace"],
+            },
+            boxShadow: {
+              phone: "0 28px 90px -28px rgba(19,43,27,.35)",
+              float: "0 14px 40px -14px rgba(10,30,17,.35)",
+            },
+          },
+        },
+      }
+    </script>
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <style>
+      :root {
+        color-scheme: light;
+        --canvas: #edf2ee;
+        --surface: #fbfdfb;
+        --elevated: #ffffff;
+        --soft: #edf3ee;
+        --line: #d9e3db;
+        --ink: #17231a;
+        --muted: #68766c;
+        --brand-50: #edf9f0;
+        --brand-100: #d9f1df;
+        --brand-500: #28a562;
+        --brand-600: #178449;
+        --brand-700: #126b3a;
+        --brand-900: #123d27;
+        --done: #23965a;
+        --skipped: #bb731b;
+        --missed: #cc454a;
+      }
+      .dark {
+        color-scheme: dark;
+        --canvas: #0d120e;
+        --surface: #131a15;
+        --elevated: #19211b;
+        --soft: #202a22;
+        --line: #2e3a31;
+        --ink: #edf4ef;
+        --muted: #a5b2a8;
+        --brand-50: #203329;
+        --brand-100: #294535;
+        --brand-500: #4db879;
+        --brand-600: #63c58b;
+        --brand-700: #88d7a6;
+        --brand-900: #dff3e5;
+        --done: #52c381;
+        --skipped: #e5a34b;
+        --missed: #ef696e;
+      }
+      * {
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
+      html {
+        background: var(--canvas);
+      }
+      body {
+        margin: 0;
+        font-family: Manrope, system-ui, sans-serif;
+      }
+      button,
+      input,
+      select {
+        font: inherit;
+      }
+      button {
+        touch-action: manipulation;
+        transition:
+          transform 140ms ease,
+          background-color 140ms ease,
+          color 140ms ease,
+          border-color 140ms ease;
+      }
+      button:active {
+        transform: scale(0.97);
+      }
+      button:focus-visible,
+      input:focus-visible,
+      select:focus-visible {
+        outline: 3px solid rgb(23 132 73 / 0.28);
+        outline-offset: 2px;
+      }
+      .safe-top {
+        padding-top: max(12px, env(safe-area-inset-top));
+      }
+      .safe-bottom {
+        padding-bottom: max(8px, env(safe-area-inset-bottom));
+      }
+      .sheet-safe {
+        padding-bottom: max(20px, calc(env(safe-area-inset-bottom) + 12px));
+      }
+      .hide-scrollbar {
+        scrollbar-width: none;
+      }
+      .hide-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .section-scroll {
+        overscroll-behavior-y: contain;
+        scrollbar-width: thin;
+        scrollbar-color: var(--line) transparent;
+      }
+      .section-scroll::-webkit-scrollbar {
+        width: 4px;
+      }
+      .section-scroll::-webkit-scrollbar-thumb {
+        border-radius: 999px;
+        background: var(--line);
+      }
+      .ring-progress {
+        background: conic-gradient(
+          var(--brand-600) calc(var(--progress) * 1%),
+          var(--soft) 0
+        );
+      }
+      .enter {
+        animation: enter 0.24s cubic-bezier(0.2, 0.8, 0.2, 1);
+      }
+      @keyframes enter {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+      }
+      @media (max-width: 520px) {
+        body {
+          height: 100dvh;
+          overflow: hidden;
+        }
+        #device {
+          width: 100%;
+          height: 100dvh;
+          border: 0;
+          border-radius: 0;
+          box-shadow: none;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          transition-duration: 0.01ms !important;
+          scroll-behavior: auto !important;
+        }
+      }
+    </style>
+  </head>
+  <body
+    class="bg-canvas text-ink flex min-h-[100dvh] flex-col items-center gap-4 antialiased md:flex-row md:justify-center md:p-6"
+  >
+    <div
+      id="device"
+      class="border-line bg-surface shadow-phone relative flex h-[100dvh] w-full max-w-[430px] flex-col overflow-clip border md:h-[850px] md:rounded-[36px]"
+    ></div>
+    <div id="prototype-controls" class="hidden"></div>
+
+    <script>
+      const variants = {
+        A: { name: "Checklist", note: "Recommended" },
+        B: { name: "Next up", note: "One task first" },
+        C: { name: "Day sections", note: "Grouped by time" },
+      }
+      const nav = [
+        ["today", "Today", "house"],
+        ["plan", "Plan", "calendar-days"],
+        ["review", "Review", "chart-no-axes-column-increasing"],
+        ["settings", "Settings", "settings"],
+      ]
+      const days = [
+        ["S", 8, true],
+        ["S", 9, true],
+        ["M", 10, true],
+        ["T", 11, false],
+        ["W", 12, false],
+        ["T", 13, false],
+        ["F", 14, false],
+      ]
+      const requestedPage = new URLSearchParams(location.search).get("page")
+      const state = {
+        page: nav.some(([page]) => page === requestedPage)
+          ? requestedPage
+          : "today",
+        theme: "light",
+        planView: "week",
+        reviewView: "summary",
+        reviewRange: "7",
+        logFilter: "all",
+        selectedDay: 3,
+        weekOffset: 0,
+        modal: null,
+        toast: null,
+        undo: null,
+        connected: { google: true, microsoft: false },
+        settings: {
+          name: "Montasim",
+          email: "montasim@example.com",
+          timezone: "Asia/Dhaka",
+          reminder: "10 minutes before",
+          reminders: true,
+          summary: true,
+        },
+        categories: [
+          "Prayer",
+          "Personal",
+          "Food habit",
+          "Learning",
+          "Wellbeing",
+        ],
+        routines: [
+          {
+            id: 1,
+            title: "Fajr salah",
+            time: "4:55 AM",
+            category: "Prayer",
+            status: "completed",
+          },
+          {
+            id: 2,
+            title: "Morning walk",
+            time: "5:30 AM",
+            category: "Personal",
+            status: "completed",
+          },
+          {
+            id: 3,
+            title: "Breakfast",
+            time: "7:00 AM",
+            category: "Food habit",
+            status: "completed",
+          },
+          {
+            id: 4,
+            title: "German language study",
+            time: "7:12 AM",
+            category: "Learning",
+            status: "completed",
+          },
+          {
+            id: 5,
+            title: "Asr salah",
+            time: "5:15 PM",
+            category: "Prayer",
+            status: "pending",
+          },
+          {
+            id: 6,
+            title: "Magrib salah",
+            time: "6:55 PM",
+            category: "Prayer",
+            status: "pending",
+          },
+          {
+            id: 7,
+            title: "Esha salah",
+            time: "8:45 PM",
+            category: "Prayer",
+            status: "pending",
+          },
+          {
+            id: 8,
+            title: "Read for 20 minutes",
+            time: "9:30 PM",
+            category: "Learning",
+            status: "skipped",
+          },
+          {
+            id: 9,
+            title: "Prepare tomorrow",
+            time: "10:00 PM",
+            category: "Personal",
+            status: "pending",
+          },
+        ],
+        logs: [
+          {
+            id: 101,
+            date: "August 11, 2026",
+            eventTime: "7:18 AM",
+            title: "German language study",
+            category: "Learning",
+            scheduled: "7:12 AM",
+            actual: "7:18 AM",
+            variance: "+6 min",
+            status: "completed",
+            actor: "You",
+            source: "Routempo Android",
+            timezone: "Asia/Dhaka",
+            snapshot: "Reviewed vocabulary for 20 minutes.",
+          },
+          {
+            id: 102,
+            date: "August 11, 2026",
+            eventTime: "7:02 AM",
+            title: "Breakfast",
+            category: "Food habit",
+            scheduled: "7:00 AM",
+            actual: "7:02 AM",
+            variance: "+2 min",
+            status: "completed",
+            actor: "You",
+            source: "Routempo Android",
+            timezone: "Asia/Dhaka",
+            snapshot: "Breakfast completed as planned.",
+          },
+          {
+            id: 103,
+            date: "August 11, 2026",
+            eventTime: "5:38 AM",
+            title: "Morning walk",
+            category: "Personal",
+            scheduled: "5:30 AM",
+            actual: "5:38 AM",
+            variance: "+8 min",
+            status: "completed",
+            actor: "You",
+            source: "Routempo Android",
+            timezone: "Asia/Dhaka",
+            snapshot: "Walked for 25 minutes.",
+          },
+          {
+            id: 104,
+            date: "August 10, 2026",
+            eventTime: "9:30 PM",
+            title: "Read for 20 minutes",
+            category: "Learning",
+            scheduled: "9:30 PM",
+            actual: "Not recorded",
+            variance: "Skipped",
+            status: "skipped",
+            actor: "You",
+            source: "Routempo Web",
+            timezone: "Asia/Dhaka",
+            snapshot: "Deferred because the evening ran late.",
+          },
+          {
+            id: 105,
+            date: "August 10, 2026",
+            eventTime: "10:00 PM",
+            title: "Prepare tomorrow",
+            category: "Personal",
+            scheduled: "10:00 PM",
+            actual: "Not recorded",
+            variance: "Missed",
+            status: "missed",
+            actor: "Scheduler",
+            source: "Routempo",
+            timezone: "Asia/Dhaka",
+            snapshot: "No outcome was recorded before the day closed.",
+          },
+        ],
+      }
+
+      state.routines = state.routines.map((routine) => ({
+        startDate: "2026-08-11",
+        repeat: "daily",
+        repeatDays: [],
+        endDate: "",
+        note: routine.category === "Prayer" ? "Prayer time" : "10 minutes",
+        enabled: true,
+        ...routine,
+      }))
+
+      function icon(name, cls = "h-5 w-5") {
+        return `<i data-lucide="${name}" class="${cls}" aria-hidden="true"></i>`
+      }
+      function currentVariant() {
+        const key = (
+          new URLSearchParams(location.search).get("variant") || "A"
+        ).toUpperCase()
+        return variants[key] ? key : "A"
+      }
+      function pending() {
+        return state.routines.filter(
+          (routine) => routine.enabled && routine.status === "pending"
+        )
+      }
+      function completeCount() {
+        return state.routines.filter(
+          (routine) => routine.enabled && routine.status === "completed"
+        ).length
+      }
+      function percent() {
+        return enabledRoutines().length
+          ? Math.round((completeCount() / enabledRoutines().length) * 100)
+          : 0
+      }
+      function categoryUsage(category) {
+        return state.routines.filter((routine) => routine.category === category)
+          .length
+      }
+      function enabledRoutines() {
+        return state.routines.filter((routine) => routine.enabled)
+      }
+      function repeatLabel(routine) {
+        if (routine.repeat === "none") return "Once"
+        if (routine.repeat === "weekly") return "Weekly"
+        if (routine.repeat === "monthly") return "Monthly"
+        if (routine.repeat === "yearly") return "Yearly"
+        return "Daily"
+      }
+      function selectedPlanDate() {
+        const date = new Date(
+          Date.UTC(2026, 7, 8 + state.selectedDay + state.weekOffset * 7)
+        )
+        return date.toISOString().slice(0, 10)
+      }
+      function selectedPlanLabel() {
+        return new Date(`${selectedPlanDate()}T12:00:00Z`).toLocaleDateString(
+          "en-US",
+          { weekday: "long", month: "long", day: "numeric" }
+        )
+      }
+      function weekRangeLabel() {
+        const first = new Date(Date.UTC(2026, 7, 8 + state.weekOffset * 7))
+        const last = new Date(Date.UTC(2026, 7, 14 + state.weekOffset * 7))
+        const firstLabel = first.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          timeZone: "UTC",
+        })
+        const lastLabel = last.toLocaleDateString("en-US", {
+          month:
+            first.getUTCMonth() === last.getUTCMonth() ? undefined : "short",
+          day: "numeric",
+          timeZone: "UTC",
+        })
+        return `${firstLabel}-${lastLabel}`
+      }
+      function routineOccurs(routine, dateValue) {
+        if (!routine.enabled || dateValue < routine.startDate) return false
+        if (routine.endDate && dateValue > routine.endDate) return false
+        const date = new Date(`${dateValue}T12:00:00Z`)
+        if (routine.repeat === "none") return dateValue === routine.startDate
+        if (routine.repeat === "weekly")
+          return (routine.repeatDays ?? []).includes(date.getUTCDay())
+        if (routine.repeat === "monthly")
+          return date.getUTCDate() === Number(routine.repeatDate)
+        if (routine.repeat === "yearly")
+          return (
+            date.getUTCMonth() + 1 === Number(routine.repeatMonth) &&
+            date.getUTCDate() === Number(routine.repeatDate)
+          )
+        return true
+      }
+      function scheduledRoutines() {
+        return state.routines.filter((routine) =>
+          routineOccurs(routine, selectedPlanDate())
+        )
+      }
+      function meta(r) {
+        return `${r.time}  •  ${r.category}`
+      }
+
+      function render() {
+        document.documentElement.classList.toggle(
+          "dark",
+          state.theme === "dark"
+        )
+        document.querySelector('meta[name="theme-color"]').content =
+          state.theme === "dark" ? "#131a15" : "#f5f8f5"
+        const device = document.getElementById("device")
+        device.innerHTML = `${topBar()}<main class="hide-scrollbar min-h-0 flex-1 overflow-hidden px-4 pb-4 pt-2">${page()}</main>${state.modal ? "" : bottomNav()}${toast()}${modal()}`
+        device.scrollTop = 0
+        const controls = document.getElementById("prototype-controls")
+        const showControls = state.page === "today" && !state.modal
+        controls.className = showControls
+          ? "hidden shrink-0 md:block"
+          : "hidden"
+        controls.innerHTML = showControls ? switcher() : ""
+        lucide.createIcons()
+      }
+
+      function topBar() {
+        const title = {
+          today: "Today",
+          plan: "Plan",
+          review: "Review",
+          settings: "Settings",
+        }[state.page]
+        return `<header class="safe-top flex min-h-[64px] shrink-0 items-center gap-3 bg-surface/95 px-4 backdrop-blur">
+          <img src="./logo.svg" alt="Routempo" class="h-9 w-9 shrink-0 rounded-xl" />
+          <div class="min-w-0 flex-1"><p class="truncate text-[22px] font-bold tracking-[-.025em]">${title}</p>${state.page === "today" ? '<p class="text-xs text-muted">Tuesday, August 11</p>' : ""}</div>
+          ${state.page === "review" && state.reviewView === "history" ? `<button onclick="openLogForm()" class="inline-flex h-12 items-center gap-2 px-2 text-sm font-bold text-brand-700" aria-label="Add log">${icon("plus", "h-5 w-5")} Add log</button>` : ""}
+        </header>`
+      }
+
+      function page() {
+        if (state.page === "plan") return planPage()
+        if (state.page === "review") return reviewPage()
+        if (state.page === "settings") return settingsPage()
+        return todayPage()
+      }
+
+      function todayPage() {
+        const body =
+          currentVariant() === "B"
+            ? focusVariant()
+            : currentVariant() === "C"
+              ? agendaVariant()
+              : timelineVariant()
+        return `<div class="enter flex h-full min-h-0 flex-col">${body}</div>`
+      }
+
+      function timelineVariant() {
+        const routines = routinesByTime(enabledRoutines())
+        const incomplete = routines.filter(
+          (routine) => routine.status !== "completed"
+        )
+        const completed = routines.filter(
+          (routine) => routine.status === "completed"
+        )
+        return `${mobileWeekSummary("mt-1")}<section class="mt-5 flex min-h-0 flex-1 flex-col"><div class="section-scroll min-h-0 flex-1 space-y-5 overflow-y-auto">${routineStatusGroup("Incomplete", incomplete)}${routineStatusGroup("Completed", completed)}</div></section>`
+      }
+
+      function routinesByTime(routines) {
+        return [...routines].sort(
+          (first, second) =>
+            timeInMinutes(first.time) - timeInMinutes(second.time)
+        )
+      }
+
+      function timeInMinutes(time) {
+        const [, hour, minute, period] = time.match(
+          /^(\d{1,2}):(\d{2})\s(AM|PM)$/
+        )
+        return (
+          ((Number(hour) % 12) + (period === "PM" ? 12 : 0)) * 60 +
+          Number(minute)
+        )
+      }
+
+      function routineStatusGroup(label, routines) {
+        const countLabel =
+          label === "Incomplete"
+            ? `${routines.length} remaining`
+            : `${routines.length} completed`
+        return `<section><div class="mb-2 flex items-center justify-between"><h2 class="text-sm font-bold text-muted">${label}</h2><span class="text-xs text-muted">${countLabel}</span></div>${routines.length ? `<div class="overflow-hidden rounded-2xl border border-line bg-elevated">${routines.map(simpleRoutineRow).join("")}</div>` : `<div class="rounded-2xl border border-dashed border-line px-4 py-5 text-center text-sm text-muted">No ${label.toLowerCase()} routines</div>`}</section>`
+      }
+
+      function simpleRoutineRow(r) {
+        const done = r.status === "completed",
+          skipped = r.status === "skipped"
+        return `<article class="flex min-h-[72px] items-center gap-2 border-b border-line px-2 py-2 last:border-0"><button onclick="${done || skipped ? `changeStatus(${r.id},'pending')` : `changeStatus(${r.id},'completed')`}" class="grid h-12 w-12 shrink-0 place-items-center rounded-full" aria-label="${done || skipped ? "Mark pending" : "Complete"} ${r.title}"><span class="grid h-10 w-10 place-items-center rounded-full ${done ? "bg-brand-600 text-white" : skipped ? "bg-amber-100 text-skipped dark:bg-amber-950/40" : "border-2 border-line text-muted"}">${done || skipped ? icon(done ? "check" : "skip-forward", "h-5 w-5") : ""}</span></button><button onclick="openRoutine(${r.id})" class="flex min-w-0 flex-1 items-center gap-2 py-2 text-left"><span class="min-w-0 flex-1"><span class="block truncate text-sm font-bold ${done || skipped ? "text-muted" : ""}">${r.title}</span><span class="mt-1 block text-xs text-muted">${r.time} · ${r.category}</span></span>${icon("chevron-right", "h-5 w-5 shrink-0 text-muted")}</button></article>`
+      }
+
+      function focusVariant() {
+        const next = pending()[0]
+        return `<section class="rounded-2xl bg-brand-50 p-4"><div class="flex items-center justify-between"><span class="text-sm font-bold text-brand-700">Next routine</span><span class="font-mono text-sm text-muted">${next?.time || "Done"}</span></div><div class="min-h-[104px] py-5"><h2 class="text-2xl font-bold leading-tight tracking-[-.03em]">${next?.title || "You are done for today"}</h2><p class="mt-2 text-sm text-muted">${next?.category || "No routines are waiting."}</p></div>${next ? `<button onclick="changeStatus(${next.id},'completed')" class="inline-flex h-[52px] w-full items-center justify-center gap-2 rounded-xl bg-brand-600 text-base font-bold text-white">${icon("check")} Mark complete</button><button onclick="openRoutine(${next.id})" class="mt-2 h-12 w-full text-sm font-bold text-muted">Skip or view details</button>` : ""}</section>
+        <section class="mt-6 flex min-h-0 flex-1 flex-col"><div class="mb-2 flex items-center justify-between"><h2 class="text-sm font-bold text-muted">Later today</h2><span class="text-xs text-muted">${Math.max(0, pending().length - 1)} routines</span></div><div class="section-scroll min-h-0 shrink overflow-y-auto"><div class="overflow-hidden rounded-2xl border border-line bg-elevated">${pending()
+          .slice(1, 5)
+          .map(
+            (r) =>
+              `<button onclick="openRoutine(${r.id})" class="flex min-h-[64px] w-full items-center gap-3 border-b border-line px-4 text-left last:border-0"><span class="w-[68px] font-mono text-xs text-muted">${r.time}</span><span class="min-w-0 flex-1 truncate text-sm font-bold">${r.title}</span>${icon("chevron-right", "h-5 w-5 text-muted")}</button>`
+          )
+          .join("")}</div>${mobileWeekSummary()}</div></section>`
+      }
+
+      function agendaVariant() {
+        const routines = enabledRoutines()
+        const groups = [
+          ["Morning", routines.slice(0, 4)],
+          ["Afternoon", routines.slice(4, 5)],
+          ["Evening", routines.slice(5)],
+        ]
+        return `<section class="rounded-2xl bg-brand-50 px-4 py-3"><p class="text-sm font-bold">${completeCount()} completed</p><p class="mt-1 text-xs text-muted">${pending().length} still need attention</p></section><div class="section-scroll mt-6 min-h-0 flex-1 space-y-4 overflow-y-auto">${groups.map(([label, routines]) => `<section><div class="mb-2 flex items-center justify-between"><h2 class="text-sm font-bold text-muted">${label}</h2><span class="text-xs text-muted">${routines.length}</span></div><div class="overflow-hidden rounded-2xl border border-line bg-elevated">${routines.map(simpleRoutineRow).join("")}</div></section>`).join("")}${mobileWeekSummary()}</div>`
+      }
+
+      function mobileWeekSummary(spacingClass = "mt-6") {
+        const rates = [100, 75, 88, percent(), 0, 0, 0]
+        return `<section class="${spacingClass} rounded-2xl border border-line bg-elevated p-4"><div class="flex items-start justify-between gap-3"><div><h2 class="text-sm font-bold">Your week</h2><p class="mt-1 text-xs text-muted">${completeCount()} of ${enabledRoutines().length} completed today</p></div><span class="font-mono text-lg font-medium text-brand-700">${percent()}%</span></div><div class="mt-3 grid grid-cols-7 text-center">${rates.map((rate, index) => `<div><span class="text-[10px] font-bold text-muted">${["S", "S", "M", "T", "W", "T", "F"][index]}</span><span class="mx-auto mt-1 grid h-7 w-7 place-items-center rounded-lg text-[10px] ${rate === 100 ? "bg-brand-100 text-brand-700" : "bg-soft text-muted"}">${rate === 100 ? icon("check", "h-4 w-4") : rate ? `${rate}%` : ""}</span></div>`).join("")}</div></section>`
+      }
+
+      function planPage() {
+        return `<div class="enter flex h-full min-h-0 flex-col"><div class="z-10 grid shrink-0 grid-cols-2 border-b border-line bg-surface" role="tablist"><button onclick="state.planView='week';render()" class="h-12 border-b-2 text-sm font-bold ${state.planView === "week" ? "border-brand-600 text-brand-700" : "border-transparent text-muted"}" role="tab" aria-selected="${state.planView === "week"}">Schedule</button><button onclick="state.planView='routines';render()" class="h-12 border-b-2 text-sm font-bold ${state.planView === "routines" ? "border-brand-600 text-brand-700" : "border-transparent text-muted"}" role="tab" aria-selected="${state.planView === "routines"}">All routines</button></div>${state.planView === "week" ? weekPlan() : manageRoutines()}</div>`
+      }
+      function weekPlan() {
+        const scheduled = routinesByTime(scheduledRoutines())
+        return `<section class="flex min-h-0 flex-1 flex-col"><div class="mt-4 shrink-0 rounded-2xl border border-line bg-elevated py-2"><div class="flex h-12 items-center justify-between px-4"><h2 class="text-base font-bold">${weekRangeLabel()}</h2><div class="flex"><button onclick="changeWeek(-1)" class="grid h-12 w-12 place-items-center rounded-full text-muted transition-colors hover:bg-soft" aria-label="Previous week">${icon("chevron-left")}</button><button onclick="changeWeek(1)" class="grid h-12 w-12 place-items-center rounded-full text-muted transition-colors hover:bg-soft" aria-label="Next week">${icon("chevron-right")}</button></div></div><div class="grid grid-cols-[repeat(7,48px)] justify-center min-[380px]:grid-cols-7">${days
+          .map((d, i) => {
+            const date = new Date(`${selectedPlanDate()}T12:00:00Z`)
+            date.setUTCDate(date.getUTCDate() - state.selectedDay + i)
+            const dateLabel = date.toLocaleDateString("en-US", {
+              weekday: "long",
+              month: "long",
+              day: "numeric",
+              timeZone: "UTC",
+            })
+            return `<button onclick="state.selectedDay=${i};render()" class="grid h-14 min-w-0 place-items-center content-center" aria-label="${dateLabel}" aria-pressed="${state.selectedDay === i}"><span class="text-[11px] font-bold text-muted">${d[0]}</span><span class="mt-1 grid h-8 w-8 place-items-center rounded-full font-mono text-sm ${state.selectedDay === i ? "bg-brand-600 text-white" : "text-muted"}">${date.getUTCDate()}</span></button>`
+          })
+          .join(
+            ""
+          )}</div></div><div class="mt-4 flex min-h-0 flex-1 flex-col"><div class="flex shrink-0 items-end justify-between gap-3"><div><h2 class="text-base font-bold">${selectedPlanLabel()}</h2><p class="mt-1 text-xs text-muted">${scheduled.length} ${scheduled.length === 1 ? "routine" : "routines"} scheduled</p></div></div><div class="section-scroll mt-2 min-h-0 flex-1 overflow-y-auto rounded-2xl border border-line bg-elevated">${
+          scheduled.length
+            ? scheduled
+                .map(
+                  (r) =>
+                    `<button onclick="openRoutine(${r.id})" class="flex min-h-[72px] w-full items-center gap-3 border-b border-line bg-elevated px-4 text-left last:border-0"><span class="w-[64px] shrink-0 font-mono text-xs text-muted">${r.time}</span><span class="min-w-0 flex-1"><span class="block truncate text-sm font-bold">${r.title}</span><span class="mt-1 block truncate text-xs text-muted">${r.category}</span></span>${icon("chevron-right", "h-5 w-5 shrink-0 text-muted")}</button>`
+                )
+                .join("")
+            : `<div class="grid h-full min-h-40 place-items-center p-6 text-center"><div><span class="mx-auto grid h-10 w-10 place-items-center rounded-xl bg-brand-50 text-brand-700">${icon("calendar-days", "h-5 w-5")}</span><h3 class="mt-3 text-sm font-bold">This day is open</h3><p class="mt-1 text-xs text-muted">Add a routine only if it helps your week.</p><button onclick="openAdd()" class="mt-4 h-12 rounded-xl bg-brand-600 px-4 text-sm font-bold text-white">Add one</button></div></div>`
+        }</div></div></section>`
+      }
+      function manageRoutines() {
+        const active = routinesByTime(
+          state.routines.filter((routine) => routine.enabled)
+        )
+        const paused = routinesByTime(
+          state.routines.filter((routine) => !routine.enabled)
+        )
+        return `<section class="section-scroll mt-4 min-h-0 flex-1 space-y-5 overflow-y-auto">${routinePlanGroup("Active", active)}${paused.length ? routinePlanGroup("Paused", paused) : ""}</section>`
+      }
+
+      function routinePlanGroup(label, routines) {
+        return `<section><div class="mb-2 flex items-center justify-between"><h2 class="text-sm font-bold text-muted">${label}</h2><span class="text-xs text-muted">${routines.length} ${routines.length === 1 ? "routine" : "routines"}</span></div>${routines.length ? `<div class="overflow-hidden rounded-2xl border border-line bg-elevated">${routines.map(planRoutineRow).join("")}</div>` : `<div class="rounded-2xl border border-dashed border-line px-4 py-5 text-center text-sm text-muted">No ${label.toLowerCase()} routines</div>`}</section>`
+      }
+
+      function planRoutineRow(routine) {
+        return `<button onclick="openRoutine(${routine.id})" class="flex min-h-[72px] w-full items-center gap-3 border-b border-line px-4 text-left last:border-0"><span class="grid h-10 w-10 shrink-0 place-items-center rounded-full ${routine.enabled ? "bg-brand-50 text-brand-700" : "bg-soft text-muted"}">${icon(routine.enabled ? "repeat-2" : "pause", "h-4 w-4")}</span><span class="min-w-0 flex-1"><span class="block truncate text-sm font-bold ${routine.enabled ? "" : "text-muted"}">${routine.title}</span><span class="mt-1 block truncate text-xs text-muted">${repeatLabel(routine)} at ${routine.time}</span></span>${icon("chevron-right", "h-5 w-5 shrink-0 text-muted")}</button>`
+      }
+
+      function reviewPage() {
+        return `<div class="enter flex h-full min-h-0 flex-col"><div class="z-10 grid shrink-0 grid-cols-2 border-b border-line bg-surface" role="tablist"><button onclick="state.reviewView='summary';render()" class="h-12 border-b-2 text-sm font-bold ${state.reviewView === "summary" ? "border-brand-600 text-brand-700" : "border-transparent text-muted"}" role="tab" aria-selected="${state.reviewView === "summary"}">Insights</button><button onclick="state.reviewView='history';render()" class="h-12 border-b-2 text-sm font-bold ${state.reviewView === "history" ? "border-brand-600 text-brand-700" : "border-transparent text-muted"}" role="tab" aria-selected="${state.reviewView === "history"}">Logs</button></div>${state.reviewView === "summary" ? reviewRangeSelector() : ""}<div class="hide-scrollbar min-h-0 flex-1 overflow-y-auto">${state.reviewView === "summary" ? reviewSummary() : reviewHistory()}</div></div>`
+      }
+
+      function reviewRangeSelector() {
+        return `<div class="shrink-0 bg-surface pt-4"><div class="grid grid-cols-3 gap-1 rounded-xl bg-soft p-1" role="group" aria-label="Insight range">${["7", "30", "90"].map((range) => `<button onclick="state.reviewRange='${range}';render()" class="h-10 rounded-lg text-xs font-bold ${state.reviewRange === range ? "bg-elevated text-brand-700 shadow-sm" : "text-muted"}">${range} days</button>`).join("")}</div></div>`
+      }
+
+      function reviewSummary() {
+        const completed = state.logs.filter(
+          (log) => log.status === "completed"
+        ).length
+        const skipped = state.logs.filter(
+          (log) => log.status === "skipped"
+        ).length
+        const missed = state.logs.filter(
+          (log) => log.status === "missed"
+        ).length
+        const total = Math.max(state.logs.length, 1)
+        const rate = Math.round((completed / total) * 100)
+        const activity = [55, 72, 66, 90, 78, 64, rate]
+        const categoryRows = state.categories
+          .filter((category) => categoryUsage(category))
+          .map((category, index) => [
+            category,
+            [94, 76, 81, 64][index % 4],
+            categoryUsage(category),
+          ])
+        return `<section class="mt-6 rounded-2xl bg-brand-50 p-4"><p class="text-sm font-bold text-brand-700">Last ${state.reviewRange} days</p><div class="mt-3 flex items-end justify-between"><div><span class="font-mono text-4xl font-medium">${rate}%</span><p class="mt-1 text-xs text-muted">${completed} of ${total} recorded outcomes completed</p></div>${icon("trending-up", "h-8 w-8 text-brand-700")}</div></section><section class="mt-6"><h2 class="text-sm font-bold text-muted">Recent daily completion</h2><div class="mt-2 rounded-2xl border border-line bg-elevated p-4"><div class="flex h-28 items-end gap-3 border-b border-line">${activity.map((value, index) => `<div class="flex h-full flex-1 items-end"><span class="w-full rounded-t-md bg-brand-100" style="height:${Math.max(value, 8)}%" title="${value}%"></span></div>`).join("")}</div><div class="mt-2 grid grid-cols-7 text-center text-[10px] font-bold text-muted">${["W", "T", "F", "S", "S", "M", "T"].map((day) => `<span>${day}</span>`).join("")}</div></div></section><section class="mt-6"><h2 class="text-sm font-bold text-muted">Outcomes</h2><div class="mt-2 grid grid-cols-3 divide-x divide-line overflow-hidden rounded-2xl border border-line bg-elevated"><div class="flex items-center gap-2 p-3"><span class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-brand-100 text-done">${icon("check", "h-4 w-4")}</span><span><span class="block font-mono text-base font-medium">${completed}</span><span class="block text-[10px] font-semibold text-muted">Completed</span></span></div><div class="flex items-center gap-2 p-3"><span class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-amber-100 text-skipped dark:bg-amber-950/40">${icon("skip-forward", "h-4 w-4")}</span><span><span class="block font-mono text-base font-medium">${skipped}</span><span class="block text-[10px] font-semibold text-muted">Skipped</span></span></div><div class="flex items-center gap-2 p-3"><span class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-red-100 text-missed dark:bg-red-950/40">${icon("circle-alert", "h-4 w-4")}</span><span><span class="block font-mono text-base font-medium">${missed}</span><span class="block text-[10px] font-semibold text-muted">Missed</span></span></div></div></section><section class="mt-6"><h2 class="text-sm font-bold text-muted">Category breakdown</h2><div class="mt-2 overflow-hidden rounded-2xl border border-line bg-elevated">${categoryRows.map((x) => `<div class="flex min-h-[64px] items-center gap-3 border-b border-line px-4 last:border-0"><span class="min-w-0 flex-1 text-sm font-bold">${x[0]}</span><span class="text-xs text-muted">${x[2]} routines</span><span class="font-mono text-sm font-medium text-brand-700">${x[1]}%</span></div>`).join("")}</div></section>`
+      }
+
+      function reviewHistory() {
+        const items = state.logs.filter(
+          (log) => state.logFilter === "all" || log.status === state.logFilter
+        )
+        return `<div class="hide-scrollbar -mx-4 mt-4 flex gap-2 overflow-x-auto px-4">${["all", "completed", "skipped", "missed"].map((filter) => `<button onclick="state.logFilter='${filter}';render()" class="h-12 shrink-0 rounded-full px-4 text-sm font-bold capitalize ${state.logFilter === filter ? "bg-brand-100 text-brand-700" : "text-muted"}">${filter}</button>`).join("")}</div><section class="mt-3 overflow-hidden rounded-2xl border border-line bg-elevated">${items.length ? items.map((log) => `<button onclick="openLog(${log.id})" class="flex min-h-[72px] w-full items-center gap-3 border-b border-line px-4 text-left last:border-0"><span class="grid h-10 w-10 shrink-0 place-items-center rounded-full ${log.status === "completed" ? "bg-brand-100 text-done" : log.status === "skipped" ? "bg-amber-100 text-skipped dark:bg-amber-950/40" : "bg-red-100 text-missed dark:bg-red-950/40"}">${icon(log.status === "completed" ? "check" : log.status === "skipped" ? "skip-forward" : "circle-alert", "h-4 w-4")}</span><span class="min-w-0 flex-1"><span class="block truncate text-sm font-bold">${log.title}</span><span class="mt-1 block text-xs text-muted">${log.eventTime} · ${log.category}</span></span>${icon("chevron-right", "h-5 w-5 text-muted")}</button>`).join("") : `<div class="grid min-h-56 place-items-center text-center"><div><h2 class="font-bold">No ${state.logFilter} logs</h2><p class="mt-1 text-sm text-muted">Choose another filter or add a log.</p><button onclick="openLogForm()" class="mt-4 h-12 rounded-xl bg-brand-600 px-4 text-sm font-bold text-white">Add log</button></div></div>`}</section>`
+      }
+
+      function settingsPage() {
+        return `<div class="enter hide-scrollbar h-full overflow-y-auto"><section><h2 class="mb-3 text-sm font-bold text-muted">Account and reminders</h2><div class="overflow-hidden rounded-2xl border border-line bg-elevated"><button onclick="openProfile()" class="flex min-h-[72px] w-full items-center gap-3 border-b border-line px-4 text-left"><span class="grid h-10 w-10 place-items-center rounded-full bg-soft text-muted">${icon("user-round", "h-5 w-5")}</span><span class="min-w-0 flex-1"><span class="block text-sm font-bold">Profile and schedule</span><span class="mt-1 block truncate text-xs text-muted">${state.settings.name} · ${state.settings.timezone}</span></span>${icon("chevron-right", "h-5 w-5 text-muted")}</button>${settingRow("bell", "Routine reminders", state.settings.reminder, state.settings.reminders, "reminders")}${settingRow("mail", "Weekly summary", "A recap every Monday", state.settings.summary, "summary")}<button onclick="toggleTheme()" class="flex min-h-[72px] w-full items-center gap-3 px-4 text-left"><span class="grid h-10 w-10 place-items-center rounded-full bg-soft text-muted">${icon(state.theme === "dark" ? "sun" : "moon", "h-5 w-5")}</span><span class="min-w-0 flex-1"><span class="block text-sm font-bold">Appearance</span><span class="mt-1 block text-xs text-muted">${state.theme === "dark" ? "Dark" : "Light"} theme</span></span>${icon("chevron-right", "h-5 w-5 text-muted")}</button></div></section><section class="mt-6"><h2 class="mb-2 text-sm font-bold text-muted">Organization</h2><div class="overflow-hidden rounded-2xl border border-line bg-elevated"><button onclick="openCategories()" class="flex min-h-[72px] w-full items-center gap-3 px-4 text-left"><span class="grid h-10 w-10 place-items-center rounded-full bg-soft text-muted">${icon("tags", "h-5 w-5")}</span><span class="min-w-0 flex-1"><span class="block text-sm font-bold">Categories</span><span class="mt-1 block text-xs text-muted">View and manage all ${state.categories.length} categories</span></span>${icon("chevron-right", "h-5 w-5 text-muted")}</button></div></section><section class="mt-6"><h2 class="mb-2 text-sm font-bold text-muted">Calendar and task integrations</h2><div class="overflow-hidden rounded-2xl border border-line bg-elevated">${provider("google", "Google", "Calendar and Tasks", "G")}${provider("microsoft", "Microsoft", "Calendar and To Do", "M")}</div></section><section class="mt-6"><h2 class="mb-2 text-sm font-bold text-muted">Data and account</h2><div class="overflow-hidden rounded-2xl border border-line bg-elevated">${simpleSetting("download", "Export data", "exportData()")}${simpleSetting("upload", "Import data", "openImport()")}${simpleSetting("log-out", "Sign out", "openSignOut()", true)}</div></section></div>`
+      }
+      function settingRow(ic, title, note, on, key) {
+        return `<div class="flex min-h-[72px] items-center gap-3 border-b border-line px-4 last:border-0"><span class="grid h-10 w-10 place-items-center rounded-full bg-soft text-muted">${icon(ic, "h-5 w-5")}</span><span class="min-w-0 flex-1"><span class="block text-sm font-bold">${title}</span><span class="mt-1 block text-xs text-muted">${note}</span></span><button onclick="state.settings.${key}=!state.settings.${key};render()" class="grid h-12 w-14 place-items-center" role="switch" aria-label="${title}" aria-checked="${on}"><span class="block h-7 w-12 rounded-full ${on ? "bg-brand-600" : "bg-line"} p-1"><span class="block h-5 w-5 rounded-full bg-white transition-transform ${on ? "translate-x-5" : ""}"></span></span></button></div>`
+      }
+      function provider(key, title, detail, letter) {
+        const on = state.connected[key]
+        return `<button onclick="openIntegration('${key}')" class="flex min-h-[72px] w-full items-center gap-3 border-b border-line px-4 text-left last:border-0"><span class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-soft text-sm font-bold">${letter}</span><span class="min-w-0 flex-1"><span class="block truncate text-sm font-bold">${title}</span><span class="mt-1 block truncate text-xs text-muted">${on ? detail : "Not connected"}</span></span><span class="text-xs font-bold ${on ? "text-muted" : "text-brand-700"}">${on ? "Manage" : "Connect"}</span></button>`
+      }
+      function simpleSetting(ic, title, action, danger = false) {
+        return `<button onclick="${action}" class="flex min-h-[64px] w-full items-center gap-3 border-b border-line px-4 text-left last:border-0 ${danger ? "text-missed" : ""}"><span class="grid h-10 w-10 place-items-center rounded-full bg-soft">${icon(ic, "h-5 w-5")}</span><span class="flex-1 text-sm font-bold">${title}</span>${icon("chevron-right", "h-5 w-5")}</button>`
+      }
+
+      function bottomNav() {
+        const addDisabled =
+          state.page === "plan" &&
+          state.planView === "week" &&
+          selectedPlanDate() < "2026-08-11"
+        const navItem = ([page, label, itemIcon]) =>
+          `<button onclick="navigate('${page}')" class="grid min-h-[64px] place-items-center content-center gap-1 rounded-2xl ${state.page === page ? "text-brand-700" : "text-muted"}" ${state.page === page ? 'aria-current="page"' : ""}><span class="grid h-8 min-w-[52px] place-items-center rounded-full ${state.page === page ? "bg-brand-100" : ""}">${icon(itemIcon, "h-5 w-5")}</span><span class="text-[11px] font-bold">${label}</span></button>`
+        return `<nav class="safe-bottom z-20 grid shrink-0 grid-cols-5 border-t border-line bg-surface/95 px-1 pt-1 backdrop-blur" aria-label="Primary navigation">${nav.slice(0, 2).map(navItem).join("")}<button onclick="openAdd()" class="relative -top-3 grid h-[72px] place-items-center content-start gap-1 rounded-2xl ${addDisabled ? "text-muted" : "text-brand-700"}" aria-label="Add routine" ${addDisabled ? 'disabled title="Routines cannot be added to past days"' : ""}><span class="grid h-14 w-14 place-items-center rounded-2xl ${addDisabled ? "bg-soft" : "bg-brand-600 text-white shadow-float"}">${icon("plus", "h-6 w-6")}</span><span class="text-[11px] font-bold">Add</span></button>${nav.slice(2).map(navItem).join("")}</nav>`
+      }
+
+      function switcher() {
+        const key = currentVariant(),
+          keys = Object.keys(variants)
+        return `<aside class="flex items-center rounded-full bg-[#17231a] p-1 text-white shadow-float dark:bg-[#edf4ef] dark:text-[#17231a]" aria-label="Prototype variant switcher"><button onclick="cycle(-1)" class="grid h-12 w-12 place-items-center rounded-full hover:bg-white/10" aria-label="Previous variant">${icon("chevron-left", "h-5 w-5")}</button><div class="min-w-[132px] px-2 text-center"><p class="text-xs font-bold">${key}: ${variants[key].name}</p><p class="text-[10px] opacity-60">${variants[key].note}</p></div><button onclick="cycle(1)" class="grid h-12 w-12 place-items-center rounded-full hover:bg-white/10" aria-label="Next variant">${icon("chevron-right", "h-5 w-5")}</button></aside>`
+      }
+
+      function toast() {
+        return state.toast
+          ? `<div class="absolute bottom-[100px] left-4 right-4 z-40 flex min-h-[52px] items-center gap-3 rounded-xl bg-[#17231a] px-4 text-sm text-white shadow-float dark:bg-[#edf4ef] dark:text-[#17231a]"><span class="min-w-0 flex-1">${state.toast}</span>${state.undo ? `<button onclick="undo()" class="h-12 font-bold text-brand-500">Undo</button>` : ""}</div>`
+          : ""
+      }
+      function modal() {
+        if (!state.modal) return ""
+        if (state.modal === "add") return routineFormSheet()
+        if (state.modal === "categories") return categoriesSheet()
+        if (state.modal === "profile") return profileSheet()
+        if (state.modal === "import")
+          return confirmSheet(
+            "Replace your Routempo data?",
+            "Importing a backup will replace settings, categories, routines, and behavior logs.",
+            "Replace and import",
+            "confirmImport()"
+          )
+        if (state.modal === "signout")
+          return confirmSheet(
+            "Sign out of Routempo?",
+            "You will need to sign in with Google again to access your routines.",
+            "Sign out",
+            "confirmSignOut()"
+          )
+        if (state.modal.type === "routine") return routineSheet(state.modal.id)
+        if (state.modal.type === "routine-form")
+          return routineFormSheet(state.modal.id)
+        if (state.modal.type === "confirm-skip")
+          return confirmSheet(
+            "Skip this routine today?",
+            "The routine will stay in your plan. Today’s occurrence will be recorded as skipped.",
+            "Skip today",
+            `changeStatusFromSheet(${state.modal.id},'skipped')`
+          )
+        if (state.modal.type === "confirm-routine-delete")
+          return confirmSheet(
+            "Delete routine?",
+            "The routine will be removed from your schedule. Existing history will stay in Logs.",
+            "Delete routine",
+            `deleteRoutine(${state.modal.id})`
+          )
+        if (state.modal.type === "category-form")
+          return categoryFormSheet(state.modal.name)
+        if (state.modal.type === "confirm-category-delete")
+          return confirmSheet(
+            "Delete category?",
+            `${state.modal.name} will be removed from your category list.`,
+            "Delete category",
+            `deleteCategory('${state.modal.name}')`
+          )
+        if (state.modal.type === "integration")
+          return integrationSheet(state.modal.key)
+        if (state.modal.type === "log") return logSheet(state.modal.id)
+        if (state.modal.type === "log-form") return logFormSheet(state.modal.id)
+        if (state.modal.type === "confirm-log-delete")
+          return confirmSheet(
+            "Delete log?",
+            "This recorded event will be permanently removed from your behavior history.",
+            "Delete log",
+            `deleteLog(${state.modal.id})`
+          )
+        return ""
+      }
+
+      function sheet(title, body, labelledBy = "sheet-title") {
+        return `<div class="absolute inset-0 z-50 flex items-end bg-[#0b160e]/55" onclick="closeModal(event)"><section class="sheet-safe enter max-h-[92%] w-full overflow-y-auto rounded-t-[28px] bg-elevated px-4 pt-4" role="dialog" aria-modal="true" aria-labelledby="${labelledBy}"><div class="mx-auto mb-4 h-1 w-10 rounded-full bg-line"></div><div class="flex items-center justify-between gap-3"><h2 id="${labelledBy}" class="min-w-0 text-xl font-bold">${title}</h2><button onclick="state.modal=null;render()" class="grid h-12 w-12 shrink-0 place-items-center rounded-full" aria-label="Close">${icon("x", "h-5 w-5")}</button></div>${body}</section></div>`
+      }
+
+      function routineFormSheet(id) {
+        const routine = state.routines.find((item) => item.id === id)
+        const repeat = routine?.repeat ?? "none"
+        const selectedDays = routine?.repeatDays?.length
+          ? routine.repeatDays
+          : [2]
+        const defaultDate =
+          state.page === "plan" && state.planView === "week"
+            ? selectedPlanDate()
+            : "2026-08-11"
+        const body = `<p class="mt-1 text-sm text-muted">${routine ? "Adjust its schedule, category, or cue." : "Schedule it once or make it part of your rhythm."}</p><form onsubmit="saveRoutine(event,${routine?.id ?? "null"})" class="mt-5 grid gap-4"><label class="grid gap-2 text-sm font-bold">Routine name<input name="title" required maxlength="100" value="${routine?.title ?? ""}" placeholder="Drink a glass of water" class="h-[52px] rounded-xl border border-line bg-surface px-4 text-base text-ink" /></label><div class="grid grid-cols-1 gap-4 min-[380px]:grid-cols-2 min-[380px]:gap-3"><label class="grid gap-2 text-sm font-bold">Start date<input name="startDate" type="date" required value="${routine?.startDate ?? defaultDate}" ${routine ? "" : 'min="2026-08-11"'} class="h-[52px] rounded-xl border border-line bg-surface px-4 text-sm text-ink" /></label><label class="grid gap-2 text-sm font-bold">Time<input name="time" type="time" required value="${timeTo24(routine?.time ?? "8:00 AM")}" class="h-[52px] rounded-xl border border-line bg-surface px-4 text-sm text-ink" /></label></div><label class="grid gap-2 text-sm font-bold">Repeat<select name="repeat" onchange="updateRepeatFields(this)" class="h-[52px] rounded-xl border border-line bg-surface px-4 text-sm text-ink"><option value="none" ${repeat === "none" ? "selected" : ""}>Does not repeat</option><option value="daily" ${repeat === "daily" ? "selected" : ""}>Every day</option><option value="weekly" ${repeat === "weekly" ? "selected" : ""}>Weekly</option><option value="monthly" ${repeat === "monthly" ? "selected" : ""}>Monthly</option><option value="yearly" ${repeat === "yearly" ? "selected" : ""}>Yearly</option></select></label><fieldset data-repeat="weekly" class="${repeat === "weekly" ? "" : "hidden"}"><legend class="text-sm font-bold">Days of week</legend><div class="mt-2 grid grid-cols-7 gap-1">${["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((day, index) => `<label class="grid h-11 place-items-center rounded-xl border border-line text-xs font-bold has-[:checked]:border-brand-600 has-[:checked]:bg-brand-50 has-[:checked]:text-brand-700"><input type="checkbox" name="repeatDays" value="${index}" class="sr-only" ${selectedDays.includes(index) ? "checked" : ""}>${day}</label>`).join("")}</div></fieldset><div data-repeat="monthly" class="${repeat === "monthly" ? "" : "hidden"}"><label class="grid gap-2 text-sm font-bold">Day of month<input name="repeatDate" type="number" min="1" max="31" value="${routine?.repeatDate ?? 11}" class="h-[52px] rounded-xl border border-line bg-surface px-4 text-sm text-ink" /></label></div><div data-repeat="yearly" class="${repeat === "yearly" ? "" : "hidden"}"><div class="grid grid-cols-2 gap-3"><label class="grid gap-2 text-sm font-bold">Month<select name="repeatMonth" class="h-[52px] rounded-xl border border-line bg-surface px-3 text-sm text-ink">${["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"].map((month, index) => `<option value="${index + 1}" ${Number(routine?.repeatMonth ?? 8) === index + 1 ? "selected" : ""}>${month}</option>`).join("")}</select></label><label class="grid gap-2 text-sm font-bold">Date<input name="yearlyDate" type="number" min="1" max="31" value="${routine?.repeatDate ?? 11}" class="h-[52px] rounded-xl border border-line bg-surface px-4 text-sm text-ink" /></label></div></div><div data-repeat-end class="${repeat === "none" ? "hidden" : ""}"><label class="grid gap-2 text-sm font-bold">Ends <span class="text-xs font-normal text-muted">Optional</span><input name="endDate" type="date" value="${routine?.endDate ?? ""}" class="h-[52px] rounded-xl border border-line bg-surface px-4 text-sm text-ink" /></label></div><label class="grid gap-2 text-sm font-bold">Category<input name="category" list="routine-categories" required maxlength="60" value="${routine?.category ?? state.categories[0] ?? ""}" class="h-[52px] rounded-xl border border-line bg-surface px-4 text-sm text-ink" /><datalist id="routine-categories">${state.categories.map((category) => `<option value="${category}"></option>`).join("")}</datalist><span class="text-xs font-normal text-muted">Choose an existing category or type a new one.</span></label><label class="grid gap-2 text-sm font-bold">Note<textarea name="note" maxlength="160" rows="3" placeholder="Add a useful cue" class="rounded-xl border border-line bg-surface px-4 py-3 text-sm text-ink">${routine?.note ?? "10 minutes"}</textarea></label><button class="mt-1 h-[52px] rounded-xl bg-brand-600 text-base font-bold text-white">${routine ? "Save changes" : "Add routine"}</button></form>`
+        return sheet(
+          routine ? "Edit routine" : "Add routine",
+          body,
+          "routine-form-title"
+        )
+      }
+
+      function routineSheet(id) {
+        const routine = state.routines.find((item) => item.id === id)
+        if (!routine) return ""
+        const completionAction = routine.enabled
+          ? routine.status !== "completed"
+            ? `<button onclick="changeStatusFromSheet(${routine.id},'completed')" class="inline-flex h-[52px] w-full items-center justify-center gap-2 rounded-xl bg-brand-600 px-4 text-base font-bold text-white">${icon("check", "h-5 w-5")} Mark complete</button>`
+            : `<button onclick="changeStatusFromSheet(${routine.id},'pending')" class="inline-flex h-[52px] w-full items-center justify-center gap-2 rounded-xl border border-line px-4 text-base font-bold">${icon("rotate-ccw", "h-5 w-5")} Mark as not done</button>`
+          : ""
+        const canSkip = routine.enabled && routine.status !== "skipped"
+        const body = `<p class="mt-1 text-sm text-muted">${routine.time} · ${routine.category}</p><div class="mt-4 flex items-start gap-3 rounded-2xl bg-soft p-4"><span class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-elevated text-brand-700">${icon("repeat-2", "h-5 w-5")}</span><div class="min-w-0 flex-1"><p class="text-sm font-bold">${repeatLabel(routine)}</p><p class="mt-1 text-xs text-muted">Starts ${routine.startDate}${routine.endDate ? ` · Ends ${routine.endDate}` : ""}</p>${routine.note ? `<p class="mt-2 text-sm">${routine.note}</p>` : ""}</div></div><div class="mt-4">${completionAction}<div class="${completionAction ? "mt-2" : ""} grid ${canSkip ? "grid-cols-2" : "grid-cols-1"} gap-2">${canSkip ? `<button onclick="state.modal={type:'confirm-skip',id:${routine.id}};render()" class="inline-flex h-[52px] items-center justify-center gap-2 rounded-xl border border-line px-3 text-sm font-bold text-skipped">${icon("skip-forward", "h-5 w-5")} Skip today</button>` : ""}<button onclick="openEditRoutine(${routine.id})" class="inline-flex h-[52px] items-center justify-center gap-2 rounded-xl border border-line px-3 text-sm font-bold">${icon("pencil", "h-5 w-5")} Edit routine</button></div></div><div class="mt-4"><p class="mb-2 text-xs font-bold text-muted">Routine settings</p><div class="overflow-hidden rounded-2xl border border-line"><button onclick="toggleRoutine(${routine.id})" class="flex h-[52px] w-full items-center gap-3 px-4 text-left text-sm font-bold"><span class="text-muted">${icon(routine.enabled ? "pause" : "play", "h-5 w-5")}</span><span class="flex-1">${routine.enabled ? "Pause routine" : "Resume routine"}</span>${icon("chevron-right", "h-5 w-5 text-muted")}</button><button onclick="state.modal={type:'confirm-routine-delete',id:${routine.id}};render()" class="flex h-[52px] w-full items-center gap-3 border-t border-line px-4 text-left text-sm font-bold text-missed">${icon("trash-2", "h-5 w-5")}<span class="flex-1">Delete routine</span>${icon("chevron-right", "h-5 w-5")}</button></div></div>`
+        return sheet(routine.title, body, "routine-title")
+      }
+
+      function categoriesSheet() {
+        const body = `<p class="mt-1 text-sm text-muted">Categories organize routines across Today, Plan, Insights, and Logs.</p><div class="mt-5 flex gap-2"><button id="category-search-button" onclick="toggleCategorySearch()" class="grid h-[52px] w-[52px] shrink-0 place-items-center rounded-xl border border-line text-muted" aria-label="Search categories" aria-controls="category-search" aria-expanded="false">${icon("search", "h-5 w-5")}</button><button onclick="openCategoryForm()" class="inline-flex h-[52px] min-w-0 flex-1 items-center justify-center gap-2 rounded-xl bg-brand-600 px-4 text-sm font-bold text-white">${icon("plus")} Add category</button></div><label id="category-search" class="mt-3 hidden gap-2 text-sm font-bold">Search categories<input id="category-search-input" type="search" oninput="filterCategories(this.value)" placeholder="Type a category name" class="h-[52px] w-full rounded-xl border border-line bg-surface px-4 text-base font-normal text-ink" /></label><div id="category-list" class="mt-4 overflow-hidden rounded-2xl border border-line">${state.categories
+          .map((category) => {
+            const usage = categoryUsage(category)
+            return `<div data-category="${category.toLowerCase()}" class="flex min-h-[72px] items-center gap-3 border-b border-line px-4 last:border-0"><span class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-soft text-muted">${icon("tag", "h-4 w-4")}</span><span class="min-w-0 flex-1"><span class="block truncate text-sm font-bold">${category}</span><span class="mt-1 block text-xs text-muted">${usage ? `${usage} ${usage === 1 ? "routine" : "routines"}` : "Not used by a routine"}</span></span><button onclick="openCategoryForm('${category}')" class="grid h-12 w-12 place-items-center text-muted" aria-label="Rename ${category}">${icon("pencil", "h-4 w-4")}</button><button onclick="${usage ? "" : `state.modal={type:'confirm-category-delete',name:'${category}'};render()`}" class="grid h-12 w-12 place-items-center ${usage ? "text-line" : "text-missed"}" ${usage ? "disabled" : ""} aria-label="Delete ${category}">${icon("trash-2", "h-4 w-4")}</button></div>`
+          })
+          .join(
+            ""
+          )}</div><div id="category-search-empty" class="mt-4 hidden rounded-2xl border border-dashed border-line px-4 py-6 text-center"><p class="text-sm font-bold">No matching categories</p><p class="mt-1 text-xs text-muted">Try a different category name.</p></div>`
+        return sheet("Categories", body, "categories-title")
+      }
+
+      function toggleCategorySearch() {
+        const field = document.getElementById("category-search")
+        const input = document.getElementById("category-search-input")
+        const button = document.getElementById("category-search-button")
+        const opening = field.classList.contains("hidden")
+        field.classList.toggle("hidden", !opening)
+        field.classList.toggle("grid", opening)
+        button.setAttribute("aria-expanded", String(opening))
+        button.classList.toggle("border-brand-600", opening)
+        button.classList.toggle("bg-brand-50", opening)
+        button.classList.toggle("text-brand-700", opening)
+        if (opening) input.focus()
+        else {
+          input.value = ""
+          filterCategories("")
+        }
+      }
+
+      function filterCategories(value) {
+        const query = value.trim().toLowerCase()
+        const rows = [
+          ...document.querySelectorAll("#category-list [data-category]"),
+        ]
+        let visible = 0
+        rows.forEach((row) => {
+          const matches = row.dataset.category.includes(query)
+          row.classList.toggle("hidden", !matches)
+          if (matches) visible += 1
+        })
+        document
+          .getElementById("category-list")
+          .classList.toggle("hidden", visible === 0)
+        document
+          .getElementById("category-search-empty")
+          .classList.toggle("hidden", visible !== 0)
+      }
+
+      function categoryFormSheet(name = "") {
+        const body = `<p class="mt-1 text-sm text-muted">${name ? "Renaming also updates routines in this category." : "Use a short name that is easy to scan."}</p><form onsubmit="saveCategory(event,'${name}')" class="mt-5 grid gap-4"><label class="grid gap-2 text-sm font-bold">Category name<input name="name" required maxlength="60" value="${name}" placeholder="Wellbeing" class="h-[52px] rounded-xl border border-line bg-surface px-4 text-base text-ink" /></label><button class="h-[52px] rounded-xl bg-brand-600 text-base font-bold text-white">${name ? "Save name" : "Add category"}</button></form>`
+        return sheet(
+          name ? "Rename category" : "Add category",
+          body,
+          "category-form-title"
+        )
+      }
+
+      function profileSheet() {
+        const body = `<p class="mt-1 text-sm text-muted">These settings control dates and reminder timing.</p><form onsubmit="saveProfile(event)" class="mt-5 grid gap-4"><label class="grid gap-2 text-sm font-bold">Name<input name="name" required value="${state.settings.name}" class="h-[52px] rounded-xl border border-line bg-surface px-4 text-base text-ink" /></label><label class="grid gap-2 text-sm font-bold">Email<input value="${state.settings.email}" disabled class="h-[52px] rounded-xl border border-line bg-soft px-4 text-sm text-muted" /><span class="text-xs font-normal text-muted">Managed by your Google account.</span></label><label class="grid gap-2 text-sm font-bold">Timezone<select name="timezone" class="h-[52px] rounded-xl border border-line bg-surface px-4 text-sm text-ink">${["Asia/Dhaka", "Asia/Kolkata", "Europe/London", "America/New_York", "UTC"].map((zone) => `<option ${zone === state.settings.timezone ? "selected" : ""}>${zone}</option>`).join("")}</select></label><label class="grid gap-2 text-sm font-bold">Default reminder<select name="reminder" class="h-[52px] rounded-xl border border-line bg-surface px-4 text-sm text-ink">${["At scheduled time", "5 minutes before", "10 minutes before", "15 minutes before", "30 minutes before", "1 hour before"].map((value) => `<option ${value === state.settings.reminder ? "selected" : ""}>${value}</option>`).join("")}</select></label><button class="h-[52px] rounded-xl bg-brand-600 text-base font-bold text-white">Save changes</button></form>`
+        return sheet("Profile and schedule", body, "profile-title")
+      }
+
+      function integrationSheet(key) {
+        const label = key === "google" ? "Google" : "Microsoft"
+        const connected = state.connected[key]
+        const connectionContent = connected
+          ? `<div class="mt-5 grid gap-3">${syncGroup(key, "calendar", "Calendar", "calendar-days")}${syncGroup(key, "tasks", key === "google" ? "Tasks" : "To Do", "list-todo")}</div><button onclick="toggleConnection('${key}')" class="mt-4 h-[52px] w-full rounded-xl text-sm font-bold text-missed">Disconnect ${label}</button>`
+          : `<div class="mt-5 rounded-2xl bg-soft p-4"><p class="text-sm font-bold">Not connected</p><p class="mt-1 text-xs text-muted">Grant calendar and task access to use import and export.</p></div><button onclick="toggleConnection('${key}')" class="mt-4 h-[52px] w-full rounded-xl bg-brand-600 text-sm font-bold text-white">Connect ${label}</button>`
+        const body = `<p class="mt-1 text-sm text-muted">Import upcoming items into Routempo or export enabled routines without creating duplicates.</p>${connectionContent}`
+        return sheet(`${label} integration`, body, "integration-title")
+      }
+
+      function syncGroup(provider, resource, label, ic) {
+        return `<section class="rounded-2xl border border-line p-4"><div class="flex items-center gap-3"><span class="grid h-10 w-10 place-items-center rounded-full bg-brand-50 text-brand-700">${icon(ic, "h-5 w-5")}</span><h3 class="text-sm font-bold">${label}</h3></div><div class="mt-3 grid grid-cols-2 gap-2"><button onclick="syncProvider('${provider}','${resource}','import')" class="h-12 rounded-xl border border-line text-sm font-bold">Import</button><button onclick="syncProvider('${provider}','${resource}','export')" class="h-12 rounded-xl border border-line text-sm font-bold">Export</button></div></section>`
+      }
+
+      function logSheet(id) {
+        const log = state.logs.find((item) => item.id === id)
+        if (!log) return ""
+        const body = `<p class="mt-1 text-sm text-muted">${log.date} · ${log.eventTime}</p><dl class="mt-5 grid grid-cols-2 gap-3 rounded-2xl bg-soft p-4 text-sm"><div><dt class="text-xs text-muted">Outcome</dt><dd class="mt-1 font-bold capitalize">${log.status}</dd></div><div><dt class="text-xs text-muted">Category</dt><dd class="mt-1 font-bold">${log.category}</dd></div><div><dt class="text-xs text-muted">Scheduled</dt><dd class="mt-1 font-mono">${log.scheduled}</dd></div><div><dt class="text-xs text-muted">Actual</dt><dd class="mt-1 font-mono">${log.actual}</dd></div><div class="col-span-2"><dt class="text-xs text-muted">Actor and source</dt><dd class="mt-1">${log.actor} / ${log.source}</dd></div><div class="col-span-2"><dt class="text-xs text-muted">Timezone snapshot</dt><dd class="mt-1">${log.timezone}</dd></div>${log.snapshot ? `<div class="col-span-2"><dt class="text-xs text-muted">Note</dt><dd class="mt-1">${log.snapshot}</dd></div>` : ""}</dl><div class="mt-5 grid gap-2"><button onclick="openLogForm(${log.id})" class="inline-flex h-[52px] items-center justify-center gap-2 rounded-xl bg-brand-600 text-base font-bold text-white">${icon("pencil", "h-5 w-5")} Edit log</button><button onclick="state.modal={type:'confirm-log-delete',id:${log.id}};render()" class="inline-flex h-[52px] items-center justify-center gap-2 rounded-xl text-base font-bold text-missed">${icon("trash-2", "h-5 w-5")} Delete log</button></div>`
+        return sheet(log.title, body, "log-title")
+      }
+
+      function logFormSheet(id) {
+        const log = state.logs.find((item) => item.id === id)
+        const logDate = log
+          ? new Date(`${log.date} 12:00:00`).toISOString().slice(0, 10)
+          : "2026-08-11"
+        const body = `<p class="mt-1 text-sm text-muted">${log ? "Correct the recorded outcome without changing its routine." : "Record an outcome that happened outside Routempo."}</p><form onsubmit="saveLog(event,${log?.id ?? "null"})" class="mt-5 grid gap-4"><label class="grid gap-2 text-sm font-bold">Routine name<input name="title" required maxlength="100" value="${log?.title ?? ""}" placeholder="Morning walk" class="h-[52px] rounded-xl border border-line bg-surface px-4 text-base text-ink" /></label><div class="grid grid-cols-2 gap-3"><label class="grid gap-2 text-sm font-bold">Date<input name="date" type="date" required value="${logDate}" class="h-[52px] rounded-xl border border-line bg-surface px-3 text-sm text-ink" /></label><label class="grid gap-2 text-sm font-bold">Event time<input name="eventTime" type="time" required value="${timeTo24(log?.eventTime ?? "8:00 AM")}" class="h-[52px] rounded-xl border border-line bg-surface px-3 text-sm text-ink" /></label></div><div class="grid grid-cols-2 gap-3"><label class="grid gap-2 text-sm font-bold">Category<input name="category" list="log-categories" required value="${log?.category ?? state.categories[0]}" class="h-[52px] rounded-xl border border-line bg-surface px-3 text-sm text-ink" /><datalist id="log-categories">${state.categories.map((category) => `<option value="${category}"></option>`).join("")}</datalist></label><label class="grid gap-2 text-sm font-bold">Outcome<select name="status" class="h-[52px] rounded-xl border border-line bg-surface px-3 text-sm text-ink">${["completed", "skipped", "missed"].map((status) => `<option value="${status}" ${status === (log?.status ?? "completed") ? "selected" : ""}>${status[0].toUpperCase() + status.slice(1)}</option>`).join("")}</select></label></div><div class="grid grid-cols-2 gap-3"><label class="grid gap-2 text-sm font-bold">Scheduled<input name="scheduled" type="time" required value="${timeTo24(log?.scheduled ?? "8:00 AM")}" class="h-[52px] rounded-xl border border-line bg-surface px-3 text-sm text-ink" /></label><label class="grid gap-2 text-sm font-bold">Actual<input name="actual" type="time" value="${log?.actual === "Not recorded" ? "" : timeTo24(log?.actual ?? "")}" class="h-[52px] rounded-xl border border-line bg-surface px-3 text-sm text-ink" /></label></div><label class="grid gap-2 text-sm font-bold">Note<textarea name="snapshot" maxlength="240" rows="3" class="rounded-xl border border-line bg-surface px-4 py-3 text-sm text-ink">${log?.snapshot ?? ""}</textarea></label><button class="h-[52px] rounded-xl bg-brand-600 text-base font-bold text-white">${log ? "Save changes" : "Add log"}</button></form>`
+        return sheet(log ? "Edit log" : "Add log", body, "log-form-title")
+      }
+
+      function confirmSheet(title, message, actionLabel, action) {
+        return sheet(
+          title,
+          `<p class="mt-2 text-sm leading-6 text-muted">${message}</p><div class="mt-6 grid gap-2"><button onclick="${action}" class="h-[52px] rounded-xl bg-missed text-base font-bold text-white">${actionLabel}</button><button onclick="state.modal=null;render()" class="h-[52px] rounded-xl text-base font-bold text-muted">Cancel</button></div>`,
+          "confirm-title"
+        )
+      }
+
+      function navigate(page) {
+        state.page = page
+        const u = new URL(location.href)
+        u.searchParams.set("page", page)
+        history.replaceState({}, "", u)
+        render()
+      }
+      function cycle(dir) {
+        const keys = Object.keys(variants),
+          i = keys.indexOf(currentVariant()),
+          next = keys[(i + dir + keys.length) % keys.length],
+          u = new URL(location.href)
+        u.searchParams.set("variant", next)
+        history.replaceState({}, "", u)
+        render()
+      }
+      function toggleTheme() {
+        state.theme = state.theme === "dark" ? "light" : "dark"
+        render()
+      }
+      function openAdd() {
+        state.modal = "add"
+        render()
+      }
+      function changeWeek(direction) {
+        state.weekOffset += direction
+        state.selectedDay = 3
+        render()
+      }
+      function openRoutine(id) {
+        state.modal = { type: "routine", id }
+        render()
+      }
+      function openEditRoutine(id) {
+        state.modal = { type: "routine-form", id }
+        render()
+      }
+      function openCategories() {
+        state.modal = "categories"
+        render()
+      }
+      function openCategoryForm(name = "") {
+        state.modal = { type: "category-form", name }
+        render()
+      }
+      function openProfile() {
+        state.modal = "profile"
+        render()
+      }
+      function openIntegration(key) {
+        state.modal = { type: "integration", key }
+        render()
+      }
+      function openLog(id) {
+        state.modal = { type: "log", id }
+        render()
+      }
+      function openLogForm(id) {
+        state.modal = { type: "log-form", id }
+        render()
+      }
+      function openImport() {
+        state.modal = "import"
+        render()
+      }
+      function openSignOut() {
+        state.modal = "signout"
+        render()
+      }
+      function closeModal(e) {
+        if (e.target === e.currentTarget) {
+          state.modal = null
+          render()
+        }
+      }
+      function updateRepeatFields(select) {
+        const form = select.form
+        form.querySelectorAll("[data-repeat]").forEach((field) => {
+          field.classList.toggle(
+            "hidden",
+            field.dataset.repeat !== select.value
+          )
+        })
+        form
+          .querySelector("[data-repeat-end]")
+          .classList.toggle("hidden", select.value === "none")
+      }
+      function timeTo24(value) {
+        if (!value) return ""
+        if (/^\d{2}:\d{2}$/.test(value)) return value
+        const match = value.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i)
+        if (!match) return "08:00"
+        let hour = Number(match[1]) % 12
+        if (match[3].toUpperCase() === "PM") hour += 12
+        return `${String(hour).padStart(2, "0")}:${match[2]}`
+      }
+      function displayTime(value) {
+        const [rawHour, minute] = value.split(":")
+        const hour = Number(rawHour)
+        const period = hour >= 12 ? "PM" : "AM"
+        return `${hour % 12 || 12}:${minute} ${period}`
+      }
+      function showToast(message) {
+        state.toast = message
+        render()
+        setTimeout(() => {
+          state.toast = null
+          if (!state.modal) render()
+        }, 2200)
+      }
+      function saveRoutine(e, id) {
+        e.preventDefault()
+        const data = new FormData(e.currentTarget)
+        const category = data.get("category").trim()
+        const repeat = data.get("repeat")
+        const routine = {
+          title: data.get("title").trim(),
+          startDate: data.get("startDate"),
+          time: displayTime(data.get("time")),
+          repeat,
+          repeatDays:
+            repeat === "weekly" ? data.getAll("repeatDays").map(Number) : [],
+          repeatDate:
+            repeat === "monthly"
+              ? Number(data.get("repeatDate"))
+              : repeat === "yearly"
+                ? Number(data.get("yearlyDate"))
+                : undefined,
+          repeatMonth:
+            repeat === "yearly" ? Number(data.get("repeatMonth")) : undefined,
+          endDate: repeat === "none" ? "" : data.get("endDate"),
+          category,
+          note: data.get("note").trim(),
+        }
+        if (!state.categories.includes(category))
+          state.categories.push(category)
+        const existing = state.routines.find((item) => item.id === id)
+        if (existing) Object.assign(existing, routine)
+        else
+          state.routines.push({
+            id: Date.now(),
+            ...routine,
+            enabled: true,
+            status: "pending",
+          })
+        state.modal = null
+        showToast(
+          existing ? `${routine.title} updated` : `${routine.title} added`
+        )
+      }
+      function toggleRoutine(id) {
+        const routine = state.routines.find((item) => item.id === id)
+        if (!routine) return
+        routine.enabled = !routine.enabled
+        state.modal = null
+        showToast(`${routine.title} ${routine.enabled ? "resumed" : "paused"}`)
+      }
+      function deleteRoutine(id) {
+        const routine = state.routines.find((item) => item.id === id)
+        state.routines = state.routines.filter((item) => item.id !== id)
+        state.modal = null
+        showToast(`${routine?.title ?? "Routine"} deleted`)
+      }
+      function saveCategory(e, currentName) {
+        e.preventDefault()
+        const name = new FormData(e.currentTarget).get("name").trim()
+        if (!name) return
+        if (currentName) {
+          state.categories = state.categories.map((category) =>
+            category === currentName ? name : category
+          )
+          state.routines.forEach((routine) => {
+            if (routine.category === currentName) routine.category = name
+          })
+          state.logs.forEach((log) => {
+            if (log.category === currentName) log.category = name
+          })
+        } else if (!state.categories.includes(name)) state.categories.push(name)
+        state.modal = "categories"
+        showToast(currentName ? "Category renamed" : "Category added")
+      }
+      function deleteCategory(name) {
+        if (categoryUsage(name)) return
+        state.categories = state.categories.filter(
+          (category) => category !== name
+        )
+        state.modal = "categories"
+        showToast(`${name} deleted`)
+      }
+      function saveProfile(e) {
+        e.preventDefault()
+        const data = new FormData(e.currentTarget)
+        state.settings.name = data.get("name").trim()
+        state.settings.timezone = data.get("timezone")
+        state.settings.reminder = data.get("reminder")
+        state.modal = null
+        showToast("Settings saved")
+      }
+      function toggleConnection(key) {
+        state.connected[key] = !state.connected[key]
+        state.modal = { type: "integration", key }
+        showToast(
+          `${key === "google" ? "Google" : "Microsoft"} ${state.connected[key] ? "connected" : "disconnected"}`
+        )
+      }
+      function syncProvider(provider, resource, action) {
+        state.modal = null
+        showToast(
+          `${resource === "calendar" ? "Calendar items" : "Tasks"} ${action === "import" ? "imported" : "exported"}`
+        )
+      }
+      function exportData() {
+        showToast("Routempo data exported")
+      }
+      function confirmImport() {
+        state.modal = null
+        showToast("Backup imported")
+      }
+      function confirmSignOut() {
+        state.modal = null
+        showToast("Signed out in prototype")
+      }
+      function saveLog(e, id) {
+        e.preventDefault()
+        const data = new FormData(e.currentTarget)
+        const category = data.get("category").trim()
+        if (!state.categories.includes(category))
+          state.categories.push(category)
+        const entry = {
+          date: new Date(`${data.get("date")}T12:00:00`).toLocaleDateString(
+            "en-US",
+            { month: "long", day: "numeric", year: "numeric" }
+          ),
+          eventTime: displayTime(data.get("eventTime")),
+          title: data.get("title").trim(),
+          category,
+          scheduled: displayTime(data.get("scheduled")),
+          actual: data.get("actual")
+            ? displayTime(data.get("actual"))
+            : "Not recorded",
+          variance: "Recorded manually",
+          status: data.get("status"),
+          actor: "You",
+          source: "Routempo Android",
+          timezone: state.settings.timezone,
+          snapshot: data.get("snapshot").trim(),
+        }
+        const existing = state.logs.find((item) => item.id === id)
+        if (existing) Object.assign(existing, entry)
+        else state.logs.unshift({ id: Date.now(), ...entry })
+        state.modal = null
+        showToast(existing ? "Log updated" : "Log added")
+      }
+      function deleteLog(id) {
+        state.logs = state.logs.filter((item) => item.id !== id)
+        state.modal = null
+        showToast("Log deleted")
+      }
+      function changeStatus(id, status) {
+        const r = state.routines.find((x) => x.id === id)
+        if (!r) return
+        state.undo = { id, previous: r.status }
+        r.status = status
+        if (status === "completed" || status === "skipped") {
+          const logId = Date.now()
+          state.logs.unshift({
+            id: logId,
+            date: "August 11, 2026",
+            eventTime: r.time,
+            title: r.title,
+            category: r.category,
+            scheduled: r.time,
+            actual: status === "completed" ? r.time : "Not recorded",
+            variance: status === "completed" ? "On time" : "Skipped",
+            status,
+            actor: "You",
+            source: "Routempo Android",
+            timezone: state.settings.timezone,
+            snapshot:
+              status === "completed"
+                ? `${r.title} completed from Today.`
+                : `${r.title} skipped for today.`,
+          })
+          state.undo.logId = logId
+        }
+        state.toast =
+          status === "completed"
+            ? `${r.title} completed`
+            : status === "skipped"
+              ? `${r.title} skipped for today`
+              : `${r.title} marked as not done`
+        render()
+        setTimeout(() => {
+          state.toast = null
+          state.undo = null
+          if (!state.modal) render()
+        }, 3500)
+      }
+      function changeStatusFromSheet(id, status) {
+        state.modal = null
+        changeStatus(id, status)
+      }
+      function undo() {
+        if (!state.undo) return
+        const r = state.routines.find((x) => x.id === state.undo.id)
+        if (r) r.status = state.undo.previous
+        if (state.undo.logId)
+          state.logs = state.logs.filter((log) => log.id !== state.undo.logId)
+        state.undo = null
+        state.toast = "Action undone"
+        render()
+        setTimeout(() => {
+          state.toast = null
+          if (!state.modal) render()
+        }, 1800)
+      }
+      document.addEventListener("keydown", (e) => {
+        const t = e.target
+        if (t.matches("input,textarea,select,[contenteditable]")) return
+        if (e.key === "ArrowLeft") cycle(-1)
+        if (e.key === "ArrowRight") cycle(1)
+      })
+      render()
+    </script>
+  </body>
+</html>

@@ -2,7 +2,7 @@ import "@tanstack/react-start/server-only"
 
 import { betterAuth } from "better-auth"
 import { drizzleAdapter } from "better-auth/adapters/drizzle"
-import { genericOAuth, microsoftEntraId } from "better-auth/plugins"
+import { bearer, genericOAuth, microsoftEntraId } from "better-auth/plugins"
 
 import { getDatabase } from "@/db/client.server"
 import * as schema from "@/db/schema"
@@ -30,20 +30,23 @@ async function createAuthInstance() {
             },
           }
         : {},
-    plugins: microsoftConfigured
-      ? [
-          genericOAuth({
-            config: [
-              microsoftEntraId({
-                clientId: process.env.MICROSOFT_CLIENT_ID!,
-                clientSecret: process.env.MICROSOFT_CLIENT_SECRET!,
-                tenantId: process.env.MICROSOFT_TENANT_ID || "common",
-                scopes: ["openid", "profile", "email", "offline_access"],
-              }),
-            ],
-          }),
-        ]
-      : [],
+    plugins: [
+      bearer(),
+      ...(microsoftConfigured
+        ? [
+            genericOAuth({
+              config: [
+                microsoftEntraId({
+                  clientId: process.env.MICROSOFT_CLIENT_ID!,
+                  clientSecret: process.env.MICROSOFT_CLIENT_SECRET!,
+                  tenantId: process.env.MICROSOFT_TENANT_ID || "common",
+                  scopes: ["openid", "profile", "email", "offline_access"],
+                }),
+              ],
+            }),
+          ]
+        : []),
+    ],
     session: { expiresIn: 60 * 60 * 24 * 7, updateAge: 60 * 60 * 24 },
   })
 }

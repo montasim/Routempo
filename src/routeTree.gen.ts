@@ -23,6 +23,7 @@ import { Route as ApiIntegrationsRouteImport } from './routes/api.integrations'
 import { Route as ApiPushRouteImport } from './routes/api.push'
 import { Route as ApiAuthSplatRouteImport } from './routes/api.auth.$'
 import { Route as ApiNotificationsRunRouteImport } from './routes/api.notifications.run'
+import { Route as ApiV1SplatRouteImport } from './routes/api.v1.$'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -94,6 +95,11 @@ const ApiNotificationsRunRoute = ApiNotificationsRunRouteImport.update({
   path: '/api/notifications/run',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiV1SplatRoute = ApiV1SplatRouteImport.update({
+  id: '/api/v1/$',
+  path: '/api/v1/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -110,6 +116,7 @@ export interface FileRoutesByFullPath {
   '/api/push': typeof ApiPushRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/notifications/run': typeof ApiNotificationsRunRoute
+  '/api/v1/$': typeof ApiV1SplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -126,6 +133,7 @@ export interface FileRoutesByTo {
   '/api/push': typeof ApiPushRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/notifications/run': typeof ApiNotificationsRunRoute
+  '/api/v1/$': typeof ApiV1SplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -143,6 +151,7 @@ export interface FileRoutesById {
   '/api/push': typeof ApiPushRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/notifications/run': typeof ApiNotificationsRunRoute
+  '/api/v1/$': typeof ApiV1SplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -161,6 +170,7 @@ export interface FileRouteTypes {
     | '/api/push'
     | '/api/auth/$'
     | '/api/notifications/run'
+    | '/api/v1/$'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -177,6 +187,7 @@ export interface FileRouteTypes {
     | '/api/push'
     | '/api/auth/$'
     | '/api/notifications/run'
+    | '/api/v1/$'
   id:
     | '__root__'
     | '/'
@@ -193,6 +204,7 @@ export interface FileRouteTypes {
     | '/api/push'
     | '/api/auth/$'
     | '/api/notifications/run'
+    | '/api/v1/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -210,6 +222,7 @@ export interface RootRouteChildren {
   ApiPushRoute: typeof ApiPushRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiNotificationsRunRoute: typeof ApiNotificationsRunRoute
+  ApiV1SplatRoute: typeof ApiV1SplatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -312,6 +325,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiNotificationsRunRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/v1/$': {
+      id: '/api/v1/$'
+      path: '/api/v1/$'
+      fullPath: '/api/v1/$'
+      preLoaderRoute: typeof ApiV1SplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -330,6 +350,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPushRoute: ApiPushRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiNotificationsRunRoute: ApiNotificationsRunRoute,
+  ApiV1SplatRoute: ApiV1SplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
