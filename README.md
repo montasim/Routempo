@@ -7,9 +7,9 @@
 
 Routempo helps people build repeatable daily rhythms. Users can schedule one-off or recurring routines, complete or skip each occurrence, review behavior history and insights, receive browser reminders, and move routines between Routempo and Google or Microsoft calendars and task lists.
 
-This repository contains the full-stack web application, its Neon PostgreSQL schema and migrations, an interactive product prototype, a reusable design system, and automated unit and browser tests.
+This repository contains the full-stack web application, its versioned mobile API, Neon PostgreSQL schema and migrations, web and Android prototypes, a reusable design system, and automated unit and browser tests.
 
-**[Open the live app](https://routempo.netlify.app) · [Review the v1 prototype](prototypes/v1/README.md) · [Report an issue](https://github.com/montasim/Routempo/issues)**
+**[Open the live app](https://routempo.netlify.app) · [Review the Android prototype](prototypes/android/v1/README.md) · [Review the web prototype](prototypes/web/v1/README.md) · [Report an issue](https://github.com/montasim/Routempo/issues)**
 
 > [!NOTE]
 > Routempo is under active development. The public deployment is available for evaluation, but it has no uptime or availability commitment.
@@ -230,11 +230,12 @@ The schema and generated migrations live in [`src/db/schema.ts`](src/db/schema.t
 | `/settings`              | Profile, timezone, reminders, categories, data and integrations | Authenticated              |
 | `/terms`, `/privacy`     | Bundled legal copy                                              | Public                     |
 | `/api/app`               | Internal application-data API                                   | Authenticated              |
+| `/api/v1/*`              | Versioned Android and first-party client API                    | Mixed; bearer or cookie    |
 | `/api/integrations`      | Internal provider sync API                                      | Authenticated              |
 | `/api/push`              | Push configuration and subscription API                         | Authenticated              |
 | `/api/notifications/run` | Notification dispatcher                                         | `CRON_SECRET` bearer token |
 
-The application APIs are internal implementation surfaces and are not currently published as a stable public API.
+The legacy application routes remain internal implementation surfaces. `/api/v1` is the documented, versioned interface for the first-party Android app; its contract is published in [`docs/api/openapi-v1.yaml`](docs/api/openapi-v1.yaml).
 
 ## Technology
 
@@ -312,14 +313,17 @@ src/lib/              Domain rules, persistence, auth, push and integrations
 src/routes/           TanStack application and server routes
 drizzle/              Ordered PostgreSQL migrations and snapshots
 tests/e2e/             Playwright workflows and regressions
-prototypes/v1/         Current throwaway product prototype
+prototypes/android/v1/ Android app prototype and implementation contract
+prototypes/web/v1/     Current web product prototype
 docs/design_system/    Routempo visual tokens, components and guidance
 docs/research/         Evidence-backed architecture research
 ```
 
 ## Documentation
 
-- [v1 prototype guide](prototypes/v1/README.md)
+- [Android v1 prototype and API guide](prototypes/android/v1/README.md)
+- [Web v1 prototype guide](prototypes/web/v1/README.md)
+- [Mobile API OpenAPI contract](docs/api/openapi-v1.yaml)
 - [Routempo design system](docs/design_system/readme.md)
 - [Neon PostgreSQL and Drizzle decision](docs/research/neon-data-layer.md)
 - [Web reminders and weekly summaries](docs/research/web-reminders.md)

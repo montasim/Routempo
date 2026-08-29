@@ -489,7 +489,45 @@ routine usage count derived from routines
 
 ## API integration requirements
 
-The Android API is versioned under `https://routempo.netlify.app/api/v1`. During local development, use `/api/v1` on the configured backend origin. The machine-readable contract is [`../../../docs/api/openapi-v1.yaml`](../../../docs/api/openapi-v1.yaml).
+### Which API the Android app must use
+
+Use **only the versioned Android API**:
+
+```text
+Production base URL: https://routempo.netlify.app/api/v1
+Local base URL:      http://10.0.2.2:3000/api/v1
+```
+
+`10.0.2.2` is the Android emulator alias for the development computer. A physical device must use a reachable HTTPS development URL or the computer's LAN address when local cleartext traffic is explicitly allowed for debug builds.
+
+Do not call these legacy web-only endpoints from Android:
+
+- `/api/app`
+- `/api/auth/*`
+- `/api/integrations`
+- `/api/push`
+- `/api/notifications/run`
+
+Those endpoints exist for the browser application, internal jobs, or Web Push. They are not the Android contract. Do not reproduce `/api/app`'s action-based mutation payloads in the Android client.
+
+The machine-readable Android contract is [`../../../docs/api/openapi-v1.yaml`](../../../docs/api/openapi-v1.yaml). Generate DTOs or verify hand-written Retrofit models against that file. All endpoint paths below are relative to the selected `/api/v1` base URL.
+
+### Required request headers
+
+After authentication, every protected request must include:
+
+```http
+Authorization: Bearer <session-token>
+Accept: application/json
+```
+
+Requests with a JSON body must also include:
+
+```http
+Content-Type: application/json
+```
+
+The client may send a unique `X-Request-Id` for tracing. Read the final request ID from the response `X-Request-Id` header or `meta.requestId` and include it in user-visible support details. Do not send browser cookies from Android.
 
 Every successful JSON response uses this envelope:
 
@@ -510,40 +548,197 @@ Errors use `application/problem+json` and include `status`, stable `code`, human
 
 ### Authentication API
 
-- `POST /auth/google` accepts a Google Credential Manager ID token and returns a Routempo bearer session. Send `{ "idToken": "...", "nonce": "..." }`; `nonce` is optional when the credential did not use one.
-- `GET /auth/social/start` starts a Google or Microsoft flow. Open this backend URL directly in a Custom Tab with `provider` and the registered `redirectUri`; its redirect response carries the protected OAuth state cookie.
+- **Preferred Google sign-in:** `POST /auth/google` accepts a Google Credential Manager ID token and returns a Routempo bearer session. Send `{ "idToken": "...", "nonce": "..." }`; `nonce` is optional when the credential did not use one.
+- **Microsoft sign-in and browser fallback:** `GET /auth/social/start` starts a Google or Microsoft flow. Open this backend URL directly in a Custom Tab with `provider` and the registered `redirectUri`; its redirect response carries the protected OAuth state cookie.
 - `GET /auth/social/callback` is a backend OAuth bridge. It redirects to the Android URI with a single-use five-minute `code`.
 - `POST /auth/social/exchange` accepts the `code` and identical `redirectUri`, then returns the bearer session.
 - `GET /auth/me` returns the current user and settings.
-- `POST /auth/refresh` extends the current session by seven days.
+- `POST /auth/refresh` extends the current session by seven days. The same bearer token may refresh an expired session for up to 30 days after its expiry; after that, sign-in is required.
 - `POST /auth/logout` revokes the current session.
 
+For Google Credential Manager, use this call:
+
+```http
+POST /auth/google
+Content-Type: application/json
+
+{
+  "idToken": "google-id-token",
+  "nonce": "the-original-nonce-if-one-was-used"
+}
+```
+
+Read and securely persist `data.session.token` and `data.session.expiresAt`. Also persist `data.user` as the initial signed-in identity.
+
+For Microsoft or Custom Tab Google sign-in:
+
+1. Open `GET /auth/social/start?provider=microsoft&redirectUri=routempo%3A%2F%2Fauth%2Fcallback` in a Custom Tab. Use `provider=google` for the Google browser fallback.
+2. Let the backend and provider redirects complete inside the same Custom Tab cookie context.
+3. Handle the registered Android URI and read its `code` query parameter.
+4. Call `POST /auth/social/exchange` with `{ "code": "...", "redirectUri": "routempo://auth/callback" }`.
+5. Persist the session returned in `data.session`.
+
 Store the returned token with Android encrypted storage and send `Authorization: Bearer <token>` on every protected request. On `401`, attempt refresh only when the client still has a current token; otherwise clear local user data and return to authentication. Never place a token in a URL, log, analytics event, backup, or crash report.
+
+For every state-changing application request (`POST`, `PATCH`, `PUT`, or `DELETE` after authentication), send an `Idempotency-Key` generated once per logical user action. Reuse that key only when retrying the identical method, URL, and body. Keep it until a final response is received; a reused key with different input returns `409 IDEMPOTENCY_KEY_REUSED`. Results are replayable for 24 hours.
 
 The backend accepts only redirect URIs in `ROUTEMPO_MOBILE_REDIRECT_URIS`, a comma-separated deployment variable. The default development value is `routempo://auth/callback`. Prefer a verified HTTPS Android App Link for production.
 
 ### Application API map
 
-| Android repository operation      | Method and endpoint                          | Important behavior                                                                                         |
-| --------------------------------- | -------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| Read/update profile and reminders | `GET/PATCH /settings`                        | Patch only changed fields. Timezone uses an IANA name.                                                     |
-| List/create categories            | `GET/POST /categories`                       | List includes `routineCount`; duplicate normalized names do not create duplicates.                         |
-| Rename/delete category            | `PATCH/DELETE /categories/{id}`              | Rename propagates to routines and logs. Delete returns `409 CATEGORY_IN_USE` while referenced.             |
-| List/create routines              | `GET/POST /routines`                         | Use `includeInactive=true` for Plan → All routines. Create cannot start in the past.                       |
-| Edit/pause/resume/delete routine  | `PATCH/DELETE /routines/{id}`                | Set `isActive` to pause or resume. Deletion preserves behavior logs.                                       |
-| Load Today or Plan schedule       | `GET /occurrences?date=YYYY-MM-DD`           | Returns recurrence-resolved, time-sortable occurrences. Date ranges up to 93 days are supported.           |
-| Warm current schedule window      | `POST /occurrences/generate`                 | Resolves today plus six days and returns a count.                                                          |
-| Complete/skip occurrence          | `POST /occurrences/{id}/complete` or `/skip` | Only today's occurrence can be resolved. Both write a behavior log. An empty JSON object is valid.         |
-| Mark not done / Undo              | `POST /occurrences/{id}/revert`              | Returns the occurrence to pending and removes its app-created outcome log.                                 |
-| List/create behavior logs         | `GET/POST /logs`                             | GET supports date, routine, category, status, cursor, and limit filters.                                   |
-| Correct/delete behavior log       | `PATCH/DELETE /logs/{id}`                    | Does not change the routine.                                                                               |
-| Load Review insights              | `GET /analytics?range=7`, `30`, or `90`      | Returns outcome totals, completion percentage, daily series, and category breakdown.                       |
-| Export/restore complete backup    | `GET/PUT /backup`                            | PUT expects the complete `routempo-data-export` version 1 object and replaces current data. Confirm first. |
-| Export logs                       | `GET /export`                                | Returns downloadable CSV; optional `startDate` and `endDate`.                                              |
-| Read integration state            | `GET /integrations`                          | Returns Google and Microsoft configured, connected, and ready flags.                                       |
-| Connect a provider                | `POST /integrations/{provider}/connect`      | Returns a five-minute `browserUrl`. Open that URL in a Custom Tab; no bearer token is placed in the URL.   |
-| Disconnect a provider             | `DELETE /integrations/{provider}`            | Unlinks `google` or `microsoft`; confirm before calling.                                                   |
-| Run provider import/export        | `POST /integrations`                         | Body contains `action`, `provider`, and `resource`; duplicate sync records are skipped.                    |
+| Android repository operation      | Method and endpoint                          | Important behavior                                                                                                                      |
+| --------------------------------- | -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| Read/update profile and reminders | `GET/PATCH /settings`                        | Patch only changed fields. Timezone uses an IANA name.                                                                                  |
+| List/create categories            | `GET/POST /categories`                       | List includes `routineCount`; duplicate normalized names do not create duplicates.                                                      |
+| Rename/delete category            | `PATCH/DELETE /categories/{id}`              | Rename propagates to routines and logs. Delete returns `409 CATEGORY_IN_USE` while referenced.                                          |
+| List/create routines              | `GET/POST /routines`                         | Use `includeInactive=true` for Plan → All routines. Create cannot start in the past.                                                    |
+| Edit/pause/resume/delete routine  | `PATCH/DELETE /routines/{id}`                | Set `isActive` to pause or resume. Deletion preserves behavior logs.                                                                    |
+| Load Today or Plan schedule       | `GET /occurrences?date=YYYY-MM-DD`           | Returns recurrence-resolved, time-sortable occurrences. Date ranges up to 93 days are supported.                                        |
+| Warm current schedule window      | `POST /occurrences/generate`                 | Resolves today plus six days and returns a count. Past queried occurrences are durably finalized as missed.                             |
+| Complete/skip occurrence          | `POST /occurrences/{id}/complete` or `/skip` | Only today's occurrence can be resolved. Both write a behavior log. An empty JSON object is valid.                                      |
+| Mark not done / Undo              | `POST /occurrences/{id}/revert`              | Returns the occurrence to pending and removes its app-created outcome log.                                                              |
+| List/create behavior logs         | `GET/POST /logs`                             | GET supports date, routine, category, status, cursor, and limit filters.                                                                |
+| Correct/delete behavior log       | `PATCH/DELETE /logs/{id}`                    | Does not change the routine.                                                                                                            |
+| Load Review insights              | `GET /analytics?range=7`, `30`, or `90`      | Returns outcome totals, completion percentage, daily series, and category breakdown.                                                    |
+| Export/restore complete backup    | `GET/PUT /backup`                            | Includes occurrence history. PUT expects the complete `routempo-data-export` version 1 object and replaces current data. Confirm first. |
+| Export logs                       | `GET /export`                                | Returns downloadable CSV; optional `startDate` and `endDate`.                                                                           |
+| Read integration state            | `GET /integrations`                          | Returns Google and Microsoft configured, connected, and ready flags.                                                                    |
+| Connect a provider                | `POST /integrations/{provider}/connect`      | Returns a five-minute `browserUrl`. Open that URL in a Custom Tab; no bearer token is placed in the URL.                                |
+| Disconnect a provider             | `DELETE /integrations/{provider}`            | Unlinks `google` or `microsoft`; confirm before calling.                                                                                |
+| Run provider import/export        | `POST /integrations`                         | Body contains `action`, `provider`, and `resource`; duplicate sync records are skipped.                                                 |
+
+### APIs to call for each screen
+
+#### App startup
+
+1. If no stored bearer token exists, show authentication.
+2. If a token exists, call `GET /auth/me`.
+3. On success, cache `data.user` and `data.settings`, then load the selected destination.
+4. On `401`, call `POST /auth/refresh` once with the same bearer token and retry the original request once.
+5. If refresh also returns `401`, delete the local session and return to authentication.
+
+Do not load `/routines`, `/logs`, and `/analytics` eagerly when the app starts. Load only the data required by the visible destination.
+
+#### Today
+
+- Call `GET /occurrences?date=<device-date-in-user-timezone>`.
+- Use `data.occurrences`; sort by `scheduledTime` and group by `status`.
+- Complete with `POST /occurrences/{encodedOccurrenceId}/complete`.
+- Skip with `POST /occurrences/{encodedOccurrenceId}/skip`.
+- Mark as not done or perform Undo with `POST /occurrences/{encodedOccurrenceId}/revert`.
+- Refresh Today after a mutation using the returned `data.occurrence` or a new date query.
+- Load the **Your week** summary with `GET /analytics?startDate=<week-start>&endDate=<today>`. Do not calculate historical percentages from the currently loaded Today list.
+
+An occurrence ID is opaque and can contain reserved URL characters. URL-encode it as one path segment before complete, skip, or revert calls.
+
+#### Plan
+
+- Schedule tab: `GET /occurrences?date=<selected-date>`.
+- A visible week may be prefetched with `GET /occurrences?startDate=<week-start>&endDate=<week-end>&limit=200`.
+- All routines tab: `GET /routines?includeInactive=true&limit=200`.
+- Create: `POST /routines`.
+- Edit: `PATCH /routines/{routineId}`.
+- Pause: `PATCH /routines/{routineId}` with `{ "isActive": false }`.
+- Resume: `PATCH /routines/{routineId}` with `{ "isActive": true }`.
+- Delete: `DELETE /routines/{routineId}`.
+
+Example routine creation request:
+
+```json
+{
+  "title": "Read for 20 minutes",
+  "note": "Read without notifications",
+  "categoryId": "category-id-from-categories-api",
+  "startDate": "2026-08-12",
+  "scheduledTime": "21:30",
+  "recurrenceType": "weekly",
+  "recurrenceRules": {
+    "daysOfWeek": [2, 4, 6]
+  },
+  "endDate": null,
+  "isActive": true
+}
+```
+
+`daysOfWeek` uses weekday indexes Sunday `0` through Saturday `6`. Use `dayOfMonth` for monthly recurrence and both `month` plus `dayOfMonth` for yearly recurrence. Use `recurrenceType: "none"` for a one-time routine.
+
+#### Review
+
+- Insights range buttons: `GET /analytics?range=7`, `GET /analytics?range=30`, or `GET /analytics?range=90`.
+- Logs tab: start with `GET /logs?limit=50`.
+- Outcome filters: add `status=completed`, `status=skipped`, or `status=missed`.
+- Load the next page from `meta.nextCursor`, for example `GET /logs?limit=50&cursor=50`.
+- Add log: `POST /logs`.
+- Edit log: `PATCH /logs/{logId}`.
+- Delete log: `DELETE /logs/{logId}`.
+
+Example manual log request:
+
+```json
+{
+  "routineId": null,
+  "date": "2026-08-12",
+  "eventTime": "10:05",
+  "title": "Morning walk",
+  "category": "Personal",
+  "scheduledTime": "09:30",
+  "actualTime": "10:05",
+  "status": "completed",
+  "note": "Walked for 30 minutes"
+}
+```
+
+#### Settings
+
+- Profile and schedule: `GET /settings`, then `PATCH /settings` with changed fields only.
+- Categories sheet: `GET /categories?limit=200`.
+- Add category: `POST /categories` with `{ "name": "Wellbeing" }`.
+- Rename category: `PATCH /categories/{categoryId}` with `{ "name": "Health" }`.
+- Delete category: `DELETE /categories/{categoryId}`.
+- Provider status: `GET /integrations`.
+- Connect provider: `POST /integrations/google/connect` or `POST /integrations/microsoft/connect` with `{ "redirectUri": "routempo://auth/callback" }`; open `data.browserUrl` in a Custom Tab.
+- Disconnect provider: `DELETE /integrations/google` or `DELETE /integrations/microsoft`.
+- Import/export provider resources: `POST /integrations`.
+- Export complete Routempo data: `GET /backup`.
+- Replace data from a Routempo backup: `PUT /backup` after explicit confirmation.
+- Export behavior history as CSV: `GET /export`.
+- Sign out: `POST /auth/logout`, then clear local tokens and cached private data.
+
+Example settings patch:
+
+```json
+{
+  "name": "Montasim",
+  "timezone": "Asia/Dhaka",
+  "defaultReminderMinutes": 15,
+  "routineRemindersEnabled": true,
+  "weeklySummaryEnabled": true
+}
+```
+
+Example integration sync request:
+
+```json
+{
+  "action": "import",
+  "provider": "google",
+  "resource": "calendar"
+}
+```
+
+Valid `action` values are `import` and `export`; valid `provider` values are `google` and `microsoft`; valid `resource` values are `calendar` and `tasks`.
+
+### HTTP status handling
+
+- `200`: request succeeded.
+- `201`: resource or temporary connection URL created.
+- `401`: session missing or expired; try refresh once, then sign out locally.
+- `404`: resource or route does not exist; remove stale cached entries where appropriate.
+- `409`: operation conflicts with current state, such as deleting a category in use or resolving an already resolved occurrence. Display `detail` and refresh the affected resource.
+- `422`: request validation failed. Map `errors[].path` to form fields and display `errors[].message`.
+- `502`: Google or Microsoft operation failed. Keep local data unchanged and offer Retry.
+
+Never determine behavior from English error text. Branch on the HTTP status and stable problem `code`.
 
 List endpoints accept `limit` from 1 through 200 and a numeric `cursor` returned as `meta.nextCursor`. Occurrence IDs are opaque strings; persist and return the exact value supplied by the API rather than constructing one in Android.
 
