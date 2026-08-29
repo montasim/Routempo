@@ -72,39 +72,48 @@ describe("AddRoutineDialog", () => {
   })
 
   it("creates a category and submits a future one-off routine", () => {
-    render(
-      <AddRoutineDialog
-        open
-        onOpenChange={vi.fn()}
-        defaultStartDate="2026-08-12"
-      />
-    )
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date("2026-08-11T12:00:00.000Z"))
+    try {
+      render(
+        <AddRoutineDialog
+          open
+          onOpenChange={vi.fn()}
+          defaultStartDate="2026-08-12"
+        />
+      )
 
-    fireEvent.change(screen.getByLabelText(/Routine name/), {
-      target: { value: "Deep work" },
-    })
-    expect(screen.getByLabelText(/Start date/)).toHaveTextContent("08/12/2026")
+      fireEvent.change(screen.getByLabelText(/Routine name/), {
+        target: { value: "Deep work" },
+      })
+      expect(screen.getByLabelText(/Start date/)).toHaveTextContent(
+        "08/12/2026"
+      )
 
-    fireEvent.click(screen.getByRole("combobox", { name: /Category/ }))
-    fireEvent.change(screen.getByPlaceholderText("Search or add a category…"), {
-      target: { value: "Work" },
-    })
-    fireEvent.click(screen.getByText("Add “Work”"))
-    fireEvent.click(screen.getByRole("button", { name: "Add routine" }))
+      fireEvent.click(screen.getByRole("combobox", { name: /Category/ }))
+      fireEvent.change(
+        screen.getByPlaceholderText("Search or add a category…"),
+        { target: { value: "Work" } }
+      )
+      fireEvent.click(screen.getByText("Add “Work”"))
+      fireEvent.click(screen.getByRole("button", { name: "Add routine" }))
 
-    expect(addRoutine).toHaveBeenCalledWith({
-      title: "Deep work",
-      startDate: "2026-08-12",
-      time: "8:00 AM",
-      repeat: "none",
-      repeatOnDay: undefined,
-      repeatOnDays: undefined,
-      repeatOnDate: undefined,
-      repeatOnMonth: undefined,
-      endDate: undefined,
-      note: "10 minutes",
-      category: "Work",
-    })
+      expect(addRoutine).toHaveBeenCalledWith({
+        title: "Deep work",
+        startDate: "2026-08-12",
+        time: "8:00 AM",
+        repeat: "none",
+        repeatOnDay: undefined,
+        repeatOnDays: undefined,
+        repeatOnDate: undefined,
+        repeatOnMonth: undefined,
+        endDate: undefined,
+        note: "10 minutes",
+        category: "Work",
+      })
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   it("does not initialize a new routine on a past date", () => {
@@ -142,33 +151,39 @@ describe("AddRoutineDialog", () => {
   })
 
   it("schedules a weekly routine on multiple weekdays", () => {
-    render(
-      <AddRoutineDialog
-        open
-        onOpenChange={vi.fn()}
-        defaultStartDate="2026-08-12"
-      />
-    )
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date("2026-08-11T12:00:00.000Z"))
+    try {
+      render(
+        <AddRoutineDialog
+          open
+          onOpenChange={vi.fn()}
+          defaultStartDate="2026-08-12"
+        />
+      )
 
-    fireEvent.change(screen.getByLabelText(/Routine name/), {
-      target: { value: "Strength training" },
-    })
-    chooseRepeat("Weekly")
-    expect(screen.getByRole("button", { name: "Wednesday" })).toHaveAttribute(
-      "aria-pressed",
-      "true"
-    )
-    fireEvent.click(screen.getByRole("button", { name: "Friday" }))
-    fireEvent.click(screen.getByRole("button", { name: "Add routine" }))
-
-    expect(addRoutine).toHaveBeenCalledWith(
-      expect.objectContaining({
-        title: "Strength training",
-        repeat: "weekly",
-        repeatOnDay: 3,
-        repeatOnDays: [3, 5],
+      fireEvent.change(screen.getByLabelText(/Routine name/), {
+        target: { value: "Strength training" },
       })
-    )
+      chooseRepeat("Weekly")
+      expect(screen.getByRole("button", { name: "Wednesday" })).toHaveAttribute(
+        "aria-pressed",
+        "true"
+      )
+      fireEvent.click(screen.getByRole("button", { name: "Friday" }))
+      fireEvent.click(screen.getByRole("button", { name: "Add routine" }))
+
+      expect(addRoutine).toHaveBeenCalledWith(
+        expect.objectContaining({
+          title: "Strength training",
+          repeat: "weekly",
+          repeatOnDay: 3,
+          repeatOnDays: [3, 5],
+        })
+      )
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   it("loads and updates an existing routine", () => {
