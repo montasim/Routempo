@@ -45,6 +45,16 @@ const logSchema = z.object({
   snapshot: z.string().max(240),
 })
 
+const occurrenceSchema = z.object({
+  routineId: z.string().min(1).max(200),
+  date: z.iso.date(),
+  status: z.enum(["completed", "skipped", "missed"]),
+  resolvedAt: z.iso.datetime().nullable(),
+  updatedAt: z.iso.datetime(),
+})
+
+export type ExportOccurrence = z.infer<typeof occurrenceSchema>
+
 export const dataExportSchema = z
   .object({
     format: z.literal("routempo-data-export"),
@@ -55,6 +65,7 @@ export const dataExportSchema = z
       categories: z.array(z.string().min(1).max(60)).max(500),
       settings: settingsSchema,
       logs: z.array(logSchema).max(10_000),
+      occurrences: z.array(occurrenceSchema).max(10_000).optional(),
     }),
   })
   .superRefine((exported, context) => {
@@ -77,12 +88,16 @@ export const dataExportSchema = z
 
 export type DataExport = z.infer<typeof dataExportSchema>
 
-export function createDataExport(data: AppData, now = new Date()) {
+export function createDataExport(
+  data: AppData,
+  now = new Date(),
+  occurrences?: ExportOccurrence[]
+) {
   return {
     format: "routempo-data-export",
     version: 1,
     exportedAt: now.toISOString(),
-    data,
+    data: { ...data, ...(occurrences ? { occurrences } : {}) },
   } as const
 }
 

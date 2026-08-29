@@ -92,6 +92,29 @@ export const verification = pgTable(
   (table) => [index("verification_identifier_idx").on(table.identifier)]
 )
 
+export const apiIdempotency = pgTable(
+  "api_idempotency",
+  {
+    userId: text("user_id").notNull(),
+    key: text("key").notNull(),
+    requestHash: text("request_hash").notNull(),
+    responseStatus: integer("response_status"),
+    responseBody: text("response_body"),
+    responseContentType: text("response_content_type"),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    primaryKey({ columns: [table.userId, table.key] }),
+    index("api_idempotency_expires_at_idx").on(table.expiresAt),
+  ]
+)
+
 export const appSettings = pgTable("app_settings", {
   userId: text("user_id").primaryKey(),
   name: text("name").notNull(),

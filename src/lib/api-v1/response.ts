@@ -1,3 +1,5 @@
+import { ApiError } from "./errors"
+
 export type ApiMeta = {
   requestId: string
   apiVersion: "v1"
@@ -88,7 +90,7 @@ export function methodNotAllowed(
 
 export async function jsonBody(request: Request) {
   const type = request.headers.get("content-type")?.split(";", 1)[0]
-  if (type !== "application/json") throw new Error("JSON_REQUIRED")
+  if (type !== "application/json") throw new ApiError("JSON_REQUIRED")
   return (await request.json()) as unknown
 }
 

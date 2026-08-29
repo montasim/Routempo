@@ -16,6 +16,16 @@ export const settingsPatchSchema = z
   })
   .refine((value) => Object.keys(value).length > 0, "No settings supplied")
 
+export const analyticsQuerySchema = z.object({
+  range: z
+    .string()
+    .default("7")
+    .transform(Number)
+    .pipe(z.union([z.literal(7), z.literal(30), z.literal(90)])),
+  startDate: z.iso.date().optional(),
+  endDate: z.iso.date().optional(),
+})
+
 export const categoryWriteSchema = z.object({
   name: z.string().trim().min(1).max(60),
 })

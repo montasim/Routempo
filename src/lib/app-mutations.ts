@@ -55,7 +55,7 @@ export function applyAppMutation(
         ...mutation.routine,
         id: crypto.randomUUID(),
         status: "pending",
-        enabled: true,
+        enabled: mutation.routine.enabled ?? true,
       })
       data.categories = categoryList(
         [...data.categories, mutation.routine.category],

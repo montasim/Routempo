@@ -7,6 +7,9 @@ import { session, user, verification } from "@/db/schema"
 import { getAuth } from "@/lib/auth.server"
 import { currentUser } from "@/lib/current-user.server"
 
+import { bearerToken, refreshableUntil } from "./auth-session"
+import { ApiError } from "./errors"
+
 const sessionSeconds = 60 * 60 * 24 * 7
 const exchangePrefix = "mobile-social:"
 const integrationPrefix = "mobile-integration:"
@@ -52,7 +55,7 @@ export async function googleTokenSignIn(
     },
   })
   if (!("token" in result) || !result.token || !result.user)
-    throw new Error("Google did not create a mobile session")
+    throw new ApiError("AUTH_PROVIDER_ERROR")
   return {
     session: {
       token: result.token,
@@ -67,7 +70,8 @@ export async function socialAuthorizationResponse(
   provider: "google" | "microsoft",
   redirectUri: string
 ) {
-  if (!validMobileRedirect(redirectUri)) throw new Error("INVALID_REDIRECT_URI")
+  if (!validMobileRedirect(redirectUri))
+    throw new ApiError("INVALID_REDIRECT_URI")
   const callback = new URL("/api/v1/auth/social/callback", baseUrl(request))
   callback.searchParams.set("redirectUri", redirectUri)
   const auth = await getAuth()
@@ -93,7 +97,11 @@ export async function socialAuthorizationResponse(
         })
   if (!response.ok) return response
   const body = (await response.json()) as { url?: string }
-  if (!body.url) throw new Error(`${provider} sign-in is not configured`)
+  if (!body.url)
+    throw new ApiError(
+      "AUTH_PROVIDER_ERROR",
+      `${provider} sign-in is not configured`
+    )
   const redirect = new Response(null, {
     status: 302,
     headers: { location: body.url },
@@ -106,7 +114,8 @@ export async function createSocialExchangeCode(
   request: Request,
   redirectUri: string
 ) {
-  if (!validMobileRedirect(redirectUri)) throw new Error("INVALID_REDIRECT_URI")
+  if (!validMobileRedirect(redirectUri))
+    throw new ApiError("INVALID_REDIRECT_URI")
   const identity = await authSession(request)
   if (!identity) return null
   const code = randomToken()
@@ -122,7 +131,8 @@ export async function createSocialExchangeCode(
 }
 
 export async function exchangeSocialCode(code: string, redirectUri: string) {
-  if (!validMobileRedirect(redirectUri)) throw new Error("INVALID_REDIRECT_URI")
+  if (!validMobileRedirect(redirectUri))
+    throw new ApiError("INVALID_REDIRECT_URI")
   const db = getDatabase()
   const rows = await db
     .select()
@@ -154,16 +164,26 @@ export async function exchangeSocialCode(code: string, redirectUri: string) {
 }
 
 export async function refreshMobileSession(request: Request) {
-  const identity = await authSession(request)
-  if (!identity) return null
+  const token = bearerToken(request.headers)
+  if (!token) return null
+  const db = getDatabase()
+  const sessions = await db
+    .select({ session, user })
+    .from(session)
+    .innerJoin(user, eq(session.userId, user.id))
+    .where(eq(session.token, token))
+    .limit(1)
+  const identity = sessions[0]
+  if (!identity || refreshableUntil(identity.session.expiresAt) <= new Date())
+    return null
   const expiresAt = new Date(Date.now() + sessionSeconds * 1000)
-  await getDatabase()
+  await db
     .update(session)
     .set({ expiresAt, updatedAt: new Date() })
     .where(eq(session.id, identity.session.id))
   return {
     session: {
-      token: identity.session.token,
+      token,
       expiresAt: expiresAt.toISOString(),
     },
     user: identity.user,
@@ -183,7 +203,8 @@ export async function createIntegrationConnect(
   provider: "google" | "microsoft",
   redirectUri: string
 ) {
-  if (!validMobileRedirect(redirectUri)) throw new Error("INVALID_REDIRECT_URI")
+  if (!validMobileRedirect(redirectUri))
+    throw new ApiError("INVALID_REDIRECT_URI")
   const code = randomToken()
   await getDatabase()
     .insert(verification)
@@ -266,7 +287,10 @@ export async function startIntegrationConnect(request: Request, code: string) {
   if (!response.ok) return response
   const body = (await response.json()) as { url?: string }
   if (!body.url)
-    throw new Error("Integration authorization URL was not created")
+    throw new ApiError(
+      "AUTH_PROVIDER_ERROR",
+      "Integration authorization URL was not created"
+    )
   const redirect = new Response(null, {
     status: 302,
     headers: { location: body.url },
@@ -279,7 +303,8 @@ export async function integrationCallback(
   request: Request,
   redirectUri: string
 ) {
-  if (!validMobileRedirect(redirectUri)) throw new Error("INVALID_REDIRECT_URI")
+  if (!validMobileRedirect(redirectUri))
+    throw new ApiError("INVALID_REDIRECT_URI")
   if (!(await authSession(request))) return null
   return redirectUri
 }

@@ -32,7 +32,7 @@ export type RoutineDraft = Pick<
   | "repeatOnDate"
   | "repeatOnMonth"
   | "endDate"
->
+> & { enabled?: boolean }
 
 export type Settings = {
   name: string

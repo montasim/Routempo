@@ -67,6 +67,7 @@ function routineValues(
     repeatOnDate: routine.repeatOnDate ?? null,
     repeatOnMonth: routine.repeatOnMonth ?? null,
     endDate: routine.endDate ?? null,
+    enabled: routine.enabled ?? true,
   }
 }
 
@@ -392,6 +393,7 @@ export async function mutateAppData(
             repeatOnDate: values.repeatOnDate,
             repeatOnMonth: values.repeatOnMonth,
             endDate: values.endDate,
+            enabled: values.enabled,
             updatedAt: new Date(),
           })
           .where(

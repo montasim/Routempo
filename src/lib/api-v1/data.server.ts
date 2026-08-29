@@ -1,6 +1,6 @@
 import "@tanstack/react-start/server-only"
 
-import { and, asc, desc, eq, gte, inArray, lte, sql } from "drizzle-orm"
+import { and, asc, eq, gte, inArray, lte, sql } from "drizzle-orm"
 
 import { getDatabase } from "@/db/client.server"
 import {
@@ -10,13 +10,20 @@ import {
   routineOccurrences,
   routines,
 } from "@/db/schema"
-import { createDataExport } from "@/lib/export-data"
 import { routineOccursOnDate } from "@/lib/routines"
-import { getAppData, mutateAppData, replaceAppData } from "@/lib/store.server"
-import type { LogDraft, Routine, RoutineDraft, Settings } from "@/lib/types"
+import { getAppData, mutateAppData } from "@/lib/store.server"
+import type { Routine, RoutineDraft, Settings } from "@/lib/types"
 import { addDays, dateKeyInTimeZone } from "@/lib/user-calendar"
 
+import { ApiError } from "./errors"
+import { normalizeName } from "./normalize"
+import {
+  occurrenceId,
+  parseOccurrenceId,
+  resolveOccurrenceWindow,
+} from "./occurrences"
 import { routineWriteSchema } from "./schemas"
+import { timeInZone, toApiTime, toStoredTime, variance } from "./time"
 
 type ApiRoutineWrite = {
   title: string
@@ -32,22 +39,6 @@ type ApiRoutineWrite = {
   }
   endDate?: string | null
   isActive: boolean
-}
-
-type ApiLogWrite = {
-  routineId?: string | null
-  date: string
-  eventTime: string
-  title: string
-  category: string
-  scheduledTime: string
-  actualTime?: string | null
-  status: "completed" | "skipped" | "missed"
-  note: string
-}
-
-function normalized(value: string) {
-  return value.normalize("NFKC").trim().toLocaleLowerCase("en-US")
 }
 
 export async function settingsFor(userId: string, name?: string) {
@@ -110,7 +101,7 @@ export async function listCategories(userId: string) {
       .groupBy(routines.category),
   ])
   const counts = new Map(
-    usage.map((item) => [normalized(item.category), item.count])
+    usage.map((item) => [normalizeName(item.category), item.count])
   )
   return rows.map((row) => ({
     id: row.id,
@@ -123,7 +114,9 @@ export async function listCategories(userId: string) {
 export async function createCategory(userId: string, name: string) {
   await mutateAppData(userId, { action: "category-add", name })
   const values = await listCategories(userId)
-  return values.find((item) => normalized(item.name) === normalized(name))!
+  return values.find(
+    (item) => normalizeName(item.name) === normalizeName(name)
+  )!
 }
 
 export async function renameCategory(userId: string, id: string, name: string) {
@@ -147,7 +140,7 @@ export async function renameCategory(userId: string, id: string, name: string) {
     .where(
       and(
         eq(routineLogs.userId, userId),
-        sql`lower(trim(${routineLogs.category})) = ${normalized(oldName)}`
+        sql`lower(trim(${routineLogs.category})) = ${normalizeName(oldName)}`
       )
     )
   return (await listCategories(userId)).find((item) => item.id === id) ?? null
@@ -181,7 +174,10 @@ export async function listRoutines(userId: string, includeInactive = true) {
   return rows
     .filter((routine) => includeInactive || routine.enabled)
     .map((routine) =>
-      mapRoutine(routine, categoryIds.get(normalized(routine.category)))
+      mapRoutine(routine, categoryIds.get(normalizeName(routine.category)))
+    )
+    .sort((left, right) =>
+      left.scheduledTime.localeCompare(right.scheduledTime)
     )
 }
 
@@ -194,7 +190,20 @@ export async function createRoutine(
     (await listRoutines(userId)).map((routine) => routine.id)
   )
   const draft = await routineDraft(userId, input)
-  await mutateAppData(userId, { action: "add", routine: draft }, name)
+  try {
+    await mutateAppData(
+      userId,
+      { action: "add", routine: { ...draft, enabled: input.isActive } },
+      name
+    )
+  } catch (error) {
+    if (
+      error instanceof Error &&
+      error.message === "Routines cannot be added to past days"
+    )
+      throw new ApiError("PAST_START_DATE")
+    throw error
+  }
   return (await listRoutines(userId)).find(
     (routine) => !before.has(routine.id)
   )!
@@ -222,14 +231,12 @@ export async function updateRoutine(
     isActive: patch.isActive ?? existing.isActive,
   }
   const validated = routineWriteSchema.safeParse(merged)
-  if (!validated.success) throw new Error("INVALID_ROUTINE_PATCH")
-  const draft = await routineDraft(userId, validated.data)
+  if (!validated.success) throw new ApiError("INVALID_ROUTINE_PATCH")
+  const draft = {
+    ...(await routineDraft(userId, validated.data)),
+    enabled: merged.isActive,
+  }
   await mutateAppData(userId, { action: "update", id, routine: draft }, name)
-  if (merged.isActive !== existing.isActive)
-    await getDatabase()
-      .update(routines)
-      .set({ enabled: merged.isActive, updatedAt: new Date() })
-      .where(and(eq(routines.userId, userId), eq(routines.id, id)))
   return (
     (await listRoutines(userId)).find((routine) => routine.id === id) ?? null
   )
@@ -251,9 +258,9 @@ async function routineDraft(
   const category = (await listCategories(userId)).find(
     (item) => item.id === input.categoryId
   )
-  if (!category) throw new Error("CATEGORY_NOT_FOUND")
+  if (!category) throw new ApiError("CATEGORY_NOT_FOUND")
   return {
-    time: input.scheduledTime,
+    time: toStoredTime(input.scheduledTime),
     title: input.title,
     note: input.note,
     category: category.name,
@@ -280,7 +287,7 @@ function mapRoutine(routine: typeof routines.$inferSelect, categoryId = "") {
     categoryId,
     categoryName: routine.category,
     startDate: routine.startDate,
-    scheduledTime: routine.time,
+    scheduledTime: toApiTime(routine.time),
     recurrenceType: routine.repeat as ApiRoutineWrite["recurrenceType"],
     recurrenceRules: {
       ...(routine.repeatOnDays?.length
@@ -302,25 +309,13 @@ function mapRoutine(routine: typeof routines.$inferSelect, categoryId = "") {
   }
 }
 
-export function occurrenceId(routineId: string, date: string) {
-  return `${routineId}:${date}`
-}
-
-export function parseOccurrenceId(id: string) {
-  const separator = id.lastIndexOf(":")
-  if (separator < 1) return null
-  const routineId = id.slice(0, separator)
-  const date = id.slice(separator + 1)
-  return /^\d{4}-\d{2}-\d{2}$/.test(date) ? { routineId, date } : null
-}
-
 export async function listOccurrences(
   userId: string,
   startDate: string,
   endDate: string,
   status?: string
 ) {
-  if (endDate < startDate) throw new Error("INVALID_DATE_RANGE")
+  if (endDate < startDate) throw new ApiError("INVALID_DATE_RANGE")
   const dates: string[] = []
   for (
     let date = startDate;
@@ -328,7 +323,7 @@ export async function listOccurrences(
     date = addDays(date, 1)
   )
     dates.push(date)
-  if (dates.at(-1) !== endDate) throw new Error("DATE_RANGE_TOO_LARGE")
+  if (dates.at(-1) !== endDate) throw new ApiError("DATE_RANGE_TOO_LARGE")
   const [routineData, stored, settings] = await Promise.all([
     getAppData(userId),
     getDatabase()
@@ -343,39 +338,58 @@ export async function listOccurrences(
       ),
     settingsFor(userId),
   ])
-  const state = new Map(
-    stored.map((item) => [
-      occurrenceId(item.routineId, item.occurrenceDate),
-      item,
-    ])
-  )
   const today = dateKeyInTimeZone(settings.timezone)
-  return dates.flatMap((date) =>
-    routineData.routines
-      .filter(
-        (routine) => routine.enabled && routineOccursOnDate(routine, date)
-      )
-      .map((routine) => {
-        const id = occurrenceId(routine.id, date)
-        const storedOccurrence = state.get(id)
-        const occurrenceStatus =
-          storedOccurrence?.status ?? (date < today ? "missed" : "pending")
-        return {
-          id,
-          routineId: routine.id,
-          title: routine.title,
-          category: routine.category,
-          date,
-          scheduledTime: routine.time,
-          timezone: settings.timezone,
-          status: occurrenceStatus,
-          resolvedAt: storedOccurrence?.resolvedAt?.toISOString() ?? null,
-          updatedAt:
-            storedOccurrence?.updatedAt.toISOString() ??
-            `${date}T00:00:00.000Z`,
-        }
-      })
-      .filter((occurrence) => !status || occurrence.status === status)
+  const resolved = resolveOccurrenceWindow(
+    routineData.routines,
+    stored,
+    settings.timezone,
+    startDate,
+    endDate,
+    today
+  )
+  if (resolved.toFinalize.length) {
+    const now = new Date()
+    await getDatabase().batch([
+      getDatabase()
+        .insert(routineOccurrences)
+        .values(
+          resolved.toFinalize.map((item) => ({
+            userId,
+            routineId: item.routineId,
+            occurrenceDate: item.date,
+            status: "missed",
+            resolvedAt: now,
+            updatedAt: now,
+          }))
+        )
+        .onConflictDoNothing(),
+      getDatabase()
+        .insert(routineLogs)
+        .values(
+          resolved.toFinalize.map((item) => ({
+            id: `missed:${item.routineId}:${item.date}`,
+            userId,
+            routineId: item.routineId,
+            date: item.date,
+            eventTime: toStoredTime(item.scheduledTime),
+            title: item.title,
+            category: item.category,
+            scheduled: toStoredTime(item.scheduledTime),
+            actual: "",
+            variance: "Not completed",
+            status: "missed",
+            recordedAt: now,
+            actor: settings.name,
+            source: "Routempo Android",
+            timezone: settings.timezone,
+            snapshot: "Automatically marked missed",
+          }))
+        )
+        .onConflictDoNothing(),
+    ])
+  }
+  return resolved.occurrences.filter(
+    (occurrence) => !status || occurrence.status === status
   )
 }
 
@@ -388,10 +402,10 @@ export async function resolveOccurrence(
   note = ""
 ) {
   const parsed = parseOccurrenceId(id)
-  if (!parsed) throw new Error("OCCURRENCE_NOT_FOUND")
+  if (!parsed) throw new ApiError("OCCURRENCE_NOT_FOUND")
   const settings = await settingsFor(userId)
   if (parsed.date !== dateKeyInTimeZone(settings.timezone))
-    throw new Error("OCCURRENCE_NOT_TODAY")
+    throw new ApiError("OCCURRENCE_NOT_TODAY")
   const data = await getAppData(userId)
   const routine = data.routines.find(
     (item) =>
@@ -399,7 +413,7 @@ export async function resolveOccurrence(
       item.enabled &&
       routineOccursOnDate(item, parsed.date)
   )
-  if (!routine) throw new Error("OCCURRENCE_NOT_FOUND")
+  if (!routine) throw new ApiError("OCCURRENCE_NOT_FOUND")
   const existing = await getDatabase()
     .select()
     .from(routineOccurrences)
@@ -416,22 +430,23 @@ export async function resolveOccurrence(
       (item) => item.id === id
     )!
   if (existing[0] && existing[0].status !== "pending")
-    throw new Error("OCCURRENCE_ALREADY_RESOLVED")
+    throw new ApiError("OCCURRENCE_ALREADY_RESOLVED")
   const now = new Date()
   const eventTime = actualTime ?? timeInZone(settings.timezone, now)
+  const scheduledTime = toApiTime(routine.time)
   const log = {
     id: crypto.randomUUID(),
     userId,
     routineId: routine.id,
     date: parsed.date,
-    eventTime,
+    eventTime: toStoredTime(eventTime),
     title: routine.title,
     category: routine.category,
     scheduled: routine.time,
-    actual: status === "completed" ? eventTime : "",
+    actual: status === "completed" ? toStoredTime(eventTime) : "",
     variance:
       status === "completed"
-        ? variance(routine.time, eventTime)
+        ? variance(scheduledTime, eventTime)
         : "Not completed",
     status,
     recordedAt: now,
@@ -469,10 +484,26 @@ export async function resolveOccurrence(
 export async function revertOccurrence(userId: string, id: string) {
   const parsed = parseOccurrenceId(id)
   if (!parsed) return null
+  const settings = await settingsFor(userId)
+  if (parsed.date !== dateKeyInTimeZone(settings.timezone))
+    throw new ApiError("OCCURRENCE_NOT_TODAY")
   const current = (
     await listOccurrences(userId, parsed.date, parsed.date)
   ).find((item) => item.id === id)
   if (!current) return null
+  const stored = await getDatabase()
+    .select({ status: routineOccurrences.status })
+    .from(routineOccurrences)
+    .where(
+      and(
+        eq(routineOccurrences.userId, userId),
+        eq(routineOccurrences.routineId, parsed.routineId),
+        eq(routineOccurrences.occurrenceDate, parsed.date)
+      )
+    )
+    .limit(1)
+  if (!stored[0] || !["completed", "skipped"].includes(stored[0].status))
+    throw new ApiError("OCCURRENCE_NOT_RESOLVED")
   await getDatabase().batch([
     getDatabase()
       .delete(routineOccurrences)
@@ -495,266 +526,4 @@ export async function revertOccurrence(userId: string, id: string) {
       ),
   ])
   return { ...current, status: "pending", resolvedAt: null }
-}
-
-export async function listLogs(userId: string) {
-  await getAppData(userId)
-  const rows = await getDatabase()
-    .select()
-    .from(routineLogs)
-    .where(eq(routineLogs.userId, userId))
-    .orderBy(desc(routineLogs.recordedAt))
-  return rows.map(mapLog)
-}
-
-export async function createLog(
-  userId: string,
-  input: ApiLogWrite,
-  actor: string
-) {
-  const settings = await settingsFor(userId)
-  const now = new Date()
-  const id = crypto.randomUUID()
-  await getDatabase()
-    .insert(routineLogs)
-    .values({
-      id,
-      userId,
-      routineId: input.routineId ?? null,
-      date: input.date,
-      eventTime: input.eventTime,
-      title: input.title,
-      category: input.category,
-      scheduled: input.scheduledTime,
-      actual: input.actualTime ?? "",
-      variance:
-        input.status === "completed" && input.actualTime
-          ? variance(input.scheduledTime, input.actualTime)
-          : "Manually recorded",
-      status: input.status,
-      recordedAt: now,
-      actor,
-      source: "Routempo Android",
-      timezone: settings.timezone,
-      snapshot: input.note,
-    })
-  return (await listLogs(userId)).find((log) => log.id === id)!
-}
-
-export async function updateLog(
-  userId: string,
-  id: string,
-  patch: Partial<ApiLogWrite>
-) {
-  const existing = (await listLogs(userId)).find((log) => log.id === id)
-  if (!existing) return null
-  const merged: ApiLogWrite = {
-    routineId:
-      patch.routineId === undefined ? existing.routineId : patch.routineId,
-    date: patch.date ?? existing.date,
-    eventTime: patch.eventTime ?? existing.eventTime,
-    title: patch.title ?? existing.title,
-    category: patch.category ?? existing.category,
-    scheduledTime: patch.scheduledTime ?? existing.scheduledTime,
-    actualTime:
-      patch.actualTime === undefined ? existing.actualTime : patch.actualTime,
-    status: patch.status ?? existing.status,
-    note: patch.note ?? existing.note,
-  }
-  await getDatabase()
-    .update(routineLogs)
-    .set({
-      routineId: merged.routineId ?? null,
-      date: merged.date,
-      eventTime: merged.eventTime,
-      title: merged.title,
-      category: merged.category,
-      scheduled: merged.scheduledTime,
-      actual: merged.actualTime ?? "",
-      variance:
-        merged.status === "completed" && merged.actualTime
-          ? variance(merged.scheduledTime, merged.actualTime)
-          : "Manually recorded",
-      status: merged.status,
-      snapshot: merged.note,
-    })
-    .where(and(eq(routineLogs.userId, userId), eq(routineLogs.id, id)))
-  return (await listLogs(userId)).find((log) => log.id === id)!
-}
-
-export async function deleteLog(userId: string, id: string) {
-  const existing = (await listLogs(userId)).find((log) => log.id === id)
-  if (!existing) return null
-  await getDatabase()
-    .delete(routineLogs)
-    .where(and(eq(routineLogs.userId, userId), eq(routineLogs.id, id)))
-  return existing
-}
-
-function mapLog(log: typeof routineLogs.$inferSelect) {
-  return {
-    id: log.id,
-    routineId: log.routineId,
-    date: log.date,
-    eventTime: log.eventTime,
-    title: log.title,
-    category: log.category,
-    scheduledTime: log.scheduled,
-    actualTime: log.actual || null,
-    variance: log.variance,
-    status: log.status as ApiLogWrite["status"],
-    recordedAt: log.recordedAt.toISOString(),
-    actor: log.actor,
-    source: log.source,
-    timezone: log.timezone,
-    note: log.snapshot,
-  }
-}
-
-export async function analytics(
-  userId: string,
-  startDate: string,
-  endDate: string
-) {
-  const logs = (await listLogs(userId)).filter(
-    (log) => log.date >= startDate && log.date <= endDate
-  )
-  const categories = new Map<
-    string,
-    { category: string; completed: number; skipped: number; missed: number }
-  >()
-  const days = new Map<
-    string,
-    { completed: number; skipped: number; missed: number }
-  >()
-  for (const log of logs) {
-    const category = categories.get(log.category) ?? {
-      category: log.category,
-      completed: 0,
-      skipped: 0,
-      missed: 0,
-    }
-    const day = days.get(log.date) ?? { completed: 0, skipped: 0, missed: 0 }
-    category[log.status] += 1
-    day[log.status] += 1
-    categories.set(log.category, category)
-    days.set(log.date, day)
-  }
-  const completed = logs.filter((log) => log.status === "completed").length
-  const skipped = logs.filter((log) => log.status === "skipped").length
-  const missed = logs.filter((log) => log.status === "missed").length
-  return {
-    startDate,
-    endDate,
-    completionPercentage: logs.length
-      ? Math.round((completed / logs.length) * 100)
-      : 0,
-    outcomes: { completed, skipped, missed, total: logs.length },
-    series: [...days.entries()]
-      .sort(([left], [right]) => left.localeCompare(right))
-      .map(([date, values]) => ({
-        date,
-        ...values,
-        total: values.completed + values.skipped + values.missed,
-        completionPercentage:
-          values.completed + values.skipped + values.missed
-            ? Math.round(
-                (values.completed /
-                  (values.completed + values.skipped + values.missed)) *
-                  100
-              )
-            : 0,
-      })),
-    categories: [...categories.values()].map((category) => {
-      const total = category.completed + category.skipped + category.missed
-      return {
-        ...category,
-        total,
-        completionPercentage: total
-          ? Math.round((category.completed / total) * 100)
-          : 0,
-      }
-    }),
-    generatedAt: new Date().toISOString(),
-  }
-}
-
-export async function backup(userId: string, name?: string) {
-  return createDataExport(await getAppData(userId, name))
-}
-
-export async function restoreBackup(
-  userId: string,
-  data: Parameters<typeof replaceAppData>[1],
-  name?: string
-) {
-  return replaceAppData(userId, data, name)
-}
-
-export async function logsCsv(
-  userId: string,
-  startDate?: string,
-  endDate?: string
-) {
-  const logs = (await listLogs(userId)).filter(
-    (log) =>
-      (!startDate || log.date >= startDate) && (!endDate || log.date <= endDate)
-  )
-  const header = [
-    "date",
-    "eventTime",
-    "routine",
-    "category",
-    "scheduledTime",
-    "actualTime",
-    "status",
-    "timezone",
-    "note",
-  ]
-  return [
-    header.join(","),
-    ...logs.map((log) =>
-      [
-        log.date,
-        log.eventTime,
-        log.title,
-        log.category,
-        log.scheduledTime,
-        log.actualTime ?? "",
-        log.status,
-        log.timezone,
-        log.note,
-      ]
-        .map(csvCell)
-        .join(",")
-    ),
-  ].join("\n")
-}
-
-function csvCell(value: string) {
-  return /[",\n]/.test(value) ? `"${value.replaceAll('"', '""')}"` : value
-}
-
-function timeInZone(timezone: string, date: Date) {
-  const parts = new Intl.DateTimeFormat("en-GB", {
-    timeZone: timezone,
-    hour: "2-digit",
-    minute: "2-digit",
-    hourCycle: "h23",
-  }).formatToParts(date)
-  const value = (type: Intl.DateTimeFormatPartTypes) =>
-    parts.find((part) => part.type === type)?.value ?? "00"
-  return `${value("hour")}:${value("minute")}`
-}
-
-function variance(scheduled: string, actual: string) {
-  const minutes = (value: string) => {
-    const [hour = 0, minute = 0] = value.split(":").map(Number)
-    return hour * 60 + minute
-  }
-  const difference = minutes(actual) - minutes(scheduled)
-  if (!difference) return "On time"
-  return difference > 0
-    ? `${difference} min late`
-    : `${Math.abs(difference)} min early`
 }

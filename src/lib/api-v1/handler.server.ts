@@ -7,43 +7,47 @@ import {
 } from "@/lib/integrations-api.server"
 import { addDays, dateKeyInTimeZone } from "@/lib/user-calendar"
 
+import { analytics } from "./analytics.server"
 import {
   authSession,
   authenticatedUser,
   createIntegrationConnect,
-  createSocialExchangeCode,
   disconnectIntegration,
-  exchangeSocialCode,
-  googleTokenSignIn,
-  integrationCallback,
-  refreshMobileSession,
   revokeMobileSession,
-  socialAuthorizationResponse,
-  startIntegrationConnect,
 } from "./auth.server"
+import { handlePublicAuthRoute } from "./auth-routes.server"
+import { backup, restoreBackup } from "./backup.server"
 import {
-  analytics,
-  backup,
   createCategory,
-  createLog,
   createRoutine,
   deleteCategory,
-  deleteLog,
   deleteRoutine,
   listCategories,
-  listLogs,
   listOccurrences,
   listRoutines,
-  logsCsv,
   renameCategory,
   resolveOccurrence,
-  restoreBackup,
   revertOccurrence,
   settingsFor,
-  updateLog,
   updateRoutine,
   updateSettings,
 } from "./data.server"
+import { ApiError } from "./errors"
+import { executeIdempotent } from "./idempotency.server"
+import {
+  createLog,
+  deleteLog,
+  listLogs,
+  logsCsv,
+  updateLog,
+} from "./logs.server"
+import { normalizeName } from "./normalize"
+import {
+  matchOccurrenceAction,
+  matchResource,
+  optionalJson,
+  validationResponse,
+} from "./route-utils"
 import {
   jsonBody,
   methodNotAllowed,
@@ -56,7 +60,7 @@ import {
 import {
   categoryPatchSchema,
   categoryWriteSchema,
-  googleTokenSchema,
+  analyticsQuerySchema,
   issues,
   logPatchSchema,
   logWriteSchema,
@@ -64,139 +68,62 @@ import {
   routinePatchSchema,
   routineWriteSchema,
   settingsPatchSchema,
-  socialExchangeSchema,
-  socialStartSchema,
 } from "./schemas"
 
 type Identity = NonNullable<Awaited<ReturnType<typeof authenticatedUser>>>
 
-export async function handleApiV1(request: Request) {
-  const id = requestId(request)
-  try {
-    if (request.method === "OPTIONS") return optionsResponse()
-    const url = new URL(request.url)
-    const path =
-      url.pathname.replace(/^\/api\/v1\/?/, "/").replace(/\/$/, "") || "/"
-
-    const publicAuth = await handlePublicAuth(request, path, id)
-    if (publicAuth) return withApiHeaders(publicAuth, id)
-
-    const identity = await authenticatedUser(request)
-    if (!identity)
-      return withApiHeaders(
-        problem(
-          request,
-          id,
-          401,
-          "UNAUTHORIZED",
-          "A valid session is required"
-        ),
-        id
-      )
-
-    const response = await handleAuthenticated(request, url, path, id, identity)
-    return withApiHeaders(response, id)
-  } catch (error) {
-    return withApiHeaders(mapError(request, id, error), id)
-  }
+type ApiRuntime = {
+  publicAuth: typeof handlePublicAuthRoute
+  authenticate: typeof authenticatedUser
+  authenticated: typeof handleAuthenticated
+  idempotent: typeof executeIdempotent
 }
 
-async function handlePublicAuth(request: Request, path: string, id: string) {
-  if (path === "/integrations/connect/start" && request.method === "GET") {
-    const code = new URL(request.url).searchParams.get("code") ?? ""
-    const response = await startIntegrationConnect(request, code)
-    return (
-      response ??
-      problem(
-        request,
-        id,
-        401,
-        "INVALID_CONNECT_CODE",
-        "The integration connection code is invalid, expired, or already used"
-      )
-    )
+export function createApiV1Handler(overrides: Partial<ApiRuntime> = {}) {
+  const runtime: ApiRuntime = {
+    publicAuth: handlePublicAuthRoute,
+    authenticate: authenticatedUser,
+    authenticated: handleAuthenticated,
+    idempotent: executeIdempotent,
+    ...overrides,
   }
+  return async (request: Request) => {
+    const id = requestId(request)
+    try {
+      if (request.method === "OPTIONS") return optionsResponse()
+      const url = new URL(request.url)
+      const path =
+        url.pathname.replace(/^\/api\/v1\/?/, "/").replace(/\/$/, "") || "/"
 
-  if (path === "/integrations/callback" && request.method === "GET") {
-    const url = new URL(request.url)
-    const redirectUri = url.searchParams.get("redirectUri") ?? ""
-    const provider = url.searchParams.get("provider") ?? ""
-    const redirect = await integrationCallback(request, redirectUri)
-    if (!redirect)
-      return problem(
-        request,
-        id,
-        401,
-        "INTEGRATION_CALLBACK_UNAUTHORIZED",
-        "The integration session was not found"
-      )
-    const destination = new URL(redirect)
-    destination.searchParams.set("integration", provider)
-    destination.searchParams.set("connected", "true")
-    return Response.redirect(destination, 302)
-  }
+      const publicAuth = await runtime.publicAuth(request, path, id)
+      if (publicAuth) return withApiHeaders(publicAuth, id)
 
-  if (path === "/auth/google" && request.method === "POST") {
-    const parsed = googleTokenSchema.safeParse(await jsonBody(request))
-    if (!parsed.success) return validation(request, id, parsed.error)
-    return ok(
-      await googleTokenSignIn(request, parsed.data.idToken, parsed.data.nonce),
-      id
-    )
-  }
-
-  if (path === "/auth/social/start") {
-    if (request.method !== "GET") return methodNotAllowed(request, id, ["GET"])
-    const input = {
-      provider: new URL(request.url).searchParams.get("provider"),
-      redirectUri: new URL(request.url).searchParams.get("redirectUri"),
-    }
-    const parsed = socialStartSchema.safeParse(input)
-    if (!parsed.success) return validation(request, id, parsed.error)
-    return socialAuthorizationResponse(
-      request,
-      parsed.data.provider,
-      parsed.data.redirectUri
-    )
-  }
-
-  if (path === "/auth/social/callback" && request.method === "GET") {
-    const redirectUri =
-      new URL(request.url).searchParams.get("redirectUri") ?? ""
-    const code = await createSocialExchangeCode(request, redirectUri)
-    if (!code)
-      return problem(
-        request,
-        id,
-        401,
-        "SOCIAL_CALLBACK_UNAUTHORIZED",
-        "The social sign-in session was not found"
-      )
-    const redirect = new URL(redirectUri)
-    redirect.searchParams.set("code", code)
-    return Response.redirect(redirect, 302)
-  }
-
-  if (path === "/auth/social/exchange" && request.method === "POST") {
-    const parsed = socialExchangeSchema.safeParse(await jsonBody(request))
-    if (!parsed.success) return validation(request, id, parsed.error)
-    const result = await exchangeSocialCode(
-      parsed.data.code,
-      parsed.data.redirectUri
-    )
-    return result
-      ? ok(result, id)
-      : problem(
-          request,
-          id,
-          401,
-          "INVALID_EXCHANGE_CODE",
-          "The exchange code is invalid, expired, or already used"
+      const identity = await runtime.authenticate(request)
+      if (!identity)
+        return withApiHeaders(
+          problem(
+            request,
+            id,
+            401,
+            "UNAUTHORIZED",
+            "A valid session is required"
+          ),
+          id
         )
-  }
 
-  return null
+      return runtime.idempotent(request, identity.id, async () =>
+        withApiHeaders(
+          await runtime.authenticated(request, url, path, id, identity),
+          id
+        )
+      )
+    } catch (error) {
+      return withApiHeaders(mapError(request, id, error), id)
+    }
+  }
 }
+
+export const handleApiV1 = createApiV1Handler()
 
 async function handleAuthenticated(
   request: Request,
@@ -220,12 +147,6 @@ async function handleAuthenticated(
       id
     )
   }
-  if (path === "/auth/refresh" && request.method === "POST") {
-    const refreshed = await refreshMobileSession(request)
-    return refreshed
-      ? ok(refreshed, id)
-      : problem(request, id, 401, "SESSION_EXPIRED", "The session has expired")
-  }
   if (path === "/auth/logout" && request.method === "POST")
     return ok({ revoked: await revokeMobileSession(request) }, id)
 
@@ -234,7 +155,7 @@ async function handleAuthenticated(
       return ok({ settings: await settingsFor(identity.id, identity.name) }, id)
     if (request.method === "PATCH") {
       const parsed = settingsPatchSchema.safeParse(await jsonBody(request))
-      if (!parsed.success) return validation(request, id, parsed.error)
+      if (!parsed.success) return validationResponse(request, id, parsed.error)
       return ok(
         {
           settings: await updateSettings(
@@ -262,7 +183,7 @@ async function handleAuthenticated(
     }
     if (request.method === "POST") {
       const parsed = categoryWriteSchema.safeParse(await jsonBody(request))
-      if (!parsed.success) return validation(request, id, parsed.error)
+      if (!parsed.success) return validationResponse(request, id, parsed.error)
       return ok(
         { category: await createCategory(identity.id, parsed.data.name) },
         id,
@@ -276,7 +197,7 @@ async function handleAuthenticated(
   if (categoryId) {
     if (request.method === "PATCH") {
       const parsed = categoryPatchSchema.safeParse(await jsonBody(request))
-      if (!parsed.success) return validation(request, id, parsed.error)
+      if (!parsed.success) return validationResponse(request, id, parsed.error)
       const category = parsed.data.name
         ? await renameCategory(identity.id, categoryId, parsed.data.name)
         : null
@@ -325,7 +246,7 @@ async function handleAuthenticated(
     }
     if (request.method === "POST") {
       const parsed = routineWriteSchema.safeParse(await jsonBody(request))
-      if (!parsed.success) return validation(request, id, parsed.error)
+      if (!parsed.success) return validationResponse(request, id, parsed.error)
       return ok(
         {
           routine: await createRoutine(identity.id, parsed.data, identity.name),
@@ -341,7 +262,7 @@ async function handleAuthenticated(
   if (routineId) {
     if (request.method === "PATCH") {
       const parsed = routinePatchSchema.safeParse(await jsonBody(request))
-      if (!parsed.success) return validation(request, id, parsed.error)
+      if (!parsed.success) return validationResponse(request, id, parsed.error)
       const routine = await updateRoutine(
         identity.id,
         routineId,
@@ -425,7 +346,7 @@ async function handleAuthenticated(
     const parsed = occurrenceResolutionSchema.safeParse(
       await optionalJson(request)
     )
-    if (!parsed.success) return validation(request, id, parsed.error)
+    if (!parsed.success) return validationResponse(request, id, parsed.error)
     const occurrence = await resolveOccurrence(
       identity.id,
       occurrenceAction.id,
@@ -450,7 +371,8 @@ async function handleAuthenticated(
           (!startDate || log.date >= startDate) &&
           (!endDate || log.date <= endDate) &&
           (!routineId || log.routineId === routineId) &&
-          (!category || normalized(log.category) === normalized(category)) &&
+          (!category ||
+            normalizeName(log.category) === normalizeName(category)) &&
           (!status || log.status === status.toLowerCase())
       )
       const result = page(items, pagination(url).limit, pagination(url).offset)
@@ -463,7 +385,7 @@ async function handleAuthenticated(
     }
     if (request.method === "POST") {
       const parsed = logWriteSchema.safeParse(await jsonBody(request))
-      if (!parsed.success) return validation(request, id, parsed.error)
+      if (!parsed.success) return validationResponse(request, id, parsed.error)
       return ok(
         { log: await createLog(identity.id, parsed.data, identity.name) },
         id,
@@ -477,7 +399,7 @@ async function handleAuthenticated(
   if (logId) {
     if (request.method === "PATCH") {
       const parsed = logPatchSchema.safeParse(await jsonBody(request))
-      if (!parsed.success) return validation(request, id, parsed.error)
+      if (!parsed.success) return validationResponse(request, id, parsed.error)
       const log = await updateLog(identity.id, logId, parsed.data)
       return log
         ? ok({ log }, id)
@@ -494,12 +416,15 @@ async function handleAuthenticated(
 
   if (path === "/analytics" && request.method === "GET") {
     const settings = await settingsFor(identity.id, identity.name)
-    const endDate =
-      url.searchParams.get("endDate") ?? dateKeyInTimeZone(settings.timezone)
-    const days = Number(url.searchParams.get("range") ?? 7)
+    const query = analyticsQuerySchema.safeParse({
+      range: url.searchParams.get("range") ?? undefined,
+      startDate: url.searchParams.get("startDate") ?? undefined,
+      endDate: url.searchParams.get("endDate") ?? undefined,
+    })
+    if (!query.success) return validationResponse(request, id, query.error)
+    const endDate = query.data.endDate ?? dateKeyInTimeZone(settings.timezone)
     const startDate =
-      url.searchParams.get("startDate") ??
-      addDays(endDate, -(days === 30 || days === 90 ? days - 1 : 6))
+      query.data.startDate ?? addDays(endDate, -(query.data.range - 1))
     return ok(
       { analytics: await analytics(identity.id, startDate, endDate) },
       id
@@ -511,7 +436,7 @@ async function handleAuthenticated(
       return ok({ backup: await backup(identity.id, identity.name) }, id)
     if (request.method === "PUT") {
       const parsed = dataExportSchema.safeParse(await jsonBody(request))
-      if (!parsed.success) return validation(request, id, parsed.error)
+      if (!parsed.success) return validationResponse(request, id, parsed.error)
       await restoreBackup(identity.id, parsed.data.data, identity.name)
       return ok({ restored: true }, id)
     }
@@ -602,95 +527,9 @@ async function envelopeLegacy(
       )
 }
 
-function matchResource(path: string, resource: string) {
-  const match = path.match(new RegExp(`^/${resource}/([^/]+)$`))
-  return match?.[1] ? decodeURIComponent(match[1]) : null
-}
-
-function matchOccurrenceAction(path: string) {
-  const match = path.match(/^\/occurrences\/(.+)\/(complete|skip|revert)$/)
-  if (!match?.[1] || !match[2]) return null
-  return {
-    id: decodeURIComponent(match[1]),
-    action: match[2] as "complete" | "skip" | "revert",
-  }
-}
-
-async function optionalJson(request: Request) {
-  return request.headers.get("content-length") === "0" ||
-    !request.headers.get("content-type")
-    ? {}
-    : jsonBody(request)
-}
-
-function validation(
-  request: Request,
-  id: string,
-  error: { issues: readonly { path: PropertyKey[]; message: string }[] }
-) {
-  return problem(
-    request,
-    id,
-    422,
-    "VALIDATION_ERROR",
-    "One or more fields are invalid",
-    error.issues.map((issue) => ({
-      path: issue.path.map(String).join("."),
-      message: issue.message,
-    }))
-  )
-}
-
 function mapError(request: Request, id: string, error: unknown) {
-  const message =
-    error instanceof Error ? error.message : "Unexpected API error"
-  const known: Record<string, [number, string, string]> = {
-    JSON_REQUIRED: [
-      400,
-      "JSON_REQUIRED",
-      "Content-Type application/json is required",
-    ],
-    CATEGORY_NOT_FOUND: [
-      422,
-      "CATEGORY_NOT_FOUND",
-      "The selected category does not exist",
-    ],
-    INVALID_DATE_RANGE: [
-      422,
-      "INVALID_DATE_RANGE",
-      "End date must not precede start date",
-    ],
-    DATE_RANGE_TOO_LARGE: [
-      422,
-      "DATE_RANGE_TOO_LARGE",
-      "Occurrence ranges cannot exceed 93 days",
-    ],
-    OCCURRENCE_NOT_FOUND: [404, "OCCURRENCE_NOT_FOUND", "Occurrence not found"],
-    OCCURRENCE_NOT_TODAY: [
-      409,
-      "OCCURRENCE_NOT_TODAY",
-      "Only today's occurrence can be resolved",
-    ],
-    OCCURRENCE_ALREADY_RESOLVED: [
-      409,
-      "OCCURRENCE_ALREADY_RESOLVED",
-      "Revert the current outcome before changing it",
-    ],
-    INVALID_ROUTINE_PATCH: [
-      422,
-      "INVALID_ROUTINE_PATCH",
-      "The combined routine schedule is invalid",
-    ],
-    INVALID_REDIRECT_URI: [
-      400,
-      "INVALID_REDIRECT_URI",
-      "The mobile redirect URI is not allowed",
-    ],
-  }
-  const mapped = known[message]
-  if (mapped) return problem(request, id, mapped[0], mapped[1], mapped[2])
-  if (message === "Routines cannot be added to past days")
-    return problem(request, id, 422, "PAST_START_DATE", message)
+  if (error instanceof ApiError)
+    return problem(request, id, error.status, error.code, error.detail)
   console.error("API v1 request failed", { requestId: id, error })
   return problem(
     request,
@@ -719,8 +558,4 @@ function withApiHeaders(response: Response, id: string) {
   response.headers.set("x-request-id", id)
   response.headers.set("cache-control", "no-store")
   return response
-}
-
-function normalized(value: string) {
-  return value.normalize("NFKC").trim().toLocaleLowerCase("en-US")
 }

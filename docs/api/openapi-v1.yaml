@@ -2,7 +2,7 @@ openapi: 3.1.0
 info:
   title: Routempo Mobile API
   version: 1.0.0
-  description: Versioned contract implemented by Routempo for web sessions and first-party Android bearer sessions.
+  description: Versioned contract implemented by Routempo for web sessions and first-party Android bearer sessions. Authenticated mutations accept an Idempotency-Key and replay the same result for identical retries for 24 hours.
 servers:
   - url: https://routempo.netlify.app/api/v1
   - url: /api/v1
@@ -201,6 +201,8 @@ paths:
     post:
       tags: [Routines]
       summary: Create an active or paused routine
+      parameters:
+        - { $ref: "#/components/parameters/IdempotencyKey" }
       requestBody:
         required: true
         content:
@@ -215,6 +217,8 @@ paths:
     patch:
       tags: [Routines]
       summary: Partially edit, pause, or resume a routine
+      parameters:
+        - { $ref: "#/components/parameters/IdempotencyKey" }
       requestBody:
         required: true
         content:
@@ -226,6 +230,8 @@ paths:
     delete:
       tags: [Routines]
       summary: Delete a routine while preserving historical logs
+      parameters:
+        - { $ref: "#/components/parameters/IdempotencyKey" }
       responses:
         "200": { description: Routine deleted }
         "404": { $ref: "#/components/responses/Problem" }
@@ -251,6 +257,8 @@ paths:
     post:
       tags: [Occurrences]
       summary: Resolve the current seven-day window and return its generated count
+      parameters:
+        - { $ref: "#/components/parameters/IdempotencyKey" }
       responses:
         "200": { description: Generation summary }
   /occurrences/{id}/complete:
@@ -259,6 +267,7 @@ paths:
       summary: Complete today's pending occurrence and create a behavior log
       parameters:
         - { $ref: "#/components/parameters/ResourceId" }
+        - { $ref: "#/components/parameters/IdempotencyKey" }
       requestBody:
         content:
           application/json:
@@ -272,6 +281,7 @@ paths:
       summary: Skip today's pending occurrence and create a behavior log
       parameters:
         - { $ref: "#/components/parameters/ResourceId" }
+        - { $ref: "#/components/parameters/IdempotencyKey" }
       requestBody:
         content:
           application/json:
@@ -285,6 +295,7 @@ paths:
       summary: Return an occurrence to pending and remove its app-created behavior log
       parameters:
         - { $ref: "#/components/parameters/ResourceId" }
+        - { $ref: "#/components/parameters/IdempotencyKey" }
       responses:
         "200": { description: Pending occurrence envelope }
         "404": { $ref: "#/components/responses/Problem" }
@@ -309,6 +320,8 @@ paths:
     post:
       tags: [Logs]
       summary: Create a manual behavior log
+      parameters:
+        - { $ref: "#/components/parameters/IdempotencyKey" }
       requestBody:
         required: true
         content:
@@ -351,12 +364,14 @@ paths:
   /backup:
     get:
       tags: [Data]
-      summary: Export a complete versioned Routempo JSON backup
+      summary: Export a complete versioned Routempo JSON backup including occurrence history
       responses:
         "200": { description: Backup envelope }
     put:
       tags: [Data]
       summary: Replace the current user's settings, categories, routines, occurrences, and logs
+      parameters:
+        - { $ref: "#/components/parameters/IdempotencyKey" }
       requestBody:
         required: true
         content:
@@ -442,6 +457,12 @@ components:
     cookieSession: { type: apiKey, in: cookie, name: routempo.session_token }
   parameters:
     ResourceId: { in: path, name: id, required: true, schema: { type: string } }
+    IdempotencyKey:
+      in: header
+      name: Idempotency-Key
+      required: false
+      description: Generate once per logical mutation and reuse only for an identical retry. Results are retained for 24 hours.
+      schema: { type: string, minLength: 8, maxLength: 200 }
     Cursor:
       { in: query, name: cursor, schema: { type: string, pattern: "^[0-9]+$" } }
     Limit:

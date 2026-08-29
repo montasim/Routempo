@@ -41,6 +41,25 @@ function dataWithRoutine() {
 }
 
 describe("app mutations", () => {
+  it("preserves a paused state when adding a routine", () => {
+    const data = dataWithRoutine()
+
+    applyAppMutation(data, {
+      action: "add",
+      routine: {
+        time: "9:30 PM",
+        title: "Read",
+        note: "",
+        category: "Learning",
+        startDate: "2026-08-12",
+        repeat: "daily",
+        enabled: false,
+      },
+    })
+
+    expect(data.routines.at(-1)?.enabled).toBe(false)
+  })
+
   it("updates routine details without replacing runtime state", () => {
     const data = dataWithRoutine()
     const routine = data.routines[0]!

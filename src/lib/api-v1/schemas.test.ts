@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest"
 
 import {
+  analyticsQuerySchema,
   logWriteSchema,
   routinePatchSchema,
   routineWriteSchema,
@@ -8,6 +9,11 @@ import {
 } from "./schemas"
 
 describe("API v1 request schemas", () => {
+  it("accepts only supported analytics ranges", () => {
+    expect(analyticsQuerySchema.safeParse({ range: "30" }).success).toBe(true)
+    expect(analyticsQuerySchema.safeParse({ range: "14" }).success).toBe(false)
+  })
+
   it("accepts partial routine updates without injecting create defaults", () => {
     expect(routinePatchSchema.parse({ title: "Read" })).toEqual({
       title: "Read",
