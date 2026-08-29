@@ -64,8 +64,8 @@ function RootDocument({ children }: { children: ReactNode }) {
         <script
           src="https://www.supportkori.com/widget.js"
           data-id="montasim"
-          data-message="Support montasim"
-          data-color="#FFDD00"
+          data-message="Support"
+          data-color="#15803d"
           data-position="right"
         ></script>
         <Scripts />
