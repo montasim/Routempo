@@ -297,7 +297,7 @@ fun LogsUiState.surfaceState(): ReviewSurfaceState = when {
     logs.isNotEmpty() -> ReviewSurfaceState.CONTENT
     errorMessage != null && !isStale -> ReviewSurfaceState.FAILURE
     isStale -> ReviewSurfaceState.EMPTY
-    isLoading || !hasLoaded -> ReviewSurfaceState.LOADING
+    !hasLoaded -> ReviewSurfaceState.LOADING
     else -> ReviewSurfaceState.EMPTY
 }
 

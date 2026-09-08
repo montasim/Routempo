@@ -480,7 +480,7 @@ async function handleAuthenticated(
 
   if (path === "/integrations") {
     if (request.method === "GET")
-      return envelopeLegacy(request, await getIntegrations(request), id)
+      return envelopeLegacy(request, await getIntegrations(request, identity.id), id)
     if (request.method === "POST")
       return envelopeLegacy(request, await syncIntegrations(request), id)
     return methodNotAllowed(request, id, ["GET", "POST"])

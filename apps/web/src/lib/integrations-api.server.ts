@@ -33,10 +33,10 @@ async function identity(request: Request) {
   return null
 }
 
-export async function getIntegrations(request: Request) {
-  const user = await identity(request)
-  if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 })
-  const providers = await connectedProviders(user.id)
+export async function getIntegrations(request: Request, authenticatedUserId?: string) {
+  const userId = authenticatedUserId ?? (await identity(request))?.id
+  if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 })
+  const providers = await connectedProviders(userId)
   return Response.json({
     providers: {
       google: {

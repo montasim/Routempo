@@ -456,8 +456,9 @@ fun RoutempoApp(
 
     fun loadProduct() {
         scope.launch {
-            todayState = todayState.copy(isLoading = true, errorMessage = null)
-            planState = planState.copy(isLoading = true, errorMessage = null)
+            val hasTodaySnapshot = todayState.occurrences.isNotEmpty() || todayState.emptyKind != null
+            todayState = todayState.copy(isLoading = !hasTodaySnapshot, errorMessage = null)
+            planState = planState.copy(errorMessage = null)
             val account = currentUser
             val cached = account?.let { snapshotCache.read(it.user.id) }
             if (cached != null && todayState.occurrences.isEmpty()) applyProductSnapshot(cached, stale = true)
@@ -575,6 +576,12 @@ fun RoutempoApp(
                 authState = AuthUiState.SignedOut()
                 return@launch
             }
+            val cached = session.accountId?.let { snapshotCache.read(it) }
+            if (cached != null) {
+                currentUser = cached.currentUser
+                applyProductSnapshot(cached, stale = true)
+                signedIn = true
+            }
             runCatching { bootstrapAccount() }
                 .onSuccess {
                     signedIn = true
@@ -582,10 +589,8 @@ fun RoutempoApp(
                 }
                 .onFailure { error ->
                     val persistedSession = application.sessionStore.read()
-                    val cached = persistedSession?.accountId?.let { snapshotCache.read(it) }
-                    if (cached != null) {
-                        signedIn = true
-                        applyProductSnapshot(cached, stale = true)
+                    if (cached != null && persistedSession != null) {
+                        snackbar.showSnackbar("Offline — showing your last saved Routempo data.")
                     } else {
                         signedIn = false
                         authState =
@@ -701,8 +706,8 @@ fun RoutempoApp(
                 reviewState.copy(
                     logs =
                         current.copy(
-                            isLoading = reset && current.logs.isEmpty(),
-                            isRefreshing = reset && current.logs.isNotEmpty(),
+                            isLoading = reset && !current.hasLoaded,
+                            isRefreshing = reset && current.hasLoaded,
                             isLoadingNextPage = !reset,
                             errorMessage = null,
                             paginationErrorMessage = null,
@@ -925,13 +930,50 @@ fun RoutempoApp(
             }.sortedWith(compareBy({ orderIndex[it.id] ?: Int.MAX_VALUE }, CategorySettingsUi::name))
     }
 
+    fun settingsUiState(
+        account: CurrentUser,
+        loadedCategories: List<Category>,
+        providers: List<ProviderSettingsUi>,
+        isOffline: Boolean = false,
+    ) =
+        RoutempoSettingsUiState(
+            account = SettingsAccountUi(account.settings.name, account.user.email, account.settings.timezone),
+            reminders =
+                ReminderSettingsUi(
+                    routineRemindersEnabled = account.settings.routineRemindersEnabled,
+                    reminderTime = "At scheduled time",
+                    reminderOffsetMinutes = account.settings.defaultReminderMinutes,
+                    weeklySummaryEnabled = account.settings.weeklySummaryEnabled,
+                ),
+            themeMode = themeMode,
+            categories = categorySettings(loadedCategories, account.user.id),
+            providers = providers,
+            notificationPermission = notificationPermission,
+            appInfo = AppInfoUi(BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE.toString()),
+            isOffline = isOffline,
+        )
+
     fun loadSettings() {
+        val knownAccount = currentUser
+        if (knownAccount != null) {
+            settingsLoaded = true
+            settingsState =
+                settingsUiState(
+                    account = knownAccount,
+                    loadedCategories = categories,
+                    providers =
+                        settingsState.providers.ifEmpty {
+                            SettingsProvider.entries.map { provider ->
+                                ProviderSettingsUi(provider, ProviderConnectionStatus.Checking)
+                            }
+                        },
+                )
+        }
         scope.launch {
-            settingsState = settingsState.copy(isLoading = settingsState.account == null, errorMessage = null)
-            val accountDeferred = async { runCatching { api.currentUser() } }
+            settingsState = settingsState.copy(isLoading = knownAccount == null, errorMessage = null)
             val categoriesDeferred = async { runCatching { api.categories(PageQuery(limit = 200)).items } }
             val integrationsDeferred = async { runCatching { api.integrationStatuses() } }
-            val accountResult = accountDeferred.await()
+            val accountResult = knownAccount?.let { Result.success(it) } ?: runCatching { api.currentUser() }
             val categoriesResult = categoriesDeferred.await()
             val integrationsResult = integrationsDeferred.await()
             val account = accountResult.getOrNull() ?: currentUser
@@ -940,33 +982,24 @@ fun RoutempoApp(
                 currentUser = account
                 categories = loadedCategories
                 settingsLoaded = true
+                val providerSettings =
+                    integrationsResult.getOrNull()?.let { integrations ->
+                        listOf(
+                            ProviderSettingsUi(SettingsProvider.Google, providerStatus(integrations.google)),
+                            ProviderSettingsUi(SettingsProvider.Microsoft, providerStatus(integrations.microsoft)),
+                        )
+                    } ?: SettingsProvider.entries.map { provider ->
+                        ProviderSettingsUi(
+                            provider,
+                            ProviderConnectionStatus.Error,
+                            integrationsResult.exceptionOrNull()?.message ?: "Provider status is unavailable.",
+                        )
+                    }
                 settingsState =
-                    RoutempoSettingsUiState(
-                        account = SettingsAccountUi(account.settings.name, account.user.email, account.settings.timezone),
-                        reminders =
-                            ReminderSettingsUi(
-                                routineRemindersEnabled = account.settings.routineRemindersEnabled,
-                                reminderTime = "At scheduled time",
-                                reminderOffsetMinutes = account.settings.defaultReminderMinutes,
-                                weeklySummaryEnabled = account.settings.weeklySummaryEnabled,
-                            ),
-                        themeMode = themeMode,
-                        categories = categorySettings(loadedCategories, account.user.id),
-                        providers =
-                            integrationsResult.getOrNull()?.let { integrations ->
-                                listOf(
-                                    ProviderSettingsUi(SettingsProvider.Google, providerStatus(integrations.google)),
-                                    ProviderSettingsUi(SettingsProvider.Microsoft, providerStatus(integrations.microsoft)),
-                                )
-                            } ?: SettingsProvider.entries.map { provider ->
-                                ProviderSettingsUi(
-                                    provider,
-                                    ProviderConnectionStatus.Error,
-                                    integrationsResult.exceptionOrNull()?.message ?: "Provider status is unavailable.",
-                                )
-                            },
-                        notificationPermission = notificationPermission,
-                        appInfo = AppInfoUi(BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE.toString()),
+                    settingsUiState(
+                        account = account,
+                        loadedCategories = loadedCategories,
+                        providers = providerSettings,
                         isOffline = listOf(accountResult, categoriesResult, integrationsResult).any { it.isFailure },
                     )
                 RoutempoNotificationScheduler.reconcile(

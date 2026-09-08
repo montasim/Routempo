@@ -102,6 +102,7 @@ class ReviewLogicTest {
             LogsUiState(hasLoaded = true, errorMessage = "offline").surfaceState(),
         )
         assertEquals(ReviewSurfaceState.EMPTY, LogsUiState(hasLoaded = true).surfaceState())
+        assertEquals(ReviewSurfaceState.EMPTY, LogsUiState(hasLoaded = true, isLoading = true).surfaceState())
         assertEquals(ReviewSurfaceState.CONTENT, LogsUiState(logs = listOf(completed)).surfaceState())
         assertEquals(
             ReviewSurfaceState.EMPTY,
