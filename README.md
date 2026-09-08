@@ -7,7 +7,7 @@
 
 Routempo helps people build repeatable daily rhythms. Users can schedule one-off or recurring routines, complete or skip each occurrence, review behavior history and insights, receive browser reminders, and move routines between Routempo and Google or Microsoft calendars and task lists.
 
-This repository contains the full-stack web application, its versioned mobile API, Neon PostgreSQL schema and migrations, web and Android prototypes, a reusable design system, and automated unit and browser tests.
+This repository contains the full-stack web application, its versioned mobile API, the native Kotlin/Compose Android application, Neon PostgreSQL schema and migrations, product prototypes, a reusable design system, and automated tests.
 
 **[Open the live app](https://routempo.netlify.app) · [Review the Android prototype](prototypes/android/v1/README.md) · [Review the web prototype](prototypes/web/v1/README.md) · [Report an issue](https://github.com/montasim/Routempo/issues)**
 
@@ -99,7 +99,7 @@ Sync is batch-oriented rather than continuous two-way synchronization. A single 
 ### Prerequisites
 
 - Node.js 24; the current toolchain is verified with Node.js `24.17.0`
-- pnpm; the repository is currently verified with pnpm `11.7.0`
+- pnpm; the repository is currently verified with pnpm `11.22.0`
 - A [Neon](https://neon.com/) PostgreSQL database
 - Google Chrome at `/usr/bin/google-chrome` when running Playwright with the committed configuration
 - Optional Google Cloud and Microsoft Entra applications for OAuth and external sync
@@ -115,16 +115,16 @@ pnpm install --frozen-lockfile
 ### 2. Configure the environment
 
 ```bash
-cp .env.example .env
+cp apps/web/.env.example apps/web/.env
 openssl rand -base64 32
 ```
 
-Add the generated value as `BETTER_AUTH_SECRET`, keep `BETTER_AUTH_URL=http://localhost:3000`, and replace `DATABASE_URL` with the pooled connection URL from Neon. Do not commit `.env` or use template secrets in production.
+Add the generated value to `apps/web/.env` as `BETTER_AUTH_SECRET`, keep `BETTER_AUTH_URL=http://localhost:3000`, and replace `DATABASE_URL` with the pooled connection URL from Neon. Do not commit `.env` or use template secrets in production.
 
 ### 3. Apply database migrations
 
 ```bash
-pnpm db:migrate
+pnpm web:db:migrate
 ```
 
 Drizzle Kit and the application both use `DATABASE_URL`. Database failures are surfaced; the application does not silently fall back to temporary in-memory storage.
@@ -132,10 +132,23 @@ Drizzle Kit and the application both use `DATABASE_URL`. Database failures are s
 ### 4. Start the application
 
 ```bash
-pnpm dev
+pnpm web:dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000). During development, [http://localhost:3000/today?demo=true](http://localhost:3000/today?demo=true) uses the development demo identity and is the shortest path when OAuth is not configured. It still reads and writes the configured database.
+
+### 5. Build the Android application
+
+Open `apps/mobile` in Android Studio, or build it from a terminal with JDK 17 and Android SDK 36 configured:
+
+```powershell
+cd apps/mobile
+$env:JAVA_HOME = "path-to-jdk-17"
+$env:ANDROID_SDK_ROOT = "path-to-android-sdk"
+.\gradlew.bat testDebugUnitTest lintDebug assembleDebug
+```
+
+The application ID is `com.montasim.routempo` (`.debug` is appended to debug builds). Debug builds call the local web server at `http://10.0.2.2:3000/api/v1`; release builds call the production v1 API. Android versions are managed independently in `apps/mobile/version.properties`, and signed APKs are distributed through GitHub Releases using tags such as `android-v1.0.0`. See the [mobile workspace guide](apps/mobile/README.md) for emulator, authentication callback, signing, artifact naming, and release instructions.
 
 ## Configuration
 
@@ -170,7 +183,7 @@ Enable Google Calendar API and Google Tasks API for Google sync. Microsoft sync 
 Generate one stable VAPID key pair per deployment:
 
 ```bash
-pnpm push:keys
+pnpm web:push:keys
 ```
 
 After setting the VAPID variables and `CRON_SECRET`, configure an external scheduler to call the dispatcher every minute:
@@ -216,7 +229,7 @@ The client loads authenticated application data from `/api/app` and applies seri
 | Notifications  | Browser subscriptions, scheduled jobs and delivery-deduplication keys |
 | Integrations   | External-provider item IDs mapped to Routempo routine IDs             |
 
-The schema and generated migrations live in [`src/db/schema.ts`](src/db/schema.ts) and [`drizzle/`](drizzle/). The data-layer rationale is recorded in the [Neon and Drizzle research note](docs/research/neon-data-layer.md).
+The schema and generated migrations live in [`apps/web/src/db/schema.ts`](apps/web/src/db/schema.ts) and [`apps/web/drizzle/`](apps/web/drizzle/). The data-layer rationale is recorded in the [Neon and Drizzle research note](docs/research/neon-data-layer.md).
 
 ### Application routes
 
@@ -239,43 +252,44 @@ The legacy application routes remain internal implementation surfaces. `/api/v1`
 
 ## Technology
 
-| Area             | Current implementation                                  |
-| ---------------- | ------------------------------------------------------- |
-| Application      | TanStack Start, TanStack Router, React 19, TypeScript 5 |
-| Build and server | Vite 8 and Nitro 3                                      |
-| Interface        | Tailwind CSS 4, shadcn/ui, Radix UI, Lucide, Sonner     |
-| Data             | Neon PostgreSQL, Drizzle ORM and Drizzle Kit            |
-| Authentication   | Better Auth with Google and Microsoft Entra OAuth       |
-| Validation       | Zod                                                     |
-| Notifications    | Web Push, VAPID, service workers and PostgreSQL jobs    |
-| Testing          | Vitest, Testing Library and Playwright                  |
+| Area             | Current implementation                                   |
+| ---------------- | -------------------------------------------------------- |
+| Applications     | TanStack Start/React web; Kotlin/Jetpack Compose Android |
+| Build and server | Vite 8 and Nitro 3                                       |
+| Interface        | Tailwind CSS 4, shadcn/ui, Radix UI, Lucide, Sonner      |
+| Data             | Neon PostgreSQL, Drizzle ORM and Drizzle Kit             |
+| Authentication   | Better Auth with Google and Microsoft Entra OAuth        |
+| Validation       | Zod                                                      |
+| Notifications    | Web Push, VAPID, service workers and PostgreSQL jobs     |
+| Testing          | Vitest, Testing Library and Playwright                   |
 
 ## Development commands
 
-| Command            | Purpose                                                       |
-| ------------------ | ------------------------------------------------------------- |
-| `pnpm dev`         | Start Vite on port 3000                                       |
-| `pnpm build`       | Create the production client and Nitro server output          |
-| `pnpm start`       | Start `.output/server/index.mjs`, loading `.env` when present |
-| `pnpm typecheck`   | Run TypeScript without emitting files                         |
-| `pnpm test`        | Run the Vitest unit and component suite                       |
-| `pnpm test:e2e`    | Start a dev server and run Playwright serially                |
-| `pnpm format`      | Format the repository with Prettier; this writes files        |
-| `pnpm db:generate` | Generate a migration from the Drizzle schema                  |
-| `pnpm db:migrate`  | Apply pending migrations to `DATABASE_URL`                    |
-| `pnpm db:studio`   | Open Drizzle Studio for the configured database               |
-| `pnpm push:keys`   | Generate a VAPID key pair                                     |
+| Command                | Purpose                                                                         |
+| ---------------------- | ------------------------------------------------------------------------------- |
+| `pnpm web:dev`         | Start the web app's Vite server on port 3000                                    |
+| `pnpm web:build`       | Create the production web client and Nitro server output                        |
+| `pnpm web:start`       | Start `apps/web/.output/server/index.mjs`, loading `apps/web/.env` when present |
+| `pnpm web:typecheck`   | Run TypeScript for the web app without emitting files                           |
+| `pnpm web:test`        | Run the web app's Vitest unit and component suite                               |
+| `pnpm web:test:e2e`    | Start the web dev server and run Playwright serially                            |
+| `pnpm web:format`      | Format only the web workspace with Prettier; this writes files                  |
+| `pnpm format`          | Format the entire repository with Prettier; this writes files                   |
+| `pnpm web:db:generate` | Generate a migration from the web app's Drizzle schema                          |
+| `pnpm web:db:migrate`  | Apply pending web migrations to `DATABASE_URL`                                  |
+| `pnpm web:db:studio`   | Open Drizzle Studio for the configured web database                             |
+| `pnpm web:push:keys`   | Generate a VAPID key pair for the web app                                       |
 
 > [!CAUTION]
-> The browser suite uses the `development-demo` account in the configured database. Regression tests replace that account’s data while they run. Point `DATABASE_URL` at a disposable Neon branch or test database before running `pnpm test:e2e`.
+> The browser suite uses the `development-demo` account in the configured database. Regression tests replace that account’s data while they run. Point `DATABASE_URL` at a disposable Neon branch or test database before running `pnpm web:test:e2e`.
 
 ## Deployment and operations
 
 The public application is deployed on Netlify at [routempo.netlify.app](https://routempo.netlify.app). Another deployment must support the generated Nitro Node server, provide all required environment variables, connect to Neon, and run:
 
 ```bash
-pnpm build
-pnpm start
+pnpm web:build
+pnpm web:start
 ```
 
 Before serving production traffic:
@@ -287,7 +301,7 @@ Before serving production traffic:
 5. Verify provider scopes, push delivery, legal copy, and retention expectations.
 6. Run unit tests, type checking, the production build, and relevant browser workflows.
 
-The repository currently has no committed CI workflow or release automation, so these checks are not enforced remotely by this project.
+The Android GitHub Release workflow runs native unit tests and release lint, creates a signed versioned APK, verifies its signature, generates a SHA-256 checksum, and publishes both assets for matching `android-v*` tags. Web checks remain local until a web CI workflow is added.
 
 ## Status, privacy, and limitations
 
@@ -300,23 +314,24 @@ The repository currently has no committed CI workflow or release automation, so 
 - Push endpoints and subscription key material are credentials and must not be logged or exposed to other users.
 - Behavior logs can currently be added, edited, and deleted by the account owner; “history” is not an immutable compliance audit trail.
 - The bundled Terms and Privacy pages require deployment-specific legal review against the configured providers, operator, jurisdiction, retention policy, and support channel.
-- Historical planning documents under `docs/` may describe superseded architectures. The current source, `package.json`, `.env.example`, Drizzle schema, and migrations are authoritative.
+- Historical planning documents under `docs/` may describe superseded architectures. The current `apps/web` source, `apps/web/package.json`, `apps/web/.env.example`, Drizzle schema, and migrations are authoritative for the web app; the root `package.json` defines workspace orchestration commands.
 
 The codebase has no advertising or product-analytics integration. Application data is nevertheless processed by the deployment’s database, authentication provider, hosting environment, browser push service, and any Google or Microsoft integration the user connects.
 
 ## Project structure
 
 ```text
-src/components/       Product pages, app shell and shadcn-based UI
-src/db/               Neon client and Drizzle schema
-src/lib/              Domain rules, persistence, auth, push and integrations
-src/routes/           TanStack application and server routes
-drizzle/              Ordered PostgreSQL migrations and snapshots
-tests/e2e/             Playwright workflows and regressions
-prototypes/android/v1/ Android app prototype and implementation contract
-prototypes/web/v1/     Current web product prototype
-docs/design_system/    Routempo visual tokens, components and guidance
-docs/research/         Evidence-backed architecture research
+apps/web/src/components/ Product pages, app shell and shadcn-based UI
+apps/web/src/db/         Neon client and Drizzle schema
+apps/web/src/lib/        Domain rules, persistence, auth, push and integrations
+apps/web/src/routes/     TanStack application and server routes
+apps/web/drizzle/        Ordered PostgreSQL migrations and snapshots
+apps/web/tests/e2e/       Playwright workflows and regressions
+apps/mobile/              Native Kotlin/Compose Android application workspace
+prototypes/android/v1/   Android app prototype and implementation contract
+prototypes/web/v1/       Current web product prototype
+docs/design_system/      Routempo visual tokens, components and guidance
+docs/research/           Evidence-backed architecture research
 ```
 
 ## Documentation
@@ -327,8 +342,8 @@ docs/research/         Evidence-backed architecture research
 - [Routempo design system](docs/design_system/readme.md)
 - [Neon PostgreSQL and Drizzle decision](docs/research/neon-data-layer.md)
 - [Web reminders and weekly summaries](docs/research/web-reminders.md)
-- [Environment template](.env.example)
-- [Database schema](src/db/schema.ts)
+- [Environment template](apps/web/.env.example)
+- [Database schema](apps/web/src/db/schema.ts)
 
 ## Support and security
 
@@ -342,7 +357,7 @@ The repository does not yet include a contribution guide or code of conduct. Bef
 
 1. Create a focused branch.
 2. Update or add tests for changed behavior.
-3. Run `pnpm typecheck`, `pnpm test`, `pnpm build`, and relevant Playwright workflows.
+3. Run `pnpm web:typecheck`, `pnpm web:test`, `pnpm web:build`, and relevant Playwright workflows.
 4. Keep secrets and personal data out of commits and test output.
 5. Submit a pull request describing the user-visible outcome and verification performed.
 

@@ -1,0 +1,3920 @@
+{
+  "schema_version": "1.0",
+  "manifest_status": "in-progress",
+  "metadata": {
+    "updated_on": "2026-09-08",
+    "repository_layout": "monorepo",
+    "layout_migration": "completed-in-working-tree",
+    "capability_count": 81,
+    "implementation_counts": {
+      "closed": 2,
+      "implemented": 71,
+      "partial": 4,
+      "verified": 4
+    }
+  },
+  "source": {
+    "web_root": "apps/web",
+    "revision": "d927c7314a5c801035f55f52dbb870af6107e551 (capability-audit baseline commit; the behavior-neutral apps/web relocation is present in the 2026-09-02 working tree)",
+    "layout_state": "post-migration"
+  },
+  "target": {
+    "android_root": "apps/mobile",
+    "layout_state": "native-implementation-integrated"
+  },
+  "evidence_conventions": {
+    "location_item_separator": ";",
+    "web_source_root": "apps/web",
+    "web_source_root_relative_prefixes": ["src/", "public/", "tests/"],
+    "repository_root_relative_prefixes": [
+      "apps/",
+      "docs/",
+      "prototypes/",
+      "README.md",
+      "AGENTS.md"
+    ],
+    "resolution_rules": [
+      "Each semicolon-delimited location item is resolved independently after surrounding whitespace is removed.",
+      "Items beginning with src/, public/, or tests/ are relative to source.web_root (apps/web); all other filesystem items are repository-root-relative.",
+      "A trailing :<positive integer> is a one-based source line, while a #/... suffix on docs/api/openapi-v1.yaml is a JSON Pointer.",
+      "HTTPS locations are absolute runtime evidence; dated architecture-decision labels are non-filesystem evidence."
+    ]
+  },
+  "discovery": {
+    "status": "complete",
+    "evidence": [
+      {
+        "kind": "source",
+        "provenance": "observed",
+        "location": "src/routes; src/components; src/lib; public",
+        "detail": "All migrated routes, page components, shared state/mutations, scheduling, integrations, PWA files, and supporting domain utilities under apps/web were inventoried."
+      },
+      {
+        "kind": "documentation",
+        "provenance": "observed",
+        "location": "docs/api/openapi-v1.yaml; README.md",
+        "detail": "The first-party v1 API contract and current architecture/capability documentation were mapped to Android responsibilities."
+      },
+      {
+        "kind": "artifact",
+        "provenance": "observed",
+        "location": "prototypes/android/v1/index.html; prototypes/android/v1/README.md",
+        "detail": "The interactive Android prototype and Kotlin/Compose handoff were audited completely, including flows, assets, API mapping, and acceptance checklist."
+      },
+      {
+        "kind": "runtime",
+        "provenance": "observed",
+        "location": "https://routempo.netlify.app/login",
+        "detail": "The deployed signed-out experience was inspected: previews, providers, legal links, theme, and support widget. Authenticated runtime was unavailable."
+      },
+      {
+        "kind": "test",
+        "provenance": "observed",
+        "location": "src/**/*.test.ts; tests",
+        "detail": "Existing web tests under apps/web were inspected for contract and edge-case evidence; the original capability audit did not execute them."
+      }
+    ],
+    "exclusions": [
+      {
+        "scope": "docs/design_system/ui_kits/mobile and superseded prototype documents",
+        "justification": "Historical React Native/Expo concepts are inspiration only; the current web source, v1 API, and prototypes/android/v1 are authoritative."
+      },
+      {
+        "scope": "Non-product developer tooling and deployment administration",
+        "justification": "CI provider setup and web hosting internals are not end-user Android capabilities; Android build/release security remains in scope."
+      }
+    ]
+  },
+  "limitations": [
+    {
+      "scope": "Authenticated production runtime",
+      "impact": "Authenticated screens and real provider exchanges were not dynamically exercised; source, OpenAPI, tests, and prototype evidence were used.",
+      "next_action": "Run the release parity matrix against a staging account for Google and Microsoft before verification."
+    },
+    {
+      "scope": "Web test execution",
+      "impact": "The full web unit/API suite passes (32 files, 117 tests), including scheduled/unrecorded analytics parity, and the targeted backend-alignment suite passes; database-backed Playwright/OAuth/preview deployment remain environment gates.",
+      "next_action": "Run Playwright and provider journeys against a disposable staging database and preview deployment."
+    },
+    {
+      "scope": "Native implementation evidence",
+      "impact": "The Compose application, typed v1 client, account-bound encrypted session/cache, adaptive navigation, all feature surfaces, scheduled/unrecorded analytics, validated backup flows, notification routing, unit tests, lint, debug assembly, and minified release assembly are implemented. Two API 36 system-image downloads failed with host-network connection resets, so authenticated emulator/provider/notification/SAF journeys are not yet verified.",
+      "next_action": "When the Android system-image download is available, attach API 26/36 emulator, staging OAuth, integration, backup round-trip, notification, accessibility, and screenshot evidence before marking the manifest complete."
+    },
+    {
+      "scope": "Post-migration web baseline",
+      "impact": "The web application and its configuration now use apps/web, but this ledger does not itself contain the command logs or deployment evidence that prove behavior parity after the move.",
+      "next_action": "Attach the post-migration web typecheck, unit, build, E2E, database, OAuth, API-route, and Netlify preview evidence to foundation.monorepo-layout."
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "foundation.monorepo-layout",
+      "name": "Independent web and mobile applications in one monorepo",
+      "area": "foundation",
+      "priority": "critical",
+      "source_evidence": [
+        {
+          "kind": "decision",
+          "provenance": "observed",
+          "location": "User architecture decision, 2026-09-02",
+          "detail": "The repository will become a monorepo with the current web application isolated from the new Android application."
+        }
+      ],
+      "expected_behavior": "Relocate the existing product without behavior change to apps/web, create the native Gradle build at apps/mobile, retain shared docs/contracts/governance at root, and keep pnpm and Gradle ownership independent.",
+      "states": [
+        "pre-move-baseline",
+        "moving",
+        "post-move-web-verified",
+        "mobile-root-ready"
+      ],
+      "dependencies": [],
+      "android": {
+        "disposition": "shared",
+        "rationale": "Repository structure, API contract ownership, CI boundaries, and deployment paths affect both clients and must be established before parallel Android work.",
+        "implementation_locations": [
+          "apps/web",
+          "apps/mobile",
+          "pnpm-workspace.yaml",
+          "netlify.toml"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Pre/post web typecheck, unit, build, E2E, Netlify preview and API-route behavior match; Android Gradle tasks run from apps/mobile without pnpm wrappers."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/web; apps/mobile; pnpm-workspace.yaml; netlify.toml",
+            "detail": "Implementation and its local automated verification gate pass."
+          }
+        ]
+      },
+      "status": "verified",
+      "blockers": [],
+      "owner": "integrator"
+    },
+    {
+      "id": "foundation.native-shell",
+      "name": "Native Compose application shell",
+      "area": "foundation",
+      "priority": "critical",
+      "source_evidence": [
+        {
+          "kind": "artifact",
+          "provenance": "observed",
+          "location": "prototypes/android/v1/README.md:9",
+          "detail": "The approved handoff requires Kotlin, Compose, Material 3, single activity, and explicitly rejects a WebView implementation."
+        }
+      ],
+      "expected_behavior": "Install and launch a first-party Kotlin/Compose app with native navigation, lifecycle, resources, and device integration.",
+      "states": ["cold-start", "restoring", "ready", "fatal-error"],
+      "dependencies": ["foundation.monorepo-layout"],
+      "android": {
+        "disposition": "native-adaptation",
+        "rationale": "A browser application shell must become native Android structure.",
+        "adaptation": "Use a single-activity Compose app rooted at apps/mobile/; never embed the authenticated product or prototype as a WebView.",
+        "implementation_locations": [
+          "apps/mobile/app",
+          "apps/mobile/core/designsystem"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Debug and signed release variants launch without WebView product content on supported SDKs."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/app; apps/mobile/core/designsystem",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "integrator"
+    },
+    {
+      "id": "foundation.api-v1",
+      "name": "Versioned first-party API client",
+      "area": "foundation",
+      "priority": "critical",
+      "source_evidence": [
+        {
+          "kind": "documentation",
+          "provenance": "observed",
+          "location": "docs/api/openapi-v1.yaml",
+          "detail": "OpenAPI defines the Android/first-party auth, settings, categories, routines, occurrences, logs, analytics, backup, export, and integrations contract."
+        }
+      ],
+      "expected_behavior": "Consume no-store /api/v1 success envelopes and application/problem+json failures without depending on legacy /api/app; support list cursors/default 50/bounds 1-200 and concurrent independent bootstrap calls.",
+      "states": [
+        "idle",
+        "loading",
+        "success",
+        "problem",
+        "transport-error",
+        "cancelled"
+      ],
+      "dependencies": ["foundation.native-shell"],
+      "android": {
+        "disposition": "shared",
+        "rationale": "The server contract is already shared; Android needs generated or hand-written typed transport mappings.",
+        "implementation_locations": [
+          "apps/mobile/core/network",
+          "apps/mobile/core/model",
+          "docs/api/openapi-v1.yaml"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Mock server contract tests cover every v1 endpoint used, metadata/request IDs, malformed envelopes, cursor bounds, no-store assumptions, and independently failing bootstrap calls."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/core/network; apps/mobile/core/model; docs/api/openapi-v1.yaml",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "network-auth agent"
+    },
+    {
+      "id": "backend.routine-title-contract",
+      "name": "Align routine title length across web and v1",
+      "area": "backend-alignment",
+      "priority": "critical",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/routes/api.app.ts:20; src/lib/api-v1/schemas.ts:43",
+          "detail": "The existing web route accepts routine titles up to 120 characters while v1 accepts only 100."
+        }
+      ],
+      "expected_behavior": "Before freezing Kotlin constraints, make the shared API preserve the web's existing 120-character title capability or document and migrate a deliberate alternative; the parity recommendation is v1 max 120.",
+      "states": ["mismatch", "contract-aligned", "migration-tested"],
+      "dependencies": ["foundation.api-v1"],
+      "android": {
+        "disposition": "shared",
+        "rationale": "Android cannot provide web parity until the first-party backend accepts the same valid routine title range.",
+        "implementation_locations": [
+          "apps/web/src/lib/api-v1",
+          "docs/api/openapi-v1.yaml"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Cross-client contract tests create/read/update 100-, 101-, and 120-character routine titles and reject only values above the aligned limit."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/web/src/lib/api-v1; docs/api/openapi-v1.yaml",
+            "detail": "Implementation and its local automated verification gate pass."
+          }
+        ]
+      },
+      "status": "verified",
+      "blockers": [],
+      "owner": "integrator/backend agent"
+    },
+    {
+      "id": "backend.first-login-timezone",
+      "name": "Initialize mobile account timezone",
+      "area": "backend-alignment",
+      "priority": "critical",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/lib/store.server.ts:83; src/lib/api-v1/data.server.ts:44",
+          "detail": "Legacy /api/app initializes from X-Routempo-Timezone, but v1 auth/me can create settings with an empty timezone and UTC fallback."
+        }
+      ],
+      "expected_behavior": "A newly authenticated Android account must persist the detected valid device IANA timezone before occurrences, logs, analytics, recurrence gates, or reminders are loaded.",
+      "states": [
+        "new-account",
+        "device-zone-detected",
+        "patching",
+        "initialized",
+        "patch-failed"
+      ],
+      "dependencies": ["foundation.api-v1"],
+      "android": {
+        "disposition": "shared",
+        "rationale": "Correct first-use timezone requires a backend v1 fix or a mandatory Android bootstrap PATCH, with the backend fix preferred.",
+        "implementation_locations": [
+          "apps/web/src/lib/api-v1",
+          "docs/api/openapi-v1.yaml"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Fresh-account tests in a non-UTC device zone prove the saved zone is initialized before any date-dependent request and survives restart."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/web/src/lib/api-v1; docs/api/openapi-v1.yaml",
+            "detail": "Implementation and its local automated verification gate pass."
+          }
+        ]
+      },
+      "status": "verified",
+      "blockers": [],
+      "owner": "integrator/backend agent"
+    },
+    {
+      "id": "backend.log-date-normalization",
+      "name": "Normalize legacy log dates for v1 analytics",
+      "area": "backend-alignment",
+      "priority": "critical",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/lib/app-mutations.ts:21; src/lib/api-v1/handler.server.ts:361; src/lib/api-v1/analytics.server.ts",
+          "detail": "Legacy web-generated logs can store localized display dates while v1 filters/analytics compare ISO date strings."
+        }
+      ],
+      "expected_behavior": "Normalize existing and future behavior-log dates to ISO YYYY-MM-DD at storage/API boundaries so web and Android filters, missed outcomes, and analytics return the same history.",
+      "states": [
+        "legacy-localized",
+        "normalizing",
+        "iso",
+        "invalid-quarantined"
+      ],
+      "dependencies": ["foundation.api-v1"],
+      "android": {
+        "disposition": "shared",
+        "rationale": "This is a shared data-compatibility migration; Android-side formatting cannot repair server filtering of legacy rows.",
+        "implementation_locations": [
+          "apps/web/src/lib/api-v1",
+          "docs/api/openapi-v1.yaml"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "DB-backed migration and web↔v1 contract tests cover localized legacy rows, ISO rows, filters, ranges, analytics, and invalid values."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/web/src/lib/api-v1; docs/api/openapi-v1.yaml",
+            "detail": "Implementation and its local automated verification gate pass."
+          }
+        ]
+      },
+      "status": "verified",
+      "blockers": [],
+      "owner": "integrator/backend agent"
+    },
+    {
+      "id": "foundation.session-security",
+      "name": "Secure account-scoped session storage",
+      "area": "foundation",
+      "priority": "critical",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/lib/api-v1/auth.server.ts; docs/api/openapi-v1.yaml",
+          "detail": "The API issues bearer sessions with refresh/expiry rules and requires Authorization headers for authenticated routes."
+        }
+      ],
+      "expected_behavior": "Persist tokens using Keystore-backed storage, exclude them from backup, scope cache to the signed-in account, and erase protected state on sign-out or terminal auth failure.",
+      "states": ["no-session", "valid", "refreshing", "expired", "clearing"],
+      "dependencies": ["foundation.api-v1"],
+      "android": {
+        "disposition": "native-adaptation",
+        "rationale": "Browser cookie/session handling must use Android secure storage and bearer headers.",
+        "adaptation": "Use Keystore-backed encrypted storage and explicit Auto Backup exclusions.",
+        "implementation_locations": [
+          "apps/mobile/core/network",
+          "apps/mobile/feature/auth",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Tokens are absent from logs/backups and account switching cannot expose another account cache."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/core/network; apps/mobile/feature/auth; apps/mobile/app/src/main/kotlin/com/montasim/routempo",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "network-auth agent"
+    },
+    {
+      "id": "foundation.cache-offline",
+      "name": "Cached reads and explicit offline state",
+      "area": "foundation",
+      "priority": "high",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/app-provider.tsx:64",
+          "detail": "The web loads all application data from the network and has no offline cache; load failure can resemble an empty account."
+        }
+      ],
+      "expected_behavior": "Show last successful account-scoped reads with freshness/offline labeling, distinguish failure from empty, and retry safely without silently queueing arbitrary writes.",
+      "states": [
+        "loading-no-cache",
+        "fresh",
+        "stale",
+        "offline-cached",
+        "offline-empty",
+        "error"
+      ],
+      "dependencies": ["foundation.api-v1", "foundation.session-security"],
+      "android": {
+        "disposition": "native-adaptation",
+        "rationale": "Mobile reliability requires lifecycle-safe caching beyond the web implementation.",
+        "adaptation": "Use Room as the read cache and online-first idempotent writes with explicit retry.",
+        "implementation_locations": [
+          "apps/mobile/core/data",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Airplane-mode and server-failure tests never render cached-data failure as a new empty account."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/core/data; apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "platform-data agent"
+    },
+    {
+      "id": "foundation.saved-timezone",
+      "name": "Saved-timezone clock and formatting",
+      "area": "foundation",
+      "priority": "critical",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/lib/user-calendar.ts; src/lib/greeting.ts; src/lib/routines.ts",
+          "detail": "Today, greetings, recurrence, weeks, and scheduling depend on the user's saved IANA timezone."
+        }
+      ],
+      "expected_behavior": "Use the saved IANA timezone for today/date gates, greetings, recurrence, analytics labels, manual-log defaults, and notifications; localize display without mutating API values.",
+      "states": [
+        "server-zone",
+        "device-zone-match",
+        "device-zone-different",
+        "invalid-zone"
+      ],
+      "dependencies": ["foundation.api-v1", "backend.first-login-timezone"],
+      "android": {
+        "disposition": "native-parity",
+        "rationale": "Timezone behavior is core product semantics and must match across clients.",
+        "implementation_locations": [
+          "apps/mobile/app",
+          "apps/mobile/core/designsystem"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Unit tests cover DST, midnight, Monday boundaries, leap days, and device/saved-zone mismatch."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/app; apps/mobile/core/designsystem",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "platform-data agent"
+    },
+    {
+      "id": "foundation.theme",
+      "name": "System, light, and dark theme",
+      "area": "foundation",
+      "priority": "medium",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/app-provider.tsx:55; prototypes/android/v1/README.md",
+          "detail": "The web persists light/dark locally and the Android handoff requires light/dark native themes."
+        }
+      ],
+      "expected_behavior": "Default to system appearance, allow system/light/dark selection, persist locally, and update every screen immediately.",
+      "states": ["system", "light", "dark"],
+      "dependencies": ["foundation.native-shell"],
+      "android": {
+        "disposition": "native-adaptation",
+        "rationale": "localStorage and CSS theming map to Material 3 and DataStore.",
+        "adaptation": "Use Material 3 color schemes, system dark-mode observation, and a DataStore preference.",
+        "implementation_locations": [
+          "apps/mobile/core/designsystem",
+          "apps/mobile/feature",
+          "apps/mobile/app"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Screenshot tests cover key screens in light/dark and verify persistence after restart."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/core/designsystem; apps/mobile/feature; apps/mobile/app",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "ui-foundation agent"
+    },
+    {
+      "id": "foundation.feedback-states",
+      "name": "Loading, empty, error, confirmation, and feedback primitives",
+      "area": "foundation",
+      "priority": "critical",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/page-skeletons.tsx; src/components/empty-state.tsx; src/components/app-provider.tsx:92",
+          "detail": "The web has skeletons, action-oriented empty states, confirmations, toasts, optimistic mutations, rollback, and busy states."
+        }
+      ],
+      "expected_behavior": "Provide distinct loading, empty, stale/offline, validation, retryable error, confirmation, busy, success, and rollback feedback without duplicate one-shot events.",
+      "states": [
+        "loading",
+        "empty",
+        "content",
+        "offline",
+        "error",
+        "confirming",
+        "submitting",
+        "success"
+      ],
+      "dependencies": ["foundation.native-shell"],
+      "android": {
+        "disposition": "native-adaptation",
+        "rationale": "Browser skeletons/toasts/dialogs require lifecycle-safe native equivalents.",
+        "adaptation": "Use semantic Compose placeholders, banners, dialogs and SnackbarHost with saved state/event discipline.",
+        "implementation_locations": [
+          "apps/mobile/core/designsystem",
+          "apps/mobile/feature",
+          "apps/mobile/app"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Compose tests exercise every state and prove one-shot messages do not repeat after rotation."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/core/designsystem; apps/mobile/feature; apps/mobile/app",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "ui-foundation agent"
+    },
+    {
+      "id": "foundation.accessibility",
+      "name": "Android accessibility semantics",
+      "area": "quality",
+      "priority": "critical",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components; prototypes/android/v1/README.md:749",
+          "detail": "The source contains semantic navigation, labels and reduced-motion cues; the handoff requires native accessibility and 48dp targets."
+        }
+      ],
+      "expected_behavior": "Expose TalkBack labels, roles, values, state and actions; logical focus; 48dp targets; scalable text; non-color cues; chart summaries; adequate contrast; reduced motion.",
+      "states": [
+        "talkback-off",
+        "talkback-on",
+        "large-text",
+        "reduced-motion",
+        "high-contrast"
+      ],
+      "dependencies": ["foundation.native-shell", "foundation.theme"],
+      "android": {
+        "disposition": "native-adaptation",
+        "rationale": "Web ARIA and responsive cues must become Compose semantics and Android target conventions.",
+        "adaptation": "Use Compose semantics, focus management, content descriptions, state descriptions, minimum touch sizes and accessible chart summaries.",
+        "implementation_locations": [
+          "apps/mobile/core/designsystem",
+          "apps/mobile/feature",
+          "apps/mobile/app"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Automated semantics tests and manual TalkBack/200% font-scale audit pass on all primary journeys."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/core/designsystem; apps/mobile/feature; apps/mobile/app",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "independent QA agent"
+    },
+    {
+      "id": "foundation.adaptive-layout",
+      "name": "Phone and expanded-width layouts",
+      "area": "quality",
+      "priority": "high",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/pages; prototypes/android/v1/README.md",
+          "detail": "The web adapts across breakpoints and the native handoff calls for phone-first adaptive layouts."
+        }
+      ],
+      "expected_behavior": "Remain usable on compact/expanded widths, portrait/landscape, system bars, display cutouts, IME, and large font scale.",
+      "states": [
+        "compact",
+        "medium",
+        "expanded",
+        "portrait",
+        "landscape",
+        "ime-visible"
+      ],
+      "dependencies": ["foundation.native-shell", "foundation.accessibility"],
+      "android": {
+        "disposition": "native-adaptation",
+        "rationale": "CSS breakpoints map to Android window-size classes and native navigation patterns.",
+        "adaptation": "Use bottom navigation on compact widths and rail/two-pane layouts only where expanded width improves the same workflows.",
+        "implementation_locations": [
+          "apps/mobile/app",
+          "apps/mobile/core/designsystem"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Screenshot and interaction tests pass on small phone, large phone, and tablet with 200% text."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/app; apps/mobile/core/designsystem",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "ui-foundation agent"
+    },
+    {
+      "id": "foundation.invalid-fatal",
+      "name": "Invalid destination and fatal screen recovery",
+      "area": "foundation",
+      "priority": "medium",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/system-status-page.tsx; src/routes/__root.tsx:44",
+          "detail": "The web provides branded 404 return/back actions and a 500 Retry/Return to today state."
+        }
+      ],
+      "expected_behavior": "Unknown deep links and unrecoverable screen failures provide safe Retry, Back, and Today recovery without exposing raw errors.",
+      "states": ["invalid-link", "screen-failure", "retrying", "recovered"],
+      "dependencies": ["foundation.feedback-states"],
+      "android": {
+        "disposition": "native-adaptation",
+        "rationale": "HTTP route errors become native navigation/error destinations.",
+        "adaptation": "Render a recoverable unavailable destination or error boundary with Back/Today/Retry actions.",
+        "implementation_locations": [
+          "apps/mobile/app",
+          "apps/mobile/core/designsystem"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Invalid App Link and injected screen-failure tests recover without crash or data loss."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/app; apps/mobile/core/designsystem",
+            "detail": "Core behavior is implemented; the remaining release/runtime evidence or recovery edge is recorded in limitations."
+          }
+        ]
+      },
+      "status": "partial",
+      "blockers": [],
+      "owner": "integrator"
+    },
+    {
+      "id": "auth.google",
+      "name": "Google sign-in",
+      "area": "authentication",
+      "priority": "critical",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/login-screen.tsx; docs/api/openapi-v1.yaml#/paths/~1auth~1google",
+          "detail": "The web offers Google OAuth and v1 exchanges a Google ID token for a first-party bearer session."
+        }
+      ],
+      "expected_behavior": "Initiate Google sign-in once, handle selection/cancel/provider/network/server failure, exchange ID token, store session securely, and open Today.",
+      "states": [
+        "available",
+        "busy",
+        "cancelled",
+        "provider-error",
+        "exchange-error",
+        "authenticated"
+      ],
+      "dependencies": [
+        "foundation.session-security",
+        "foundation.feedback-states"
+      ],
+      "android": {
+        "disposition": "native-adaptation",
+        "rationale": "Browser OAuth becomes Android Credential Manager plus the existing token-exchange endpoint.",
+        "adaptation": "Use Credential Manager Sign in with Google and configuration-aware availability.",
+        "implementation_locations": [
+          "apps/mobile/core/network",
+          "apps/mobile/feature/auth",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Device tests cover success, cancel, repeat tap suppression, unavailable provider, and exchange failure."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/core/network; apps/mobile/feature/auth; apps/mobile/app/src/main/kotlin/com/montasim/routempo",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "network-auth agent"
+    },
+    {
+      "id": "auth.microsoft",
+      "name": "Microsoft sign-in",
+      "area": "authentication",
+      "priority": "critical",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/login-screen.tsx; docs/api/openapi-v1.yaml#/paths/~1auth~1social~1start",
+          "detail": "The web offers Microsoft OAuth and v1 documents start/callback/exchange bridge endpoints."
+        }
+      ],
+      "expected_behavior": "Start Microsoft sign-in, complete an exact-allowlisted callback and single-use exchange within the five-minute code lifetime, handle cancel/invalid state/expiry/provider/network errors, store session, and open Today.",
+      "states": [
+        "available",
+        "busy",
+        "browser-open",
+        "cancelled",
+        "invalid-callback",
+        "exchange-error",
+        "authenticated"
+      ],
+      "dependencies": [
+        "foundation.session-security",
+        "foundation.feedback-states"
+      ],
+      "android": {
+        "disposition": "native-adaptation",
+        "rationale": "The web redirect flow must become Custom Tabs with a verified App Link/custom callback.",
+        "adaptation": "Use Custom Tabs, server bridge state, one-time exchange code, and provider configuration awareness.",
+        "implementation_locations": [
+          "apps/mobile/core/network",
+          "apps/mobile/feature/auth",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Device tests cover success, cancel, bad state, expired code, duplicate callback, and browser return."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/core/network; apps/mobile/feature/auth; apps/mobile/app/src/main/kotlin/com/montasim/routempo",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "network-auth agent"
+    },
+    {
+      "id": "auth.session-refresh",
+      "name": "Session restore and refresh",
+      "area": "authentication",
+      "priority": "critical",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/lib/api-v1/auth.server.ts; docs/api/openapi-v1.yaml#/paths/~1auth~1refresh",
+          "detail": "The v1 API supports current-session lookup and refresh with defined expiry/grace behavior."
+        }
+      ],
+      "expected_behavior": "Restore session at launch, refresh once under a mutex, replay the original request once, and require sign-in on terminal expiry without refresh storms.",
+      "states": [
+        "restoring",
+        "authenticated",
+        "refreshing",
+        "reauth-required",
+        "offline"
+      ],
+      "dependencies": ["foundation.session-security"],
+      "android": {
+        "disposition": "native-parity",
+        "rationale": "Session semantics are shared even though storage/transport are native.",
+        "implementation_locations": [
+          "apps/mobile/core/network",
+          "apps/mobile/feature/auth",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Concurrent 401 tests produce one refresh and each request is replayed at most once."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/core/network; apps/mobile/feature/auth; apps/mobile/app/src/main/kotlin/com/montasim/routempo",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "network-auth agent"
+    },
+    {
+      "id": "auth.logout",
+      "name": "Confirmation-gated sign-out",
+      "area": "authentication",
+      "priority": "critical",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/app-shell.tsx:215; docs/api/openapi-v1.yaml#/paths/~1auth~1logout",
+          "detail": "The web confirms sign-out, shows busy state, calls logout, and returns to login."
+        }
+      ],
+      "expected_behavior": "Confirm sign-out, show progress/failure, invalidate the server session, clear tokens/cache/notifications, and return to sign-in with provider-neutral copy.",
+      "states": ["idle", "confirming", "signing-out", "failed", "signed-out"],
+      "dependencies": ["auth.session-refresh", "foundation.cache-offline"],
+      "android": {
+        "disposition": "native-parity",
+        "rationale": "The account workflow and destructive confirmation carry directly into native UI.",
+        "implementation_locations": [
+          "apps/mobile/core/network",
+          "apps/mobile/feature/auth",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Sign-out tests prove server call, local cleanup, notification cancellation, error feedback, and back-stack removal."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/core/network; apps/mobile/feature/auth; apps/mobile/app/src/main/kotlin/com/montasim/routempo",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "network-auth agent"
+    },
+    {
+      "id": "auth.education",
+      "name": "Sign-in product education",
+      "area": "authentication",
+      "priority": "low",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/login-screen.tsx:110",
+          "detail": "The desktop login preview has Plan, Record, Learn stages, manual controls, five-second advance, pause on interaction, and reduced-motion behavior."
+        }
+      ],
+      "expected_behavior": "Explain Plan, Record, and Learn before sign-in with manual navigation and motion that never interferes with accessibility or authentication.",
+      "states": ["plan", "record", "learn", "paused", "reduced-motion"],
+      "dependencies": ["foundation.accessibility"],
+      "android": {
+        "disposition": "native-adaptation",
+        "rationale": "The desktop-only animated panel is marketing/education behavior that needs a compact mobile presentation.",
+        "adaptation": "Use a small accessible pager or static cards; manual control is primary and reduced motion disables auto-advance.",
+        "implementation_locations": [
+          "apps/mobile/core/network",
+          "apps/mobile/feature/auth",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Compose tests verify all stages, manual paging, lifecycle pause, and reduced-motion behavior."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/core/network; apps/mobile/feature/auth; apps/mobile/app/src/main/kotlin/com/montasim/routempo",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "network-auth agent"
+    },
+    {
+      "id": "legal.terms-privacy",
+      "name": "Terms and Privacy access",
+      "area": "legal",
+      "priority": "critical",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/routes/terms.tsx; src/routes/privacy.tsx; src/components/login-screen.tsx:87",
+          "detail": "Public legal pages are linked from sign-in."
+        }
+      ],
+      "expected_behavior": "Terms and Privacy remain reachable from sign-in and Settings with safe return to the app.",
+      "states": ["available", "opening", "browser", "return", "failure"],
+      "dependencies": ["foundation.native-shell"],
+      "android": {
+        "disposition": "native-adaptation",
+        "rationale": "The existing legal content can remain canonical on the website without embedding the product.",
+        "adaptation": "Open HTTPS legal routes in a trusted Custom Tab and add provider-neutral legal copy before launch.",
+        "implementation_locations": [
+          "apps/mobile/feature/auth",
+          "apps/mobile/feature/settings",
+          "apps/mobile/app"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Links open the correct production HTTPS pages from signed-out and signed-in states and return safely."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/feature/auth; apps/mobile/feature/settings; apps/mobile/app",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "integrator"
+    },
+    {
+      "id": "support.external",
+      "name": "Support entry",
+      "area": "support",
+      "priority": "low",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/routes/__root.tsx:64",
+          "detail": "SupportKori is injected globally as a user-visible support widget."
+        }
+      ],
+      "expected_behavior": "Provide an discoverable way to reach the existing support destination from Android Settings/About.",
+      "states": ["available", "opening", "external", "failure"],
+      "dependencies": ["foundation.native-shell"],
+      "android": {
+        "disposition": "native-adaptation",
+        "rationale": "A floating browser widget does not fit native UI, but its support function must remain.",
+        "adaptation": "Expose a Settings/About support row that opens the approved SupportKori HTTPS destination in a Custom Tab.",
+        "implementation_locations": [
+          "apps/mobile/feature/auth",
+          "apps/mobile/feature/settings",
+          "apps/mobile/app"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Support row is reachable with TalkBack and opens the approved destination."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/feature/auth; apps/mobile/feature/settings; apps/mobile/app",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "settings agent"
+    },
+    {
+      "id": "navigation.primary",
+      "name": "Primary Android navigation",
+      "area": "navigation",
+      "priority": "critical",
+      "source_evidence": [
+        {
+          "kind": "artifact",
+          "provenance": "observed",
+          "location": "prototypes/android/v1/README.md:58",
+          "detail": "The approved prototype uses Today, Plan, central Add, Review, Settings while the web has Today, Plan, Insights, Logs, Settings."
+        }
+      ],
+      "expected_behavior": "Navigate among Today, Plan, Review/Insights, Review/Logs, and Settings; launch Add centrally; preserve back stack, selected nested tab, and deep-link targets.",
+      "states": [
+        "today",
+        "plan",
+        "add-sheet",
+        "review-insights",
+        "review-logs",
+        "settings"
+      ],
+      "dependencies": ["foundation.native-shell", "foundation.accessibility"],
+      "android": {
+        "disposition": "native-adaptation",
+        "rationale": "The same five web destinations are reorganized into the prototype's mobile information architecture.",
+        "adaptation": "Use four bottom destinations plus central Add; combine Insights/Logs under Review and use adaptive rail where appropriate.",
+        "implementation_locations": [
+          "apps/mobile/app",
+          "apps/mobile/core/designsystem"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Navigation tests cover selection, nested Review state, central Add, back, rotation, process restore, and all deep links."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/app; apps/mobile/core/designsystem",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "integrator"
+    },
+    {
+      "id": "today.greeting",
+      "name": "Timezone-aware greeting",
+      "area": "today",
+      "priority": "medium",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/pages/today-page.tsx:79; src/lib/greeting.ts",
+          "detail": "Today greets the user's first name by morning/afternoon/evening in the saved timezone."
+        }
+      ],
+      "expected_behavior": "Show the correct saved-timezone greeting and first name and update when the relevant day/period changes.",
+      "states": ["morning", "afternoon", "evening", "missing-name"],
+      "dependencies": ["foundation.saved-timezone"],
+      "android": {
+        "disposition": "native-parity",
+        "rationale": "The user-facing greeting maps directly to native Today.",
+        "implementation_locations": [
+          "apps/mobile/feature/today",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Clock-controlled tests cover greeting boundaries and name fallback in non-device timezones."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/feature/today; apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "today agent"
+    },
+    {
+      "id": "today.load",
+      "name": "Today's dated occurrence load",
+      "area": "today",
+      "priority": "critical",
+      "source_evidence": [
+        {
+          "kind": "documentation",
+          "provenance": "observed",
+          "location": "docs/api/openapi-v1.yaml#/paths/~1occurrences; prototypes/android/v1/README.md:490",
+          "detail": "Android maps Today to the v1 dated occurrence API, including server-generated missed behavior."
+        }
+      ],
+      "expected_behavior": "Load today's occurrences from v1 in saved timezone, keep any requested occurrence range at or below 93 days, show refresh/retry/stale states, and reconcile generated missed outcomes.",
+      "states": ["loading", "fresh", "refreshing", "stale", "offline", "error"],
+      "dependencies": [
+        "foundation.api-v1",
+        "foundation.cache-offline",
+        "foundation.saved-timezone"
+      ],
+      "android": {
+        "disposition": "shared",
+        "rationale": "The server owns occurrence resolution; Android owns lifecycle-safe presentation/cache.",
+        "implementation_locations": [
+          "apps/mobile/feature/today",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Repository tests cover current day, timezone rollover, missed generation, refresh, cache, and transport failure."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/feature/today; apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "today agent"
+    },
+    {
+      "id": "today.empty",
+      "name": "Today empty and first-run states",
+      "area": "today",
+      "priority": "high",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/pages/today-page.tsx:97; src/lib/initial-data.ts",
+          "detail": "The web distinguishes no routines from routines that do not occur today; new accounts intentionally start empty."
+        }
+      ],
+      "expected_behavior": "Distinguish new/no-routine, no-occurrence-today, offline-no-cache, and failed-load states with correct Add/Plan/retry actions.",
+      "states": ["no-routines", "none-today", "offline-empty", "load-error"],
+      "dependencies": ["today.load", "foundation.feedback-states"],
+      "android": {
+        "disposition": "native-parity",
+        "rationale": "The business meanings and actions must remain distinct on Android.",
+        "implementation_locations": [
+          "apps/mobile/feature/today",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Compose tests assert distinct copy/actions and prove error never appears as no routines."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/feature/today; apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "today agent"
+    },
+    {
+      "id": "today.checklist",
+      "name": "Chronological Today checklist",
+      "area": "today",
+      "priority": "critical",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/pages/today-page.tsx:127; prototypes/android/v1/README.md:82",
+          "detail": "The web uses Up next/Later today and the prototype recommends checklist variant A; web Up next currently follows creation order."
+        }
+      ],
+      "expected_behavior": "Show every current occurrence with localized time, title, category, optional note and accessible pending/completed/skipped state in time/title order.",
+      "states": ["pending", "completed", "skipped", "missed", "mixed"],
+      "dependencies": ["today.load", "foundation.accessibility"],
+      "android": {
+        "disposition": "native-adaptation",
+        "rationale": "Prototype checklist is a mobile-appropriate equivalent and avoids the web's incorrect creation-order Up next behavior.",
+        "adaptation": "Ship prototype variant A, sort normalized scheduled time then title, and retain clear outcome state/actions.",
+        "implementation_locations": [
+          "apps/mobile/feature/today",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "UI tests prove chronological tie-breaking, optional-note rendering, semantics, and mixed outcomes."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/feature/today; apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "today agent"
+    },
+    {
+      "id": "occurrence.complete",
+      "name": "Complete occurrence",
+      "area": "occurrences",
+      "priority": "critical",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/lib/app-mutations.ts:12; docs/api/openapi-v1.yaml#/paths/~1occurrences~1{id}~1complete",
+          "detail": "Completing an occurrence records an auditable snapshot log; v1 exposes idempotent dated completion."
+        }
+      ],
+      "expected_behavior": "Complete today's pending occurrence once, show busy/optimistic feedback, prevent double taps, create/reconcile its audit log, and roll back visibly on failure.",
+      "states": ["pending", "submitting", "completed", "rollback", "conflict"],
+      "dependencies": ["today.checklist", "reliability.idempotency-errors"],
+      "android": {
+        "disposition": "native-parity",
+        "rationale": "Core occurrence outcome behavior maps directly to Android.",
+        "implementation_locations": [
+          "apps/mobile/feature/today",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Tests cover success, duplicate tap/retry, transport rollback, conflict, and log reconciliation."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/feature/today; apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "today agent"
+    },
+    {
+      "id": "occurrence.skip",
+      "name": "Skip occurrence",
+      "area": "occurrences",
+      "priority": "critical",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/pages/today-page.tsx:49; docs/api/openapi-v1.yaml#/paths/~1occurrences~1{id}~1skip",
+          "detail": "The web confirms skip and explains that only today's occurrence is affected while recording a skip log."
+        }
+      ],
+      "expected_behavior": "Confirm skipping only today's occurrence, submit once, preserve the recurring definition, reconcile its audit log, and recover from failure/conflict.",
+      "states": [
+        "pending",
+        "confirming",
+        "submitting",
+        "skipped",
+        "rollback",
+        "conflict"
+      ],
+      "dependencies": ["today.checklist", "reliability.idempotency-errors"],
+      "android": {
+        "disposition": "native-parity",
+        "rationale": "Core skip semantics and confirmation must match.",
+        "implementation_locations": [
+          "apps/mobile/feature/today",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Tests verify confirmation, cancel, recurring-plan preservation, duplicate protection, rollback, and audit log."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/feature/today; apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "today agent"
+    },
+    {
+      "id": "occurrence.revert",
+      "name": "Undo occurrence outcome",
+      "area": "occurrences",
+      "priority": "high",
+      "source_evidence": [
+        {
+          "kind": "documentation",
+          "provenance": "observed",
+          "location": "docs/api/openapi-v1.yaml#/paths/~1occurrences~1{id}~1revert; prototypes/android/v1/README.md:82",
+          "detail": "The v1 API and Android prototype support revert/Undo even though current web UI does not expose it."
+        }
+      ],
+      "expected_behavior": "Undo a completed/skipped occurrence from snackbar/detail, return it to pending, reconcile the generated log, and require revert before attempting to change one resolved outcome to another.",
+      "states": [
+        "available",
+        "reverting",
+        "pending",
+        "expired",
+        "conflict",
+        "error"
+      ],
+      "dependencies": ["occurrence.complete", "occurrence.skip"],
+      "android": {
+        "disposition": "shared",
+        "rationale": "This is a first-party API/prototype capability that improves native recovery without changing core semantics.",
+        "implementation_locations": [
+          "apps/mobile/feature/today",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Tests cover snackbar and detail Undo, success, missing/expired outcome, conflict, and log reconciliation."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/feature/today; apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "today agent"
+    },
+    {
+      "id": "today.all-done",
+      "name": "All done Today state",
+      "area": "today",
+      "priority": "medium",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/pages/today-page.tsx:348",
+          "detail": "When every occurrence is completed or skipped, the web replaces Up next with a done state."
+        }
+      ],
+      "expected_behavior": "Show an unambiguous all-done state when no pending occurrence remains while keeping resolved items and weekly progress understandable.",
+      "states": ["not-done", "all-completed", "completed-and-skipped"],
+      "dependencies": ["today.checklist"],
+      "android": {
+        "disposition": "native-parity",
+        "rationale": "The completion-state meaning carries directly into the checklist design.",
+        "implementation_locations": [
+          "apps/mobile/feature/today",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "UI tests cover all-complete and complete/skip mixtures and transition back after Undo."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/feature/today; apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "today agent"
+    },
+    {
+      "id": "today.week-summary",
+      "name": "Monday-Sunday weekly summary",
+      "area": "today",
+      "priority": "high",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/pages/today-page.tsx:206",
+          "detail": "Your week shows Monday-Sunday, today's percentage, per-day complete/partial marks, and an Insights/Plan action."
+        }
+      ],
+      "expected_behavior": "Show Monday-Sunday daily progress with accessible complete/partial/empty meaning, today's percentage, and Review/Insights or Plan destination based on available history.",
+      "states": ["no-history", "partial", "complete", "today-selected"],
+      "dependencies": ["today.load", "navigation.primary"],
+      "android": {
+        "disposition": "native-parity",
+        "rationale": "The summary and conditional destination are part of Today parity.",
+        "implementation_locations": [
+          "apps/mobile/feature/today",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Tests cover Monday/Sunday boundaries, partial marks, percentages, empty history, and destination routing."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/feature/today; apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "today agent"
+    },
+    {
+      "id": "routine.entry",
+      "name": "Routine creation entry points",
+      "area": "routines",
+      "priority": "high",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/pages/today-page.tsx; src/components/pages/plan-page.tsx; prototypes/android/v1/README.md:58",
+          "detail": "The web exposes Add from Today/Plan and the prototype adds a central action with selected Plan-date context."
+        }
+      ],
+      "expected_behavior": "Open the same creation flow from central Add, Today, Plan empty states, and a selected today/future Plan date; preserve valid context and reject past entry.",
+      "states": ["global", "today", "plan-open-day", "plan-past-disabled"],
+      "dependencies": ["navigation.primary", "foundation.saved-timezone"],
+      "android": {
+        "disposition": "native-adaptation",
+        "rationale": "A native central Add supplements the existing contextual entry points.",
+        "adaptation": "Use one route/sheet with explicit source and optional allowed start-date argument; centralize past-date validation.",
+        "implementation_locations": [
+          "apps/mobile/feature/routines",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Navigation tests cover every entry point, default date, cancel/back, and past-date gating."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/feature/routines; apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "routines-plan agent"
+    },
+    {
+      "id": "routine.form-basics",
+      "name": "Routine basic fields and validation",
+      "area": "routines",
+      "priority": "critical",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/add-routine-dialog.tsx; src/lib/api-v1/schemas.ts",
+          "detail": "Routine form and server schema define title, start date, time, category, note and limits."
+        }
+      ],
+      "expected_behavior": "After contract alignment, require title up to the web-parity limit of 120, non-past start date for new routines, valid time, category ID, optional note up to 160; default to saved-zone today/08:00 and map server errors to fields.",
+      "states": [
+        "pristine",
+        "editing",
+        "invalid",
+        "submitting",
+        "server-error",
+        "saved"
+      ],
+      "dependencies": [
+        "routine.entry",
+        "foundation.api-v1",
+        "backend.routine-title-contract"
+      ],
+      "android": {
+        "disposition": "native-parity",
+        "rationale": "The data and validation contract must be equivalent, using native inputs.",
+        "implementation_locations": [
+          "apps/mobile/feature/routines",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Unit/UI tests cover required/max values, saved-zone defaults, past guard, server field errors, busy state, and retry."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/feature/routines; apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "routines-plan agent"
+    },
+    {
+      "id": "routine.recurrence-once-daily",
+      "name": "Once and daily recurrence",
+      "area": "routines",
+      "priority": "critical",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/add-routine-dialog.tsx; src/lib/routines.ts",
+          "detail": "The form supports Does not repeat and Every day with inclusive start/end behavior."
+        }
+      ],
+      "expected_behavior": "Create once or daily schedules; start/end are inclusive; once omits end/repeat-only fields; summaries and occurrence generation agree with server.",
+      "states": ["once", "daily", "bounded", "unbounded"],
+      "dependencies": ["routine.form-basics"],
+      "android": {
+        "disposition": "native-parity",
+        "rationale": "Recurrence semantics must match exactly.",
+        "implementation_locations": [
+          "apps/mobile/feature/routines",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Tests cover start day, inclusive end, once field stripping, and recurrence summary."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/feature/routines; apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "routines-plan agent"
+    },
+    {
+      "id": "routine.recurrence-weekly",
+      "name": "Multi-weekday weekly recurrence",
+      "area": "routines",
+      "priority": "critical",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/add-routine-dialog.tsx:364; src/lib/routines.ts",
+          "detail": "Weekly recurrence supports any weekday combination and prevents removing the final selected day."
+        }
+      ],
+      "expected_behavior": "Allow one or more Sunday-Saturday weekdays seeded from start date, prevent zero selections, provide group semantics, and generate matching inclusive occurrences.",
+      "states": [
+        "single-day",
+        "multi-day",
+        "last-day-protected",
+        "bounded",
+        "unbounded"
+      ],
+      "dependencies": ["routine.form-basics"],
+      "android": {
+        "disposition": "native-parity",
+        "rationale": "Weekly scheduling behavior carries directly to native controls.",
+        "implementation_locations": [
+          "apps/mobile/feature/routines",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Tests cover every weekday, multiple selection, final-day prevention, accessibility grouping, and boundary dates."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/feature/routines; apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "routines-plan agent"
+    },
+    {
+      "id": "routine.recurrence-monthly-yearly",
+      "name": "Monthly and yearly recurrence",
+      "area": "routines",
+      "priority": "critical",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/add-routine-dialog.tsx; src/lib/routines.ts",
+          "detail": "Monthly supports day 1-31 and skips shorter months; yearly validates month/day and leap-day behavior."
+        }
+      ],
+      "expected_behavior": "Support monthly day 1-31 without clamping absent days and yearly valid month/day with February 29 only in leap years.",
+      "states": [
+        "monthly",
+        "yearly",
+        "short-month-gap",
+        "leap-day",
+        "bounded",
+        "unbounded"
+      ],
+      "dependencies": ["routine.form-basics"],
+      "android": {
+        "disposition": "native-parity",
+        "rationale": "Calendar recurrence is a domain contract, not a visual approximation.",
+        "implementation_locations": [
+          "apps/mobile/feature/routines",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Tests cover months of 28/29/30/31 days, leap/non-leap years, invalid dates, and inclusive bounds."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/feature/routines; apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "routines-plan agent"
+    },
+    {
+      "id": "routine.end-date",
+      "name": "Optional recurrence end date",
+      "area": "routines",
+      "priority": "high",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/add-routine-dialog.tsx:238",
+          "detail": "Repeating schedules allow a clearable end constrained to start or later; once strips it."
+        }
+      ],
+      "expected_behavior": "Allow a clearable inclusive end on repeating schedules, never before start, and reconcile repeat day/month when start changes.",
+      "states": [
+        "unset",
+        "set",
+        "cleared",
+        "invalid-before-start",
+        "start-changed"
+      ],
+      "dependencies": [
+        "routine.recurrence-once-daily",
+        "routine.recurrence-weekly",
+        "routine.recurrence-monthly-yearly"
+      ],
+      "android": {
+        "disposition": "native-parity",
+        "rationale": "The recurrence constraint is shared product behavior.",
+        "implementation_locations": [
+          "apps/mobile/feature/routines",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Form/domain tests cover clear, equality with start, before-start rejection, once stripping, and start-date reconciliation."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/feature/routines; apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "routines-plan agent"
+    },
+    {
+      "id": "routine.category-inline",
+      "name": "Search/select/create category in routine form",
+      "area": "routines",
+      "priority": "high",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/add-routine-dialog.tsx:296; src/lib/api-v1/schemas.ts",
+          "detail": "Category is required, searchable, selectable, and creatable inline with normalized duplicate constraints."
+        }
+      ],
+      "expected_behavior": "Search categories, select stable ID, or create an NFKC-normalized trimmed required name up to 60; reject case-folded duplicate/empty values inline and select the existing category if a create race returns it.",
+      "states": [
+        "loading",
+        "searching",
+        "selected",
+        "creating",
+        "duplicate",
+        "empty-invalid",
+        "created"
+      ],
+      "dependencies": ["routine.form-basics", "categories.list-create"],
+      "android": {
+        "disposition": "native-parity",
+        "rationale": "The combined routine/category workflow must remain intact.",
+        "implementation_locations": [
+          "apps/mobile/feature/routines",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "UI/repository tests cover search, selection, inline create, trimming, duplicate/empty/max validation, and failure retry."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/feature/routines; apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "routines-plan agent"
+    },
+    {
+      "id": "routine.detail-context",
+      "name": "Routine definition versus dated occurrence detail",
+      "area": "routines",
+      "priority": "critical",
+      "source_evidence": [
+        {
+          "kind": "artifact",
+          "provenance": "observed",
+          "location": "prototypes/android/v1/index.html:829; docs/api/openapi-v1.yaml",
+          "detail": "The prototype reuses one sheet from Today/future Plan/All, but v1 allows outcome resolution only for today's dated occurrence."
+        }
+      ],
+      "expected_behavior": "Show definition metadata/actions everywhere; show complete/skip/revert only for a valid Today occurrence; never send outcome action from future/past/definition context.",
+      "states": [
+        "definition-only",
+        "today-pending",
+        "today-resolved",
+        "past",
+        "future"
+      ],
+      "dependencies": ["routine.form-basics", "today.load"],
+      "android": {
+        "disposition": "native-adaptation",
+        "rationale": "The prototype must be corrected to respect the API's dated occurrence scope.",
+        "adaptation": "Use explicit RoutineDetail and OccurrenceDetail arguments/screens or a capability-gated shared surface.",
+        "implementation_locations": [
+          "apps/mobile/feature/routines",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Navigation tests prove Today actions appear only for valid current dated occurrences from every origin."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/feature/routines; apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "routines-plan agent"
+    },
+    {
+      "id": "routine.edit",
+      "name": "Edit routine definition",
+      "area": "routines",
+      "priority": "critical",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/add-routine-dialog.tsx; src/components/pages/plan-page.tsx",
+          "detail": "The shared dialog pre-populates values, permits legacy past start date on edit, and updates the definition."
+        }
+      ],
+      "expected_behavior": "Load current values, preserve ID/mappings, permit an existing past start date, apply all validation, omit obsolete recurrence fields, and refresh affected schedules/reminders.",
+      "states": [
+        "loading",
+        "editing",
+        "invalid",
+        "submitting",
+        "saved",
+        "conflict",
+        "error"
+      ],
+      "dependencies": [
+        "routine.detail-context",
+        "routine.end-date",
+        "routine.category-inline"
+      ],
+      "android": {
+        "disposition": "native-parity",
+        "rationale": "Definition editing is core parity.",
+        "implementation_locations": [
+          "apps/mobile/feature/routines",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Tests cover prefill, past legacy date, recurrence changes, mapping/ID stability, server conflict, and reminder refresh."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/feature/routines; apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "routines-plan agent"
+    },
+    {
+      "id": "routine.pause-resume",
+      "name": "Pause and resume routine",
+      "area": "routines",
+      "priority": "critical",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/pages/plan-page.tsx; src/lib/notification-schedule.ts",
+          "detail": "The active switch pauses/resumes immediately; paused routines leave schedules/reminders while history remains."
+        }
+      ],
+      "expected_behavior": "Toggle active state with accessible action-specific label, update scheduled views/reminders, preserve historical logs, and recover from failure.",
+      "states": ["active", "pausing", "paused", "resuming", "error"],
+      "dependencies": [
+        "routine.detail-context",
+        "reliability.idempotency-errors"
+      ],
+      "android": {
+        "disposition": "native-parity",
+        "rationale": "Pause/resume semantics map directly to native UI.",
+        "implementation_locations": [
+          "apps/mobile/feature/routines",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Tests verify schedule/reminder exclusion, history retention, accessibility label, and rollback."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/feature/routines; apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "routines-plan agent"
+    },
+    {
+      "id": "routine.delete",
+      "name": "Delete routine while retaining logs",
+      "area": "routines",
+      "priority": "critical",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/pages/plan-page.tsx:82; src/lib/app-mutations.ts",
+          "detail": "Delete is confirmed and explicitly retains existing Logs while removing the definition."
+        }
+      ],
+      "expected_behavior": "Confirm deletion with history-retention copy, remove definition/occurrences/future schedule/reminders/integration mappings, retain historical log snapshots, and handle busy/error state.",
+      "states": ["idle", "confirming", "deleting", "deleted", "error"],
+      "dependencies": [
+        "routine.detail-context",
+        "reliability.idempotency-errors"
+      ],
+      "android": {
+        "disposition": "native-parity",
+        "rationale": "Destructive semantics and explicit retained-history copy must match.",
+        "implementation_locations": [
+          "apps/mobile/feature/routines",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Tests prove cancel/delete, future removal, reminder cancellation, log retention, and error recovery."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/feature/routines; apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "routines-plan agent"
+    },
+    {
+      "id": "plan.tabs",
+      "name": "Plan Schedule and All routines tabs",
+      "area": "plan",
+      "priority": "high",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/pages/plan-page.tsx:143; prototypes/android/v1/README.md:198",
+          "detail": "Web has Week/Manage routines and prototype maps these to Schedule/All with tab state."
+        }
+      ],
+      "expected_behavior": "Switch accessibly between Schedule and All routines, retain tab/scroll state, and support back/process restoration.",
+      "states": ["schedule", "all", "restored"],
+      "dependencies": ["navigation.primary"],
+      "android": {
+        "disposition": "native-adaptation",
+        "rationale": "Labels/layout follow the approved mobile prototype while preserving both web functions.",
+        "adaptation": "Use accessible primary tabs within Plan: Schedule and All routines.",
+        "implementation_locations": [
+          "apps/mobile/feature/plan",
+          "apps/mobile/feature/routines",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Compose tests cover semantics, selection, back, rotation, process restore, and independent scroll state."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/feature/plan; apps/mobile/feature/routines; apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "routines-plan agent"
+    },
+    {
+      "id": "plan.week-navigation",
+      "name": "Centered seven-day Plan navigation",
+      "area": "plan",
+      "priority": "high",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/pages/plan-page.tsx:46; src/lib/user-calendar.ts:89",
+          "detail": "Plan starts with three days before/after today and moves previous/next by seven without a limit."
+        }
+      ],
+      "expected_behavior": "Show a seven-day window centered on today initially, select a full-labelled date, move by seven indefinitely, and retain saved-zone date correctness.",
+      "states": [
+        "current-window",
+        "previous-window",
+        "next-window",
+        "selected-date"
+      ],
+      "dependencies": ["plan.tabs", "foundation.saved-timezone"],
+      "android": {
+        "disposition": "native-parity",
+        "rationale": "The non-calendar-week behavior is intentional and must not be replaced by a month calendar.",
+        "implementation_locations": [
+          "apps/mobile/feature/plan",
+          "apps/mobile/feature/routines",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Tests cover centered dates, previous/next, DST/month/year boundaries, selection and accessibility labels."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/feature/plan; apps/mobile/feature/routines; apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "routines-plan agent"
+    },
+    {
+      "id": "plan.day-schedule",
+      "name": "Selected-day schedule and open-day state",
+      "area": "plan",
+      "priority": "high",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/pages/plan-page.tsx:58",
+          "detail": "Selected day shows count or empty state and time/title-sorted rows with repeat, note, and category."
+        }
+      ],
+      "expected_behavior": "Load the selected date, show count, chronological rows with time/title/repeat/note/category, or an open-day Add state; expose refresh/stale/error separately.",
+      "states": ["loading", "content", "open-day", "stale", "error"],
+      "dependencies": ["plan.week-navigation", "foundation.api-v1"],
+      "android": {
+        "disposition": "native-parity",
+        "rationale": "Selected-day planning information maps directly.",
+        "implementation_locations": [
+          "apps/mobile/feature/plan",
+          "apps/mobile/feature/routines",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Tests cover ordering, row metadata/detail context, empty date, refresh/cache, and failure states."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/feature/plan; apps/mobile/feature/routines; apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "routines-plan agent"
+    },
+    {
+      "id": "plan.past-guard",
+      "name": "Past-date Add gating",
+      "area": "plan",
+      "priority": "critical",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/pages/plan-page.tsx:237; prototypes/android/v1/index.html:646",
+          "detail": "Web disables Add for past dates; the prototype bottom action does, but its empty Schedule path incorrectly still opens Add."
+        }
+      ],
+      "expected_behavior": "Disable every Add entry for a selected past date in saved timezone and explain why; permit today/future consistently.",
+      "states": ["past-disabled", "today-enabled", "future-enabled"],
+      "dependencies": ["plan.day-schedule", "routine.entry"],
+      "android": {
+        "disposition": "native-adaptation",
+        "rationale": "The prototype inconsistency must be corrected by one domain rule shared by all entry points.",
+        "adaptation": "Centralize CanCreateRoutineOn(date) and consume it from central Add, toolbar, and empty state.",
+        "implementation_locations": [
+          "apps/mobile/feature/plan",
+          "apps/mobile/feature/routines",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "UI/domain tests invoke every Plan Add path for past/today/future and saved/device-zone mismatch."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/feature/plan; apps/mobile/feature/routines; apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "routines-plan agent"
+    },
+    {
+      "id": "plan.all-routines",
+      "name": "All-routines management list",
+      "area": "plan",
+      "priority": "high",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/pages/plan-page.tsx",
+          "detail": "Manage routines lists recurrence/time/category and active state with detail/edit/delete; no search/reorder/bulk operations exist."
+        }
+      ],
+      "expected_behavior": "List all definitions with schedule/category/active metadata and detail, edit, pause/resume, delete actions, without inventing unsupported reorder/bulk semantics.",
+      "states": ["loading", "empty", "content", "stale", "error"],
+      "dependencies": [
+        "plan.tabs",
+        "routine.detail-context",
+        "routine.pause-resume",
+        "routine.delete"
+      ],
+      "android": {
+        "disposition": "native-parity",
+        "rationale": "Manage-routines capability becomes the prototype All tab.",
+        "implementation_locations": [
+          "apps/mobile/feature/plan",
+          "apps/mobile/feature/routines",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Tests cover empty/content metadata, active state, every row action, refresh/cache, and error."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/feature/plan; apps/mobile/feature/routines; apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "routines-plan agent"
+    },
+    {
+      "id": "review.navigation",
+      "name": "Review Insights and Logs navigation",
+      "area": "review",
+      "priority": "high",
+      "source_evidence": [
+        {
+          "kind": "artifact",
+          "provenance": "observed",
+          "location": "prototypes/android/v1/README.md:230",
+          "detail": "The mobile prototype combines web Insights and Logs inside Review."
+        }
+      ],
+      "expected_behavior": "Switch accessibly between Insights and Logs, retain selection/scroll/filter state, and accept deep links from Today, weekly notifications, and log actions.",
+      "states": ["insights", "logs", "restored", "deep-linked"],
+      "dependencies": ["navigation.primary"],
+      "android": {
+        "disposition": "native-adaptation",
+        "rationale": "Two web destinations are grouped under one mobile destination without removing either function.",
+        "adaptation": "Use Review primary tabs and route parameters for Insights/Logs child destinations.",
+        "implementation_locations": [
+          "apps/mobile/feature/review",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Navigation tests cover tabs, state restoration, weekly-summary deep link, Today link, and log child return."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/feature/review; apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "review agent"
+    },
+    {
+      "id": "insights.ranges-empty",
+      "name": "Insights ranges and empty states",
+      "area": "insights",
+      "priority": "high",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/pages/insights-page.tsx:26",
+          "detail": "Insights defaults to 7 days, offers 7/30/90, and distinguishes empty account from no results in the selected range."
+        }
+      ],
+      "expected_behavior": "Select 7/30/90 days with default 7 and accessible selection; distinguish no routines, no range data, offline, and failed load; offer Add or 90 days appropriately.",
+      "states": [
+        "7-days",
+        "30-days",
+        "90-days",
+        "no-routines",
+        "no-range-data",
+        "offline",
+        "error"
+      ],
+      "dependencies": [
+        "review.navigation",
+        "foundation.api-v1",
+        "backend.log-date-normalization"
+      ],
+      "android": {
+        "disposition": "native-parity",
+        "rationale": "Range and empty-state behavior carries directly to Review/Insights.",
+        "implementation_locations": [
+          "apps/mobile/feature/review",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Tests cover default/selection semantics, every empty/error state, and Add/90-day actions."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/feature/review; apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "review agent"
+    },
+    {
+      "id": "insights.metrics",
+      "name": "Analytics headline metrics",
+      "area": "insights",
+      "priority": "critical",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/pages/insights-page.tsx; docs/api/openapi-v1.yaml#/paths/~1analytics",
+          "detail": "The web displays completion rate, scheduled, completed, and skipped/missed; v1 provides analytics to avoid client recomputation."
+        }
+      ],
+      "expected_behavior": "For the chosen range show server-derived completion rate, scheduled total, completed, and skipped plus missed with correct labels and accessibility values.",
+      "states": ["loading", "data", "zero", "stale", "error"],
+      "dependencies": ["insights.ranges-empty"],
+      "android": {
+        "disposition": "shared",
+        "rationale": "Android should render server analytics instead of reproducing the web's mutable-routine historical denominator issue.",
+        "implementation_locations": [
+          "apps/mobile/feature/review",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Contract/UI tests cover normal, zero, mixed, stale and error results without client-side denominator drift."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/feature/review; apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "review agent"
+    },
+    {
+      "id": "insights.daily-chart",
+      "name": "Recent daily completion visualization",
+      "area": "insights",
+      "priority": "high",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/pages/insights-page.tsx:166",
+          "detail": "The web visualizes a seven-day daily completion series but has incomplete semantic value exposure."
+        }
+      ],
+      "expected_behavior": "Render the API daily series with explicit represented dates, visible numeric context, and a complete spoken/tabular summary independent of color.",
+      "states": ["data", "zero", "partial", "complete"],
+      "dependencies": ["insights.metrics", "foundation.accessibility"],
+      "android": {
+        "disposition": "native-adaptation",
+        "rationale": "The chart needs native rendering and stronger accessibility than the web title-only bars.",
+        "adaptation": "Use a Compose chart or bars with per-day semantics and an alternate TalkBack summary/list.",
+        "implementation_locations": [
+          "apps/mobile/feature/review",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Screenshot, semantics, and numeric mapping tests cover zero/partial/full values and date labels."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/feature/review; apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "review agent"
+    },
+    {
+      "id": "insights.distribution-category",
+      "name": "Outcome distribution and category breakdown",
+      "area": "insights",
+      "priority": "high",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/pages/insights-page.tsx:254; src/components/pages/insights-page.tsx:356",
+          "detail": "The web shows outcome distribution and category completed/total progress sorted by total then name."
+        }
+      ],
+      "expected_behavior": "Show completed/skipped/missed/not-recorded distribution and category completed/total/percentage sorted by total descending then name with spoken summaries and semantic progress.",
+      "states": ["distribution", "category-list", "zero", "mixed"],
+      "dependencies": ["insights.metrics", "foundation.accessibility"],
+      "android": {
+        "disposition": "native-adaptation",
+        "rationale": "Equivalent analytics need native visuals and corrected semantic progress.",
+        "adaptation": "Render accessible distribution and progress components backed directly by analytics DTOs.",
+        "implementation_locations": [
+          "apps/mobile/feature/review",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Tests verify outcome/category numbers, sort order, zero state, semantics, and non-color differentiation."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/feature/review; apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "review agent"
+    },
+    {
+      "id": "logs.summary-filter-empty",
+      "name": "Log summary, outcome filters, and empty states",
+      "area": "logs",
+      "priority": "high",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/pages/logs-page.tsx:114",
+          "detail": "Logs shows total/completed/skipped/missed counts, exclusive filters, and distinct no-log/no-match states."
+        }
+      ],
+      "expected_behavior": "Show all/completed/skipped/missed counts; apply one filter; distinguish no logs, no matches, offline, and failure; provide Add first log or Show all actions.",
+      "states": [
+        "all",
+        "completed",
+        "skipped",
+        "missed",
+        "no-logs",
+        "no-matches",
+        "offline",
+        "error"
+      ],
+      "dependencies": [
+        "review.navigation",
+        "foundation.api-v1",
+        "backend.log-date-normalization"
+      ],
+      "android": {
+        "disposition": "native-parity",
+        "rationale": "Summary/filter meanings and empty actions map directly.",
+        "implementation_locations": [
+          "apps/mobile/feature/review",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Tests cover counts/filter exclusivity/state restore and every empty/offline/error action."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/feature/review; apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "review agent"
+    },
+    {
+      "id": "logs.list-pagination",
+      "name": "Newest-first cursor-paginated log list",
+      "area": "logs",
+      "priority": "critical",
+      "source_evidence": [
+        {
+          "kind": "documentation",
+          "provenance": "observed",
+          "location": "docs/api/openapi-v1.yaml#/paths/~1logs; src/components/pages/logs-page.tsx",
+          "detail": "The web shows newest-first rows; v1 adds nextCursor pagination required for native scale."
+        }
+      ],
+      "expected_behavior": "List newest first with date/event time, title/category, scheduled/actual/variance and outcome; pull-to-refresh and append by nextCursor with loading/retry/end state and duplicate suppression.",
+      "states": [
+        "initial-loading",
+        "content",
+        "refreshing",
+        "appending",
+        "append-error",
+        "end",
+        "stale"
+      ],
+      "dependencies": ["logs.summary-filter-empty", "foundation.cache-offline"],
+      "android": {
+        "disposition": "native-adaptation",
+        "rationale": "The web has an unpaginated in-memory list; Android must honor the v1 cursor contract.",
+        "adaptation": "Use a lazy list with repository cursor state and stable-ID duplicate suppression; Paging 3 is optional if it preserves API semantics.",
+        "implementation_locations": [
+          "apps/mobile/feature/review",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Repository/UI tests cover order, cursors, refresh invalidation, duplicate IDs, append retry, end, and filter change."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/feature/review; apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "review agent"
+    },
+    {
+      "id": "logs.audit-detail",
+      "name": "Expanded log audit detail",
+      "area": "logs",
+      "priority": "high",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/pages/logs-page.tsx:267",
+          "detail": "Expanded detail shows event ID, recorded timestamp, actor/source, timezone and routine snapshot."
+        }
+      ],
+      "expected_behavior": "Open one log detail showing immutable audit identifiers/timestamps/actor/source/timezone and routine snapshot plus edit/delete when allowed.",
+      "states": ["loading", "viewing", "missing", "error"],
+      "dependencies": ["logs.list-pagination"],
+      "android": {
+        "disposition": "native-adaptation",
+        "rationale": "Expandable web rows become a native detail sheet/screen while retaining every field.",
+        "adaptation": "Use a bottom sheet or detail destination with copyable identifiers and correct focus/back behavior.",
+        "implementation_locations": [
+          "apps/mobile/feature/review",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Tests assert every audit field, source/actor snapshots, missing record recovery, and list return state."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/feature/review; apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "review agent"
+    },
+    {
+      "id": "logs.create",
+      "name": "Create manual behavior log",
+      "area": "logs",
+      "priority": "critical",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/pages/logs-page.tsx:394; src/lib/app-mutations.ts:121",
+          "detail": "Manual create defines title/date/event time/category/outcome/scheduled/actual/note limits and source Manual entry."
+        }
+      ],
+      "expected_behavior": "Create a manual complete/skip/missed log with title max 100, saved-zone date default, event/scheduled/actual max 30, category max 60, note max 240, and source/audit semantics.",
+      "states": [
+        "pristine",
+        "editing",
+        "invalid",
+        "submitting",
+        "saved",
+        "error"
+      ],
+      "dependencies": [
+        "logs.summary-filter-empty",
+        "foundation.saved-timezone",
+        "reliability.idempotency-errors"
+      ],
+      "android": {
+        "disposition": "native-parity",
+        "rationale": "Manual history entry is a full CRUD capability and must remain available.",
+        "implementation_locations": [
+          "apps/mobile/feature/review",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Form/repository tests cover all fields/limits/outcomes, saved-zone default, source, idempotency, and errors."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/feature/review; apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "review agent"
+    },
+    {
+      "id": "logs.edit-delete",
+      "name": "Edit and permanently delete manual logs",
+      "area": "logs",
+      "priority": "critical",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/pages/logs-page.tsx; src/lib/app-mutations.ts:166",
+          "detail": "Edit does not change a routine and sets source Manual edit while retaining actor/recorded timestamp; delete requires permanent confirmation."
+        }
+      ],
+      "expected_behavior": "Edit log fields without editing its routine, preserve original actor/recorded time as defined by server, label source Manual edit, and permanently delete only after confirmation.",
+      "states": [
+        "editing",
+        "submitting",
+        "saved",
+        "confirm-delete",
+        "deleting",
+        "deleted",
+        "error"
+      ],
+      "dependencies": ["logs.audit-detail", "logs.create"],
+      "android": {
+        "disposition": "native-parity",
+        "rationale": "History CRUD/audit behavior maps directly.",
+        "implementation_locations": [
+          "apps/mobile/feature/review",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Tests prove routine isolation, audit retention/source change, cancel/delete, list/summary reconciliation, and failures."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/feature/review; apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "review agent"
+    },
+    {
+      "id": "logs.csv-export",
+      "name": "CSV log export",
+      "area": "logs",
+      "priority": "medium",
+      "source_evidence": [
+        {
+          "kind": "documentation",
+          "provenance": "observed",
+          "location": "docs/api/openapi-v1.yaml#/paths/~1export",
+          "detail": "The first-party API exposes CSV export although the current web Logs page does not expose a CSV control."
+        }
+      ],
+      "expected_behavior": "Request CSV export and let the user create a document with cancellation, progress, safe streaming/write, and failure feedback.",
+      "states": [
+        "idle",
+        "choosing-destination",
+        "downloading",
+        "writing",
+        "cancelled",
+        "saved",
+        "error"
+      ],
+      "dependencies": ["foundation.api-v1"],
+      "android": {
+        "disposition": "native-adaptation",
+        "rationale": "The API capability needs Android Storage Access Framework delivery.",
+        "adaptation": "Use ACTION_CREATE_DOCUMENT/CreateDocument and stream the authorized export without broad storage permissions.",
+        "implementation_locations": [
+          "apps/mobile/feature/review",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Instrumented tests cover destination selection, cancellation, valid CSV, provider write error, and retry."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/feature/review; apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "files-integrations agent"
+    },
+    {
+      "id": "settings.profile",
+      "name": "Profile name and managed email",
+      "area": "settings",
+      "priority": "high",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/pages/settings-page.tsx:272; src/lib/api-v1/schemas.ts",
+          "detail": "Settings edits name and displays disabled provider-managed email; server name constraint is 1-80."
+        }
+      ],
+      "expected_behavior": "Edit required trimmed name up to 80, show provider-neutral managed email/avatar, represent unsaved/saving/saved/error states, and reject server validation inline.",
+      "states": ["clean", "dirty", "invalid", "saving", "saved", "error"],
+      "dependencies": ["foundation.api-v1", "navigation.primary"],
+      "android": {
+        "disposition": "native-parity",
+        "rationale": "Profile behavior maps directly with corrected provider-neutral copy.",
+        "implementation_locations": [
+          "apps/mobile/feature/settings",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Tests cover min/max/trim, dirty state, save/retry, server errors, and Google/Microsoft-neutral copy."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/feature/settings; apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "settings agent"
+    },
+    {
+      "id": "settings.timezone",
+      "name": "Searchable IANA timezone setting",
+      "area": "settings",
+      "priority": "critical",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/pages/settings-page.tsx:744; src/lib/store.server.ts:83",
+          "detail": "The web searches zone ID/normalized label/offset, shows device zone, offers Use current, and initializes new accounts."
+        }
+      ],
+      "expected_behavior": "Search IANA zones by identifier/readable label/current offset, show device zone, offer Use current when different, initialize new accounts, and save a valid server zone.",
+      "states": [
+        "loading",
+        "searching",
+        "selected",
+        "device-match",
+        "device-different",
+        "saving",
+        "invalid",
+        "error"
+      ],
+      "dependencies": ["settings.profile", "foundation.saved-timezone"],
+      "android": {
+        "disposition": "native-parity",
+        "rationale": "The timezone choice and device shortcut are core shared behavior.",
+        "implementation_locations": [
+          "apps/mobile/feature/settings",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Tests cover search modes, device mismatch, initialization, invalid IDs, save, and downstream Today/reminder refresh."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/feature/settings; apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "settings agent"
+    },
+    {
+      "id": "settings.reminder-offsets",
+      "name": "Complete reminder offset choices",
+      "area": "settings",
+      "priority": "high",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/pages/settings-page.tsx:318; src/lib/api-v1/schemas.ts:5",
+          "detail": "Web/API support 0,5,10,15,20,30,45,60; Android prototype omits 20 and 45."
+        }
+      ],
+      "expected_behavior": "Select scheduled time or 5, 10, 15, 20, 30, 45, or 60 minutes before and persist the API integer value.",
+      "states": ["0", "5", "10", "15", "20", "30", "45", "60"],
+      "dependencies": ["settings.profile"],
+      "android": {
+        "disposition": "native-adaptation",
+        "rationale": "Native follows the complete API/web set rather than the incomplete prototype control.",
+        "adaptation": "Add missing 20- and 45-minute options to the prototype-derived Settings UI.",
+        "implementation_locations": [
+          "apps/mobile/feature/settings",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "UI/contract tests select, save, reload, and schedule against all eight values."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/feature/settings; apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "settings agent"
+    },
+    {
+      "id": "settings.reminder-preferences",
+      "name": "Routine and weekly reminder preferences",
+      "area": "settings",
+      "priority": "critical",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/pages/settings-page.tsx:132; src/lib/initial-data.ts",
+          "detail": "Routine/weekly switches default off and are saved together with settings; web subscription state can diverge from enabled preferences."
+        }
+      ],
+      "expected_behavior": "Edit routine and weekly-summary switches as drafts, save atomically with offset/timezone settings, request delivery permission only with clear intent, and show saved/error state.",
+      "states": [
+        "both-off",
+        "routine-on",
+        "weekly-on",
+        "both-on",
+        "dirty",
+        "saving",
+        "error"
+      ],
+      "dependencies": ["settings.reminder-offsets", "settings.timezone"],
+      "android": {
+        "disposition": "native-adaptation",
+        "rationale": "The preference semantics remain but browser push subscription is replaced and its ambiguous state should not be copied.",
+        "adaptation": "Separate account preference from OS delivery availability and explain when enabled preferences cannot deliver.",
+        "implementation_locations": [
+          "apps/mobile/feature/settings",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Tests cover defaults, every toggle combination, dirty/save/error, permission intent, and delivery-unavailable messaging."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/feature/settings; apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "settings agent"
+    },
+    {
+      "id": "categories.list-create",
+      "name": "Category list, usage, search, and create",
+      "area": "categories",
+      "priority": "high",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/pages/settings-page.tsx:388",
+          "detail": "Settings shows empty/add, reusable category list, routine usage count, and add validation."
+        }
+      ],
+      "expected_behavior": "Load/search categories, show routine usage count and empty state, and create an NFKC-normalized trimmed required name up to 60 with case-folded duplicate validation or existing-category selection on a race.",
+      "states": [
+        "loading",
+        "empty",
+        "content",
+        "searching",
+        "creating",
+        "duplicate",
+        "saved",
+        "error"
+      ],
+      "dependencies": ["foundation.api-v1", "navigation.primary"],
+      "android": {
+        "disposition": "native-parity",
+        "rationale": "Reusable category management maps directly.",
+        "implementation_locations": [
+          "apps/mobile/feature/settings",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Tests cover empty/list/search/usage and create trim/required/max/duplicate/server failure."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/feature/settings; apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "settings agent"
+    },
+    {
+      "id": "categories.rename-delete",
+      "name": "Rename and guarded category deletion",
+      "area": "categories",
+      "priority": "high",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/pages/settings-page.tsx:856; docs/api/openapi-v1.yaml#/paths/~1categories~1{id}",
+          "detail": "Rename uses normalized validation and updates assignments; delete is disabled while used and otherwise confirmed."
+        }
+      ],
+      "expected_behavior": "Rename with the same normalization/validation and unchanged disable; refresh assigned routine labels; disable deletion while any active or paused routine uses it, otherwise confirm/delete; preserve server-defined log snapshots.",
+      "states": [
+        "rename",
+        "unchanged",
+        "duplicate",
+        "used-delete-disabled",
+        "confirm-delete",
+        "deleting",
+        "error"
+      ],
+      "dependencies": [
+        "categories.list-create",
+        "reliability.idempotency-errors"
+      ],
+      "android": {
+        "disposition": "native-parity",
+        "rationale": "Rename/delete guard semantics map directly.",
+        "implementation_locations": [
+          "apps/mobile/feature/settings",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Tests cover unchanged/trim/max/duplicate rename, assigned routine refresh, used guard, cancel/delete, snapshots, and errors."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/feature/settings; apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoApp.kt",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "settings agent"
+    },
+    {
+      "id": "notifications.permission-channel",
+      "name": "Notification permission and channel state",
+      "area": "notifications",
+      "priority": "critical",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/pages/settings-page.tsx:348; public/sw.js",
+          "detail": "Web reports delivery states; Android requires runtime permission/channel/system state absent from the prototype."
+        }
+      ],
+      "expected_behavior": "Represent not requested, granted, denied, denied permanently/system disabled, channel disabled and unsupported states; request at contextual intent and offer settings recovery.",
+      "states": [
+        "not-requested",
+        "granted",
+        "denied",
+        "permanently-denied",
+        "system-disabled",
+        "channel-disabled",
+        "pre-api33"
+      ],
+      "dependencies": [
+        "settings.reminder-preferences",
+        "foundation.feedback-states"
+      ],
+      "android": {
+        "disposition": "native-adaptation",
+        "rationale": "Browser push subscription states must become Android 13+ permission and notification-channel states.",
+        "adaptation": "Use POST_NOTIFICATIONS on API 33+, two channels, areNotificationsEnabled/channel checks, rationale and open-settings actions.",
+        "implementation_locations": [
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoNotifications.kt",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/MainActivity.kt"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Instrumented matrix passes on API 32/33/36 for allow, deny, dismiss, permanent/system/channel disable and recovery."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoNotifications.kt; apps/mobile/app/src/main/kotlin/com/montasim/routempo/MainActivity.kt",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "notifications agent"
+    },
+    {
+      "id": "notifications.routine",
+      "name": "Routine occurrence reminders",
+      "area": "notifications",
+      "priority": "critical",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/lib/notification-schedule.ts:40",
+          "detail": "Web schedules enabled routine occurrences up to seven days ahead in saved timezone at the selected global offset and opens Today."
+        }
+      ],
+      "expected_behavior": "When enabled and deliverable, schedule active upcoming occurrences in saved timezone with global offset, prevent duplicates/cancel stale work, suppress delivery more than one hour late, and open Today/occurrence on tap.",
+      "states": [
+        "disabled",
+        "scheduled",
+        "delivered",
+        "permission-blocked",
+        "channel-blocked",
+        "cancelled",
+        "stale"
+      ],
+      "dependencies": [
+        "notifications.permission-channel",
+        "today.load",
+        "settings.reminder-offsets"
+      ],
+      "android": {
+        "disposition": "native-adaptation",
+        "rationale": "Web Push delivery becomes native local notification scheduling; current backend has no FCM device contract.",
+        "adaptation": "Use WorkManager-backed best-effort local scheduling keyed by occurrence and settings revision; document timing limits.",
+        "implementation_locations": [
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoNotifications.kt",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/MainActivity.kt"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Tests cover saved-zone/offset timing, enabled/paused/deleted changes, duplicate prevention, permission/channel blocks, and tap routing."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoNotifications.kt; apps/mobile/app/src/main/kotlin/com/montasim/routempo/MainActivity.kt",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "notifications agent"
+    },
+    {
+      "id": "notifications.weekly",
+      "name": "Monday weekly summary notification",
+      "area": "notifications",
+      "priority": "high",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/lib/notification-schedule.ts:113",
+          "detail": "Weekly summaries schedule Monday at 09:00 in saved timezone and open Insights."
+        }
+      ],
+      "expected_behavior": "When enabled and deliverable, schedule Monday 09:00 in saved timezone, prevent duplicates, and open Review/Insights on tap.",
+      "states": [
+        "disabled",
+        "scheduled",
+        "delivered",
+        "permission-blocked",
+        "channel-blocked",
+        "cancelled"
+      ],
+      "dependencies": [
+        "notifications.permission-channel",
+        "review.navigation",
+        "settings.timezone"
+      ],
+      "android": {
+        "disposition": "native-adaptation",
+        "rationale": "Browser push schedule and URL navigation map to local work and a native deep link.",
+        "adaptation": "Use best-effort WorkManager scheduling and the weekly-summary channel with Review/Insights destination.",
+        "implementation_locations": [
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoNotifications.kt",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/MainActivity.kt"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Tests cover Monday/DST calculations, enable/disable, duplicate prevention, permission/channel blocks, and tap destination."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoNotifications.kt; apps/mobile/app/src/main/kotlin/com/montasim/routempo/MainActivity.kt",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "notifications agent"
+    },
+    {
+      "id": "notifications.reschedule-routing",
+      "name": "Notification rescheduling and cleanup",
+      "area": "notifications",
+      "priority": "critical",
+      "source_evidence": [
+        {
+          "kind": "artifact",
+          "provenance": "observed",
+          "location": "prototypes/android/v1/README.md:745",
+          "detail": "The handoff notes browser Web Push is not FCM but lacks native reboot/timezone/update/edit microflows."
+        }
+      ],
+      "expected_behavior": "Reconcile/cancel work after sign-in/out, settings/timezone/routine changes, restore, reboot, time/timezone change and app update; route taps deterministically and avoid stale-account notifications.",
+      "states": [
+        "reconciling",
+        "up-to-date",
+        "cancelled",
+        "reboot",
+        "timezone-changed",
+        "app-updated",
+        "account-changed"
+      ],
+      "dependencies": [
+        "notifications.routine",
+        "notifications.weekly",
+        "auth.logout"
+      ],
+      "android": {
+        "disposition": "native-adaptation",
+        "rationale": "Android lifecycle and OS scheduling events have no browser equivalent and must be designed explicitly.",
+        "adaptation": "Use unique work, receivers only where necessary, account IDs in work data, foreground reconciliation and cleanup on sign-out.",
+        "implementation_locations": [
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoNotifications.kt",
+          "apps/mobile/app/src/main/kotlin/com/montasim/routempo/MainActivity.kt"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Device tests cover all trigger events, stale-account cleanup, reschedule idempotency, and invalid/deleted tap targets."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/app/src/main/kotlin/com/montasim/routempo/RoutempoNotifications.kt; apps/mobile/app/src/main/kotlin/com/montasim/routempo/MainActivity.kt",
+            "detail": "Core behavior is implemented; the remaining release/runtime evidence or recovery edge is recorded in limitations."
+          }
+        ]
+      },
+      "status": "partial",
+      "blockers": [],
+      "owner": "notifications agent"
+    },
+    {
+      "id": "data.backup-export",
+      "name": "Full JSON backup export",
+      "area": "data-transfer",
+      "priority": "critical",
+      "source_evidence": [
+        {
+          "kind": "documentation",
+          "provenance": "observed",
+          "location": "docs/api/openapi-v1.yaml#/paths/~1backup; src/components/pages/settings-page.tsx:473",
+          "detail": "Web exports versioned JSON; v1 backup includes richer first-party state including occurrences."
+        }
+      ],
+      "expected_behavior": "GET a versioned full backup and let the user create a date-named JSON document containing settings, categories, routines, occurrences, and logs.",
+      "states": [
+        "idle",
+        "choosing-destination",
+        "fetching",
+        "writing",
+        "cancelled",
+        "saved",
+        "error"
+      ],
+      "dependencies": ["foundation.api-v1"],
+      "android": {
+        "disposition": "native-adaptation",
+        "rationale": "Browser download becomes Android document creation and v1 must be used for occurrence-complete interoperability.",
+        "adaptation": "Use Storage Access Framework CreateDocument and stream/validate the /backup representation.",
+        "implementation_locations": [
+          "apps/mobile/core/model",
+          "apps/mobile/core/network",
+          "apps/mobile/feature/settings",
+          "apps/mobile/app"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Instrumented/contract tests prove cancellation, valid format, all entity types/occurrences, safe write, filename, and failure retry."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/core/model; apps/mobile/core/network; apps/mobile/feature/settings; apps/mobile/app",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "files-integrations agent"
+    },
+    {
+      "id": "data.backup-import",
+      "name": "Validated replacement backup restore",
+      "area": "data-transfer",
+      "priority": "critical",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/lib/export-data.ts; src/lib/store.server.ts:218; docs/api/openapi-v1.yaml#/paths/~1backup",
+          "detail": "Import is validated replacement, not merge; limits/duplicates are checked; legacy web path can discard occurrence history."
+        }
+      ],
+      "expected_behavior": "Open JSON, reject invalid/oversize/duplicate/out-of-limit content before mutation, show filename and replacement/integration-reset warning, confirm, PUT /backup, preserve occurrences, and reload all data.",
+      "states": [
+        "choosing-file",
+        "cancelled",
+        "validating",
+        "invalid",
+        "confirming",
+        "importing",
+        "success",
+        "error"
+      ],
+      "dependencies": ["data.backup-export", "foundation.cache-offline"],
+      "android": {
+        "disposition": "native-adaptation",
+        "rationale": "File selection/confirmation is native and must avoid the legacy web import's occurrence loss.",
+        "adaptation": "Use OpenDocument, 10 MB precheck, v1 schema/server validation, explicit replacement warning and full repository invalidation.",
+        "implementation_locations": [
+          "apps/mobile/core/model",
+          "apps/mobile/core/network",
+          "apps/mobile/feature/settings",
+          "apps/mobile/app"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Round-trip tests retain all occurrences/logs/settings/routines/categories and cover every limit, duplicate, cancel, invalid and server-error path."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/core/model; apps/mobile/core/network; apps/mobile/feature/settings; apps/mobile/app",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "files-integrations agent"
+    },
+    {
+      "id": "data.backup-safety",
+      "name": "Backup interoperability and local secret exclusion",
+      "area": "data-transfer",
+      "priority": "critical",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/lib/export-data.ts:48; src/lib/store.server.ts:227",
+          "detail": "Legacy web export omits full occurrence history and web import can reconstruct only today, creating a cross-client data-loss risk."
+        }
+      ],
+      "expected_behavior": "Use only v1 backup for native restore, warn against unsafe legacy web cross-import until fixed, exclude tokens/local database from Android Auto Backup, and never claim success after partial local/file failure.",
+      "states": [
+        "safe-v1",
+        "legacy-warning",
+        "excluded-secret",
+        "partial-failure"
+      ],
+      "dependencies": ["data.backup-import", "foundation.session-security"],
+      "android": {
+        "disposition": "native-adaptation",
+        "rationale": "Native must explicitly mitigate a discovered interoperability/security risk.",
+        "adaptation": "Add UI/help warning, full v1 round-trip fixtures, noBackup/backup rules, and transactional cache invalidation.",
+        "implementation_locations": [
+          "apps/mobile/core/model",
+          "apps/mobile/core/network",
+          "apps/mobile/feature/settings",
+          "apps/mobile/app"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Tests prove v1 round-trip, legacy warning, token/database exclusion and no false-success partial path."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/core/model; apps/mobile/core/network; apps/mobile/feature/settings; apps/mobile/app",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "files-integrations agent"
+    },
+    {
+      "id": "integrations.status-auth",
+      "name": "Provider status and connect/grant/reconnect",
+      "area": "integrations",
+      "priority": "high",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/pages/settings-page.tsx:533; docs/api/openapi-v1.yaml#/paths/~1integrations",
+          "detail": "Google/Microsoft expose checking/configured/sign-in-only/not-connected states and Connect/Grant/Reconnect; web swallows status fetch failure."
+        }
+      ],
+      "expected_behavior": "For each provider distinguish checking, ready, sign-in-only, not connected, credentials unavailable, network failure, and expired/reconnect; complete scope grant with cancel/callback/error handling.",
+      "states": [
+        "checking",
+        "ready",
+        "sign-in-only",
+        "not-connected",
+        "unconfigured",
+        "network-error",
+        "expired",
+        "granting",
+        "cancelled"
+      ],
+      "dependencies": ["foundation.api-v1", "auth.microsoft", "auth.google"],
+      "android": {
+        "disposition": "native-adaptation",
+        "rationale": "The provider state machine carries over but OAuth uses Custom Tabs and must correct web's failure-as-unconfigured ambiguity.",
+        "adaptation": "Map network/configuration separately and use validated browser callbacks for Connect/Grant/Reconnect.",
+        "implementation_locations": [
+          "apps/mobile/core/network",
+          "apps/mobile/feature/settings",
+          "apps/mobile/app",
+          "apps/web/src/lib/integrations.server.ts"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Tests cover every provider state, network/config distinction, grant success/cancel/bad state/expiry, and refresh."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/core/network; apps/mobile/feature/settings; apps/mobile/app; apps/web/src/lib/integrations.server.ts",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "files-integrations agent"
+    },
+    {
+      "id": "integrations.disconnect",
+      "name": "Disconnect provider integration",
+      "area": "integrations",
+      "priority": "medium",
+      "source_evidence": [
+        {
+          "kind": "documentation",
+          "provenance": "observed",
+          "location": "docs/api/openapi-v1.yaml#/paths/~1integrations~1{provider}; prototypes/android/v1/README.md:306",
+          "detail": "v1 and the prototype support provider disconnect; current web UI has no disconnect button."
+        }
+      ],
+      "expected_behavior": "Confirm and disconnect Google or Microsoft without signing out Routempo; preserve existing integration mappings so reconnect skips prior transfers, explain that behavior, refresh status, and report failure.",
+      "states": [
+        "connected",
+        "confirming",
+        "disconnecting",
+        "disconnected",
+        "error"
+      ],
+      "dependencies": [
+        "integrations.status-auth",
+        "reliability.idempotency-errors"
+      ],
+      "android": {
+        "disposition": "shared",
+        "rationale": "This is an existing first-party API/prototype capability that should be surfaced natively.",
+        "implementation_locations": [
+          "apps/mobile/core/network",
+          "apps/mobile/feature/settings",
+          "apps/mobile/app",
+          "apps/web/src/lib/integrations.server.ts"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Tests cover cancel/success/failure for both providers, app session retention, mapping preservation, and duplicate-free reconnect."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/core/network; apps/mobile/feature/settings; apps/mobile/app; apps/web/src/lib/integrations.server.ts",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "files-integrations agent"
+    },
+    {
+      "id": "integrations.calendar",
+      "name": "Google and Microsoft Calendar import/export",
+      "area": "integrations",
+      "priority": "high",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/lib/integrations.server.ts; src/lib/integrations-api.server.ts",
+          "detail": "Calendar import uses next 90 days/up to 250 non-cancelled events; export sends up to 250 enabled unmapped routines as 30-minute events."
+        }
+      ],
+      "expected_behavior": "Import eligible future events as one-off routines with provider category/time; export enabled unmapped routines as 30-minute events; skip invalid/past/blank/mapped; show counts and partial failures.",
+      "states": [
+        "idle",
+        "importing",
+        "exporting",
+        "success",
+        "partial",
+        "failure",
+        "reauth-required"
+      ],
+      "dependencies": ["integrations.status-auth"],
+      "android": {
+        "disposition": "shared",
+        "rationale": "Provider transfer logic stays on the server; Android presents and refreshes the existing operations.",
+        "implementation_locations": [
+          "apps/mobile/core/network",
+          "apps/mobile/feature/settings",
+          "apps/mobile/app",
+          "apps/web/src/lib/integrations.server.ts"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Fake-provider/contract tests cover limits/window/filtering/mapping/category/time/event duration, partial result and refresh."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/core/network; apps/mobile/feature/settings; apps/mobile/app; apps/web/src/lib/integrations.server.ts",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "files-integrations agent"
+    },
+    {
+      "id": "integrations.tasks",
+      "name": "Google and Microsoft Tasks import/export",
+      "area": "integrations",
+      "priority": "high",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/lib/integrations.server.ts; src/lib/integrations-api.server.ts",
+          "detail": "Task import reads incomplete tasks from up to 20 lists/100 each; import defaults 08:00; export targets default/first list."
+        }
+      ],
+      "expected_behavior": "Import eligible incomplete tasks as one-off 08:00 routines with provider category and export enabled unmapped routines to the default/first list while reporting skips/partials.",
+      "states": [
+        "idle",
+        "importing",
+        "exporting",
+        "success",
+        "partial",
+        "failure",
+        "reauth-required"
+      ],
+      "dependencies": ["integrations.status-auth"],
+      "android": {
+        "disposition": "shared",
+        "rationale": "Provider transfer rules stay server-side and Android invokes/presents them.",
+        "implementation_locations": [
+          "apps/mobile/core/network",
+          "apps/mobile/feature/settings",
+          "apps/mobile/app",
+          "apps/web/src/lib/integrations.server.ts"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Fake-provider/contract tests cover list/item limits, incomplete/invalid/mapped filtering, 08:00/category/default list, partial and refresh."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/core/network; apps/mobile/feature/settings; apps/mobile/app; apps/web/src/lib/integrations.server.ts",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "files-integrations agent"
+    },
+    {
+      "id": "integrations.batch-dedup",
+      "name": "Integration batch locking, mappings, and result feedback",
+      "area": "integrations",
+      "priority": "critical",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/pages/settings-page.tsx:580; src/lib/integration-mapping.ts",
+          "detail": "One sync disables all controls; mappings prevent duplicates; outcomes include success, partial and failure; sync is manual batch only."
+        }
+      ],
+      "expected_behavior": "Run one provider operation at a time, label the active control, disable others, preserve mappings/duplicate prevention, refresh imported data without app restart, and communicate success/skip/partial/failure without implying continuous sync.",
+      "states": [
+        "idle",
+        "working",
+        "success",
+        "partial",
+        "failure",
+        "refreshed"
+      ],
+      "dependencies": ["integrations.calendar", "integrations.tasks"],
+      "android": {
+        "disposition": "native-parity",
+        "rationale": "Batch state, deduplication, and honest sync semantics must match.",
+        "implementation_locations": [
+          "apps/mobile/core/network",
+          "apps/mobile/feature/settings",
+          "apps/mobile/app",
+          "apps/web/src/lib/integrations.server.ts"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Tests cover global lock, active label, duplicate rerun, success/partial/failure counts, immediate repository refresh, and manual-sync wording."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/core/network; apps/mobile/feature/settings; apps/mobile/app; apps/web/src/lib/integrations.server.ts",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "files-integrations agent"
+    },
+    {
+      "id": "reliability.idempotency-errors",
+      "name": "Idempotency, request IDs, and typed API failures",
+      "area": "reliability",
+      "priority": "critical",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/lib/api-v1/handler.server.ts",
+          "detail": "v1 supports X request IDs, JSON envelopes, problem errors, bearer auth and body-bound 24-hour idempotency replay/conflict behavior."
+        }
+      ],
+      "expected_behavior": "Attach request IDs and an 8-200 visible-ASCII stable idempotency key to every authenticated non-read request, retain it only across identical logical retry, parse problem details, and map 401/403/404/409/429/5xx deliberately even where OpenAPI omits the header annotation.",
+      "states": [
+        "success",
+        "validation",
+        "unauthorized",
+        "forbidden",
+        "not-found",
+        "conflict",
+        "rate-limited",
+        "server-error",
+        "transport-error"
+      ],
+      "dependencies": ["foundation.api-v1", "auth.session-refresh"],
+      "android": {
+        "disposition": "shared",
+        "rationale": "Server reliability protocol is shared and must be implemented exactly in Android transport/repositories.",
+        "implementation_locations": [
+          "apps/mobile/core/network",
+          "apps/mobile/core/data",
+          "apps/mobile/app"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Mock server tests cover all status classes, replay, body/key mismatch, in-progress conflict, retry-after, and request-ID correlation."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/core/network; apps/mobile/core/data; apps/mobile/app",
+            "detail": "Native implementation is integrated; external authenticated/device verification remains before manifest completion."
+          }
+        ]
+      },
+      "status": "implemented",
+      "blockers": [],
+      "owner": "network-auth agent"
+    },
+    {
+      "id": "reliability.lifecycle",
+      "name": "Lifecycle, process restoration, and account isolation",
+      "area": "reliability",
+      "priority": "critical",
+      "source_evidence": [
+        {
+          "kind": "artifact",
+          "provenance": "observed",
+          "location": "prototypes/android/v1/README.md:749",
+          "detail": "The handoff lists async states but provides no native lifecycle/process-restoration implementation or evidence."
+        }
+      ],
+      "expected_behavior": "Rotation/process death preserve safe navigation/filter/form state, one-shot effects do not repeat, foreground refreshes stale data, and account changes clear prior state/work.",
+      "states": [
+        "foreground",
+        "background",
+        "rotated",
+        "process-restored",
+        "account-changed",
+        "work-resumed"
+      ],
+      "dependencies": [
+        "foundation.cache-offline",
+        "navigation.primary",
+        "foundation.feedback-states"
+      ],
+      "android": {
+        "disposition": "native-adaptation",
+        "rationale": "Android lifecycle/process behavior has no direct web analogue and must be added without changing product meaning.",
+        "adaptation": "Use ViewModel/StateFlow, SavedStateHandle for small restorable state, repository persistence, and account-scoped work/cache.",
+        "implementation_locations": [
+          "apps/mobile/core/network",
+          "apps/mobile/core/data",
+          "apps/mobile/app"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Rotation/process-death/foreground/account-switch tests pass on primary journeys without duplicate mutation/effect or cross-account data."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": "apps/mobile/core/network; apps/mobile/core/data; apps/mobile/app",
+            "detail": "Core behavior is implemented; the remaining release/runtime evidence or recovery edge is recorded in limitations."
+          }
+        ]
+      },
+      "status": "partial",
+      "blockers": [],
+      "owner": "platform-data agent"
+    },
+    {
+      "id": "security.release",
+      "name": "Release transport, logging, component, and backup security",
+      "area": "security",
+      "priority": "critical",
+      "source_evidence": [
+        {
+          "kind": "documentation",
+          "provenance": "observed",
+          "location": "prototypes/android/v1/README.md:492; docs/api/openapi-v1.yaml",
+          "detail": "The handoff requires HTTPS/bearer/secure tokens; no native manifest/network/logging/backup release evidence exists."
+        }
+      ],
+      "expected_behavior": "Release permits HTTPS only, redacts credentials/PII, minimizes exported components, validates OAuth callbacks/state, excludes protected data from backup, uses owned signing/configuration, and requests no location/camera/microphone/media/broad-storage permission.",
+      "states": [
+        "debug",
+        "staging",
+        "release",
+        "callback-valid",
+        "callback-invalid"
+      ],
+      "dependencies": [
+        "foundation.session-security",
+        "auth.google",
+        "auth.microsoft",
+        "data.backup-safety"
+      ],
+      "android": {
+        "disposition": "native-adaptation",
+        "rationale": "Native transport, manifest, signing, deep-link and backup surfaces require Android-specific hardening.",
+        "adaptation": "Use release network security config, redacting logger, non-exported defaults, verified callbacks, backup rules, secret injection and signing controls.",
+        "implementation_locations": [
+          ".github/workflows/android-release.yml",
+          "apps/mobile/version.properties",
+          "apps/mobile/app/build.gradle.kts",
+          "apps/mobile/app/src/main/AndroidManifest.xml",
+          "apps/mobile/core/network"
+        ]
+      },
+      "verification": {
+        "requirements": [
+          "Signed release audit proves no cleartext, token/PII logging, backup leakage, unneeded permission, or invalid OAuth/deep-link callback acceptance."
+        ],
+        "evidence": [
+          {
+            "kind": "implementation",
+            "provenance": "observed",
+            "location": ".github/workflows/android-release.yml; apps/mobile/version.properties; apps/mobile/app/build.gradle.kts; apps/mobile/app/src/main/AndroidManifest.xml; apps/mobile/core/network",
+            "detail": "Release versioning, secret-injected signing, canonical APK naming, signature verification, SHA-256 generation, HTTPS/manifest hardening, and tag-triggered GitHub publication are implemented. Production-key and device evidence remain release gates."
+          }
+        ]
+      },
+      "status": "partial",
+      "blockers": [],
+      "owner": "independent security agent"
+    },
+    {
+      "id": "platform.pwa-install-push",
+      "name": "PWA install and browser push mechanics",
+      "area": "platform",
+      "priority": "low",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "public/manifest.webmanifest; public/sw.js",
+          "detail": "The web declares standalone PWA metadata and a service worker that displays push and focuses/navigates browser windows."
+        }
+      ],
+      "expected_behavior": "Do not embed or recreate PWA install prompts, service-worker registration, browser push subscriptions, or window-focus behavior inside the native app.",
+      "states": [
+        "native-installed",
+        "native-notifications",
+        "native-navigation"
+      ],
+      "dependencies": [],
+      "android": {
+        "disposition": "not-applicable",
+        "rationale": "Android packages are installed/navigated natively and use OS notification APIs.",
+        "justification": "The user-facing reminder/navigation outcomes are covered by notifications.* and navigation.primary; browser implementation mechanics do not apply.",
+        "implementation_locations": []
+      },
+      "verification": {
+        "requirements": [
+          "Source/release inspection finds no PWA install prompt, service-worker runtime, or browser push subscription code in Android."
+        ],
+        "evidence": []
+      },
+      "status": "closed",
+      "blockers": [],
+      "owner": "integrator"
+    },
+    {
+      "id": "platform.dev-demo-query",
+      "name": "Development-only demo query bypass",
+      "area": "platform",
+      "priority": "low",
+      "source_evidence": [
+        {
+          "kind": "source",
+          "provenance": "observed",
+          "location": "src/components/app-screen.tsx:21; src/lib/search.ts",
+          "detail": "The web accepts demo=true/1 only in development and strips legacy variant query parameters."
+        }
+      ],
+      "expected_behavior": "Production Android must not expose URL-query authentication bypass or legacy variant cleanup behavior; previews/tests use injected fakes in debug/test builds only.",
+      "states": ["debug-fixture", "test-fixture", "release-disabled"],
+      "dependencies": [],
+      "android": {
+        "disposition": "not-applicable",
+        "rationale": "A browser query-string demo bypass and legacy URL cleanup are web/development mechanics.",
+        "justification": "Android tests can inject repositories and preview data without any production route/auth bypass.",
+        "implementation_locations": []
+      },
+      "verification": {
+        "requirements": [
+          "Release source/manifest inspection proves no demo query, hidden auth bypass, or legacy variant behavior is reachable."
+        ],
+        "evidence": []
+      },
+      "status": "closed",
+      "blockers": [],
+      "owner": "integrator"
+    }
+  ]
+}
