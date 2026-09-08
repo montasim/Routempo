@@ -6,3 +6,8 @@
 [build.environment]
   NODE_VERSION = "22"
   NITRO_PRESET = "netlify"
+
+# Keep the production database schema in lockstep with the server bundle. Deploy
+# previews only build the app, so they cannot mutate the production database.
+[context.production]
+  command = "pnpm db:migrate && pnpm build"
