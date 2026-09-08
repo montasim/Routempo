@@ -17,6 +17,8 @@ import com.montasim.routempo.core.model.IntegrationResource
 import com.montasim.routempo.core.model.IntegrationStatuses
 import com.montasim.routempo.core.model.IntegrationSyncResult
 import com.montasim.routempo.core.model.LogPatch
+import com.montasim.routempo.core.model.LogPage
+import com.montasim.routempo.core.model.LogOutcomeCounts
 import com.montasim.routempo.core.model.LogQuery
 import com.montasim.routempo.core.model.LogWrite
 import com.montasim.routempo.core.model.OccurrenceGeneration
@@ -207,7 +209,7 @@ internal class OkHttpRoutempoApi(
         OccurrenceDataDto.serializer(),
     ).data.occurrence.toDomain()
 
-    override suspend fun logs(query: LogQuery): ApiPage<BehaviorLog> {
+    override suspend fun logs(query: LogQuery): LogPage {
         val target = url("logs").apply {
             query.startDate?.let { addQueryParameter("startDate", it) }
             query.endDate?.let { addQueryParameter("endDate", it) }
@@ -217,7 +219,14 @@ internal class OkHttpRoutempoApi(
         }.page(query.page).build()
         val result = envelope(Request.Builder().url(target).get().build(), LogsDataDto.serializer())
         val values = result.data.logs.map { it.toDomain() }
-        return ApiPage(values, result.meta.total ?: values.size, result.meta.nextCursor)
+        return LogPage(
+            items = values,
+            total = result.meta.total ?: values.size,
+            nextCursor = result.meta.nextCursor,
+            outcomeCounts = result.meta.outcomeCounts?.let {
+                LogOutcomeCounts(it.total, it.completed, it.skipped, it.missed)
+            },
+        )
     }
 
     override suspend fun createLog(log: LogWrite, idempotencyKey: IdempotencyKey): BehaviorLog = envelope(

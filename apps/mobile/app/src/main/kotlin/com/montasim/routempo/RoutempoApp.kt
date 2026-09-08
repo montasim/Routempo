@@ -710,8 +710,16 @@ fun RoutempoApp(
                 )
             runCatching {
                 val page = api.logs(query)
+                val serverCounts = page.outcomeCounts
                 val counts =
-                    if (reset) {
+                    if (reset && serverCounts != null) {
+                        LogOutcomeCounts(
+                            all = serverCounts.total,
+                            completed = serverCounts.completed,
+                            skipped = serverCounts.skipped,
+                            missed = serverCounts.missed,
+                        )
+                    } else if (reset) {
                         val base = filters.copy(status = null)
                         val totals =
                             listOf(null, com.montasim.routempo.core.model.LogStatus.COMPLETED, com.montasim.routempo.core.model.LogStatus.SKIPPED, com.montasim.routempo.core.model.LogStatus.MISSED)

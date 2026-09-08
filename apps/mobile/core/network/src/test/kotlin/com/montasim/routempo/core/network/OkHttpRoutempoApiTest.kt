@@ -3,6 +3,7 @@ package com.montasim.routempo.core.network
 import com.montasim.routempo.core.model.BearerSession
 import com.montasim.routempo.core.model.AnalyticsQuery
 import com.montasim.routempo.core.model.IdempotencyKey
+import com.montasim.routempo.core.model.LogQuery
 import com.montasim.routempo.core.model.PageQuery
 import com.montasim.routempo.core.model.RoutinePatch
 import java.util.concurrent.atomic.AtomicInteger
@@ -102,6 +103,21 @@ class OkHttpRoutempoApiTest {
         assertEquals(1, analytics.series.single().outcomes.unrecorded)
         assertEquals(1, analytics.categories.single().outcomes.unrecorded)
         assertEquals("7", server.takeRequest().requestUrl?.queryParameter("range"))
+    }
+
+    @Test
+    fun `maps log outcome counts from a single paged response`() = runBlocking {
+        server.enqueue(MockResponse().setResponseCode(200).setBody(fixture("logs-page.json")))
+
+        val page = api.logs(LogQuery(page = PageQuery(limit = 50)))
+
+        assertEquals(8, page.total)
+        assertEquals(8, page.outcomeCounts?.total)
+        assertEquals(3, page.outcomeCounts?.completed)
+        assertEquals(2, page.outcomeCounts?.skipped)
+        assertEquals(3, page.outcomeCounts?.missed)
+        assertEquals(1, page.items.size)
+        assertEquals(1, server.requestCount)
     }
 
     @Test

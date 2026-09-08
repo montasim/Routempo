@@ -17,6 +17,7 @@ import com.montasim.routempo.core.model.IntegrationResource
 import com.montasim.routempo.core.model.IntegrationStatuses
 import com.montasim.routempo.core.model.IntegrationSyncResult
 import com.montasim.routempo.core.model.LogPatch
+import com.montasim.routempo.core.model.LogPage
 import com.montasim.routempo.core.model.LogQuery
 import com.montasim.routempo.core.model.LogWrite
 import com.montasim.routempo.core.model.OccurrenceGeneration
@@ -57,7 +58,7 @@ interface RoutempoApi {
     suspend fun skipOccurrence(id: String, resolution: OccurrenceResolution, idempotencyKey: IdempotencyKey): RoutineOccurrence
     suspend fun revertOccurrence(id: String, idempotencyKey: IdempotencyKey): RoutineOccurrence
 
-    suspend fun logs(query: LogQuery = LogQuery()): ApiPage<BehaviorLog>
+    suspend fun logs(query: LogQuery = LogQuery()): LogPage
     suspend fun createLog(log: LogWrite, idempotencyKey: IdempotencyKey): BehaviorLog
     suspend fun updateLog(id: String, patch: LogPatch, idempotencyKey: IdempotencyKey): BehaviorLog
     suspend fun deleteLog(id: String, idempotencyKey: IdempotencyKey): BehaviorLog

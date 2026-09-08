@@ -8,6 +8,20 @@ data class ApiPage<T>(
     val nextCursor: String?,
 )
 
+data class LogOutcomeCounts(
+    val total: Int,
+    val completed: Int,
+    val skipped: Int,
+    val missed: Int,
+)
+
+data class LogPage(
+    val items: List<BehaviorLog>,
+    val total: Int,
+    val nextCursor: String?,
+    val outcomeCounts: LogOutcomeCounts?,
+)
+
 data class PageQuery(
     val cursor: String? = null,
     val limit: Int = 50,

@@ -35,6 +35,7 @@ import {
 } from "./data.server"
 import { ApiError } from "./errors"
 import { executeIdempotent } from "./idempotency.server"
+import { countLogOutcomes } from "./log-outcomes"
 import {
   createLog,
   deleteLog,
@@ -369,27 +370,38 @@ async function handleAuthenticated(
 
   if (path === "/logs") {
     if (request.method === "GET") {
-      let items = await listLogs(identity.id)
+      const items = await listLogs(identity.id)
       const startDate = url.searchParams.get("startDate")
       const endDate = url.searchParams.get("endDate")
       const routineId = url.searchParams.get("routineId")
       const category = url.searchParams.get("category")
       const status = url.searchParams.get("status")
-      items = items.filter(
+      const scopedItems = items.filter(
         (log) =>
           (!startDate || log.date >= startDate) &&
           (!endDate || log.date <= endDate) &&
           (!routineId || log.routineId === routineId) &&
           (!category ||
-            normalizeName(log.category) === normalizeName(category)) &&
-          (!status || log.status === status.toLowerCase())
+            normalizeName(log.category) === normalizeName(category))
       )
-      const result = page(items, pagination(url).limit, pagination(url).offset)
+      const outcomeCounts = countLogOutcomes(scopedItems)
+      const filteredItems = status
+        ? scopedItems.filter((log) => log.status === status.toLowerCase())
+        : scopedItems
+      const result = page(
+        filteredItems,
+        pagination(url).limit,
+        pagination(url).offset
+      )
       return ok(
         { logs: result.values },
         id,
         {},
-        { total: result.total, nextCursor: result.nextCursor }
+        {
+          total: result.total,
+          nextCursor: result.nextCursor,
+          outcomeCounts,
+        }
       )
     }
     if (request.method === "POST") {

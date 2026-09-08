@@ -13,6 +13,15 @@ data class ApiMeta(
     val serverTime: String,
     val total: Int? = null,
     val nextCursor: String? = null,
+    val outcomeCounts: LogOutcomeCountsDto? = null,
+)
+
+@Serializable
+data class LogOutcomeCountsDto(
+    val total: Int,
+    val completed: Int,
+    val skipped: Int,
+    val missed: Int,
 )
 
 @Serializable

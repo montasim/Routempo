@@ -6,6 +6,12 @@ export type ApiMeta = {
   serverTime: string
   total?: number
   nextCursor?: string
+  outcomeCounts?: {
+    total: number
+    completed: number
+    skipped: number
+    missed: number
+  }
 }
 
 export function requestId(request: Request) {
@@ -18,7 +24,7 @@ export function ok(
   data: unknown,
   id: string,
   init: ResponseInit = {},
-  pagination?: Pick<ApiMeta, "total" | "nextCursor">
+  pagination?: Pick<ApiMeta, "total" | "nextCursor" | "outcomeCounts">
 ) {
   return Response.json(
     {

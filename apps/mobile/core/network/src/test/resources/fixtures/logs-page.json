@@ -1,0 +1,35 @@
+{
+  "data": {
+    "logs": [
+      {
+        "id": "log-1",
+        "routineId": "routine-1",
+        "date": "2026-09-08",
+        "eventTime": "07:00",
+        "title": "Breakfast",
+        "category": "Food habit",
+        "scheduledTime": "07:00",
+        "actualTime": "07:05",
+        "variance": "5 minutes late",
+        "status": "completed",
+        "recordedAt": "2026-09-08T01:05:00.000Z",
+        "actor": "Montasim",
+        "source": "Routempo Android",
+        "timezone": "Asia/Dhaka",
+        "note": ""
+      }
+    ]
+  },
+  "meta": {
+    "requestId": "request-logs",
+    "apiVersion": "v1",
+    "serverTime": "2026-09-08T07:05:00.000Z",
+    "total": 8,
+    "outcomeCounts": {
+      "total": 8,
+      "completed": 3,
+      "skipped": 2,
+      "missed": 3
+    }
+  }
+}
