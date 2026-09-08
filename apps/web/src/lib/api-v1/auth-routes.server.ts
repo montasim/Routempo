@@ -11,6 +11,7 @@ import {
 } from "./auth.server"
 import { jsonBody, methodNotAllowed, ok, problem } from "./response"
 import { validationResponse } from "./route-utils"
+import { mobileCallbackRedirect } from "./mobile-redirect"
 import {
   googleTokenSchema,
   socialExchangeSchema,
@@ -101,9 +102,7 @@ export async function handlePublicAuthRoute(
         "SOCIAL_CALLBACK_UNAUTHORIZED",
         "The social sign-in session was not found"
       )
-    const redirect = new URL(redirectUri)
-    redirect.searchParams.set("code", code)
-    return Response.redirect(redirect, 302)
+    return mobileCallbackRedirect(redirectUri, { code })
   }
 
   if (path === "/auth/social/exchange" && request.method === "POST") {

@@ -11,7 +11,7 @@ import { bearerToken, refreshableUntil } from "./auth-session"
 import { ApiError } from "./errors"
 
 const sessionSeconds = 60 * 60 * 24 * 7
-const exchangePrefix = "mobile-social:"
+const exchangeSessionPrefix = "mobile-social:"
 const integrationPrefix = "mobile-integration:"
 
 function baseUrl(request: Request) {
@@ -120,11 +120,12 @@ export async function createSocialExchangeCode(
   if (!identity) return null
   const code = randomToken()
   await getDatabase()
-    .insert(verification)
+    .insert(session)
     .values({
-      id: crypto.randomUUID(),
-      identifier: `${exchangePrefix}${code}`,
-      value: JSON.stringify({ userId: identity.user.id, redirectUri }),
+      id: `${exchangeSessionPrefix}${code}`,
+      token: randomToken(),
+      userId: identity.user.id,
+      userAgent: redirectUri,
       expiresAt: new Date(Date.now() + 5 * 60 * 1000),
     })
   return code
@@ -134,31 +135,24 @@ export async function exchangeSocialCode(code: string, redirectUri: string) {
   if (!validMobileRedirect(redirectUri))
     throw new ApiError("INVALID_REDIRECT_URI")
   const db = getDatabase()
-  const rows = await db
-    .select()
-    .from(verification)
+  const consumed = await db
+    .delete(session)
     .where(
       and(
-        eq(verification.identifier, `${exchangePrefix}${code}`),
-        gt(verification.expiresAt, new Date())
+        eq(session.id, `${exchangeSessionPrefix}${code}`),
+        gt(session.expiresAt, new Date())
       )
     )
-    .limit(1)
-  const record = rows[0]
-  if (!record) return null
-  const value = JSON.parse(record.value) as {
-    userId?: string
-    redirectUri?: string
-  }
-  if (!value.userId || value.redirectUri !== redirectUri) return null
+    .returning({ userId: session.userId, redirectUri: session.userAgent })
+  const exchange = consumed[0]
+  if (!exchange || exchange.redirectUri !== redirectUri) return null
   const users = await db
     .select()
     .from(user)
-    .where(eq(user.id, value.userId))
+    .where(eq(user.id, exchange.userId))
     .limit(1)
   const account = users[0]
   if (!account) return null
-  await db.delete(verification).where(eq(verification.id, record.id))
   const created = await createSession(account.id)
   return { session: created, user: account }
 }
