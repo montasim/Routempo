@@ -5,7 +5,7 @@ import {
   getIntegrations,
   syncIntegrations,
 } from "@/lib/integrations-api.server"
-import { addDays, dateKeyInTimeZone } from "@/lib/user-calendar"
+import { addDays, dateKeyInTimeZone, validTimeZone } from "@/lib/user-calendar"
 
 import { analytics } from "./analytics.server"
 import {
@@ -18,6 +18,7 @@ import {
 import { handlePublicAuthRoute } from "./auth-routes.server"
 import { backup, restoreBackup } from "./backup.server"
 import {
+  bootstrapDeviceTimeZone,
   createCategory,
   createRoutine,
   deleteCategory,
@@ -71,6 +72,12 @@ import {
 } from "./schemas"
 
 type Identity = NonNullable<Awaited<ReturnType<typeof authenticatedUser>>>
+
+type DeviceTimeZoneInitializer = (
+  userId: string,
+  name: string | undefined,
+  timezone: string
+) => Promise<unknown>
 
 type ApiRuntime = {
   publicAuth: typeof handlePublicAuthRoute
@@ -132,6 +139,8 @@ async function handleAuthenticated(
   id: string,
   identity: Identity
 ) {
+  await bootstrapRequestTimeZone(request, identity)
+
   if (path === "/auth/me" && request.method === "GET") {
     const session = await authSession(request)
     return ok(
@@ -508,6 +517,17 @@ async function handleAuthenticated(
   }
 
   return problem(request, id, 404, "ROUTE_NOT_FOUND", "API route not found")
+}
+
+export async function bootstrapRequestTimeZone(
+  request: Request,
+  identity: Pick<Identity, "id" | "name">,
+  initialize: DeviceTimeZoneInitializer = bootstrapDeviceTimeZone
+) {
+  const timezone = request.headers.get("x-routempo-timezone")?.trim()
+  if (!timezone || !validTimeZone(timezone)) return false
+  await initialize(identity.id, identity.name, timezone)
+  return true
 }
 
 async function envelopeLegacy(

@@ -98,6 +98,8 @@ paths:
     get:
       tags: [Auth]
       summary: Read the current user and settings
+      parameters:
+        - { $ref: "#/components/parameters/DeviceTimezone" }
       responses:
         "200":
           description: Current identity
@@ -360,7 +362,11 @@ paths:
         - { in: query, name: startDate, schema: { type: string, format: date } }
         - { in: query, name: endDate, schema: { type: string, format: date } }
       responses:
-        "200": { description: Analytics envelope }
+        "200":
+          description: Analytics envelope
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AnalyticsEnvelope" }
   /backup:
     get:
       tags: [Data]
@@ -463,6 +469,12 @@ components:
       required: false
       description: Generate once per logical mutation and reuse only for an identical retry. Results are retained for 24 hours.
       schema: { type: string, minLength: 8, maxLength: 200 }
+    DeviceTimezone:
+      in: header
+      name: X-Routempo-Timezone
+      required: false
+      description: Valid device IANA timezone used only to initialize an authenticated account whose saved timezone is still empty; it never overwrites an existing preference.
+      schema: { type: string, example: Asia/Dhaka }
     Cursor:
       { in: query, name: cursor, schema: { type: string, pattern: "^[0-9]+$" } }
     Limit:
@@ -587,7 +599,7 @@ components:
       type: object
       required: [title, categoryId, startDate, scheduledTime, recurrenceType]
       properties:
-        title: { type: string, minLength: 1, maxLength: 100 }
+        title: { type: string, minLength: 1, maxLength: 120 }
         note: { type: string, maxLength: 160, default: "" }
         categoryId: { type: string }
         startDate: { type: string, format: date }
@@ -613,7 +625,7 @@ components:
       type: object
       minProperties: 1
       properties:
-        title: { type: string, minLength: 1, maxLength: 100 }
+        title: { type: string, minLength: 1, maxLength: 120 }
         note: { type: string, maxLength: 160 }
         categoryId: { type: string }
         startDate: { type: string, format: date }
@@ -669,3 +681,71 @@ components:
         actualTime: { type: [string, "null"] }
         status: { $ref: "#/components/schemas/LogStatus" }
         note: { type: string, maxLength: 240 }
+    OutcomeSummary:
+      type: object
+      required:
+        [completed, skipped, missed, unrecorded, total, completionPercentage]
+      properties:
+        completed: { type: integer, minimum: 0 }
+        skipped: { type: integer, minimum: 0 }
+        missed: { type: integer, minimum: 0 }
+        unrecorded:
+          {
+            type: integer,
+            minimum: 0,
+            description: Scheduled occurrences without a recorded outcome,
+          }
+        total:
+          {
+            type: integer,
+            minimum: 0,
+            description: Greater of scheduled occurrences and recorded outcomes,
+          }
+        completionPercentage: { type: integer, minimum: 0, maximum: 100 }
+    Analytics:
+      type: object
+      required:
+        [
+          startDate,
+          endDate,
+          completionPercentage,
+          outcomes,
+          series,
+          categories,
+          generatedAt,
+        ]
+      properties:
+        startDate: { type: string, format: date }
+        endDate: { type: string, format: date }
+        completionPercentage: { type: integer, minimum: 0, maximum: 100 }
+        outcomes: { $ref: "#/components/schemas/OutcomeSummary" }
+        series:
+          type: array
+          items:
+            allOf:
+              - { $ref: "#/components/schemas/OutcomeSummary" }
+              - type: object
+                required: [date]
+                properties:
+                  date: { type: string, format: date }
+        categories:
+          type: array
+          items:
+            allOf:
+              - { $ref: "#/components/schemas/OutcomeSummary" }
+              - type: object
+                required: [category, routineCount]
+                properties:
+                  category: { type: string }
+                  routineCount: { type: integer, minimum: 0 }
+        generatedAt: { type: string, format: date-time }
+    AnalyticsEnvelope:
+      allOf:
+        - { $ref: "#/components/schemas/Envelope" }
+        - type: object
+          properties:
+            data:
+              type: object
+              required: [analytics]
+              properties:
+                analytics: { $ref: "#/components/schemas/Analytics" }

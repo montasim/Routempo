@@ -13,7 +13,7 @@ import {
 import { routineOccursOnDate } from "@/lib/routines"
 import { getAppData, mutateAppData } from "@/lib/store.server"
 import type { Routine, RoutineDraft, Settings } from "@/lib/types"
-import { addDays, dateKeyInTimeZone } from "@/lib/user-calendar"
+import { addDays, dateKeyInTimeZone, validTimeZone } from "@/lib/user-calendar"
 
 import { ApiError } from "./errors"
 import { normalizeName } from "./normalize"
@@ -39,6 +39,22 @@ type ApiRoutineWrite = {
   }
   endDate?: string | null
   isActive: boolean
+}
+
+export async function bootstrapDeviceTimeZone(
+  userId: string,
+  name: string | undefined,
+  timezone: string
+) {
+  const detectedTimeZone = timezone.trim()
+  if (!validTimeZone(detectedTimeZone)) return false
+
+  await getAppData(userId, name, detectedTimeZone)
+  await getDatabase()
+    .update(appSettings)
+    .set({ timezone: detectedTimeZone, updatedAt: new Date() })
+    .where(and(eq(appSettings.userId, userId), eq(appSettings.timezone, "")))
+  return true
 }
 
 export async function settingsFor(userId: string, name?: string) {

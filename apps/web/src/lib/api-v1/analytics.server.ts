@@ -9,9 +9,15 @@ export async function analytics(
   startDate: string,
   endDate: string
 ) {
-  await listOccurrences(userId, startDate, endDate)
+  const occurrences = await listOccurrences(userId, startDate, endDate)
   const logs = (await listLogs(userId, false)).filter(
     (log) => log.date >= startDate && log.date <= endDate
   )
-  return buildAnalytics(logs, await listCategories(userId), startDate, endDate)
+  return buildAnalytics(
+    logs,
+    await listCategories(userId),
+    occurrences,
+    startDate,
+    endDate
+  )
 }

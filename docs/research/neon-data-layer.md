@@ -22,11 +22,12 @@ more than it needs Prisma's higher-level generated client.
 ## Why this fits the current application
 
 The server is TanStack Start/Nitro, launched as a Node process, not an edge-only
-deployment (`package.json`, `vite.config.ts`). The recommendation below was used
+deployment ([`apps/web/package.json`](../../apps/web/package.json),
+[`apps/web/vite.config.ts`](../../apps/web/vite.config.ts)). The recommendation below was used
 to replace the prototype's MongoDB document store: application data is now
 normalized in PostgreSQL tables, and Better Auth uses its Drizzle adapter
-([`store.server.ts`](../../src/lib/store.server.ts),
-[`auth.server.ts`](../../src/lib/auth.server.ts)).
+([`store.server.ts`](../../apps/web/src/lib/store.server.ts),
+[`auth.server.ts`](../../apps/web/src/lib/auth.server.ts)).
 
 That storage model is adequate for a prototype, but Routempo's actual domain is
 relational:

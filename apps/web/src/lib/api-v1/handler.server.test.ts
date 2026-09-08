@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest"
 
-import { createApiV1Handler } from "./handler.server"
+import { bootstrapRequestTimeZone, createApiV1Handler } from "./handler.server"
 import { ok } from "./response"
 
 describe("/api/v1 HTTP seam", () => {
@@ -51,5 +51,32 @@ describe("/api/v1 HTTP seam", () => {
 
     expect(response.status).toBe(401)
     expect(authenticated).not.toHaveBeenCalled()
+  })
+
+  it("bootstraps a valid device timezone without accepting invalid headers", async () => {
+    const initialize = vi.fn(async () => true)
+    const identity = { id: "user-1", name: "Test user" }
+
+    await expect(
+      bootstrapRequestTimeZone(
+        new Request("https://example.test/api/v1/auth/me", {
+          headers: { "x-routempo-timezone": "Asia/Dhaka" },
+        }),
+        identity,
+        initialize
+      )
+    ).resolves.toBe(true)
+    expect(initialize).toHaveBeenCalledWith("user-1", "Test user", "Asia/Dhaka")
+
+    await expect(
+      bootstrapRequestTimeZone(
+        new Request("https://example.test/api/v1/auth/me", {
+          headers: { "x-routempo-timezone": "not/a-zone" },
+        }),
+        identity,
+        initialize
+      )
+    ).resolves.toBe(false)
+    expect(initialize).toHaveBeenCalledOnce()
   })
 })

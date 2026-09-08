@@ -7,6 +7,7 @@ import { routineLogs } from "@/db/schema"
 import { addDays, dateKeyInTimeZone } from "@/lib/user-calendar"
 
 import { listOccurrences, settingsFor } from "./data.server"
+import { resolveStoredLogDate } from "./log-date"
 import { toApiTime, toStoredTime, variance } from "./time"
 
 type ApiLogWrite = {
@@ -27,12 +28,40 @@ export async function listLogs(userId: string, finalizeMissed = true) {
     const today = dateKeyInTimeZone(settings.timezone)
     await listOccurrences(userId, addDays(today, -92), today)
   }
-  const rows = await getDatabase()
+  const db = getDatabase()
+  const rows = await db
     .select()
     .from(routineLogs)
     .where(eq(routineLogs.userId, userId))
     .orderBy(desc(routineLogs.recordedAt))
-  return rows.map(mapLog)
+  const resolved = rows.map((row) => ({
+    row,
+    date: resolveStoredLogDate(row.date, row.recordedAt, row.timezone),
+  }))
+  const repairs = resolved.filter((item) => item.date.repair)
+  if (repairs.length) {
+    const results = await Promise.allSettled(
+      repairs.map((item) =>
+        db
+          .update(routineLogs)
+          .set({ date: item.date.repair! })
+          .where(
+            and(
+              eq(routineLogs.userId, userId),
+              eq(routineLogs.id, item.row.id),
+              eq(routineLogs.date, item.row.date)
+            )
+          )
+      )
+    )
+    const failed = results.filter((result) => result.status === "rejected")
+    if (failed.length)
+      console.error("API v1 legacy log date repair failed", {
+        userId,
+        failed: failed.length,
+      })
+  }
+  return resolved.map((item) => mapLog(item.row, item.date.date))
 }
 
 export async function createLog(
@@ -119,11 +148,11 @@ export async function deleteLog(userId: string, id: string) {
   return existing
 }
 
-function mapLog(log: typeof routineLogs.$inferSelect) {
+function mapLog(log: typeof routineLogs.$inferSelect, date: string) {
   return {
     id: log.id,
     routineId: log.routineId,
-    date: log.date,
+    date,
     eventTime: toApiTime(log.eventTime),
     title: log.title,
     category: log.category,

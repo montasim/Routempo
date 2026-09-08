@@ -40,7 +40,7 @@ export const categoryPatchSchema = categoryWriteSchema
 const time = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/)
 
 const routineBaseSchema = z.object({
-  title: z.string().trim().min(1).max(100),
+  title: z.string().trim().min(1).max(120),
   note: z.string().trim().max(160).optional(),
   categoryId: z.string().min(1),
   startDate: z.iso.date(),
