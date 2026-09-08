@@ -130,6 +130,7 @@ import java.time.ZoneId
 import java.time.DayOfWeek
 import java.time.format.DateTimeFormatter
 import java.time.temporal.TemporalAdjusters
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.Dispatchers
@@ -1074,27 +1075,30 @@ fun RoutempoApp(
     LaunchedEffect(Unit) { restoreSession() }
     LaunchedEffect(authCallback) {
         val callback = authCallback ?: return@LaunchedEffect
-        onAuthCallbackConsumed()
         val code = callback.getQueryParameter("code")
         val error = callback.getQueryParameter("error")
         if (code != null) {
             authState = AuthUiState.SigningIn(pendingAuthProvider ?: AuthProvider.Microsoft)
-            runCatching {
+            try {
                 api.exchangeSocialCode(code, AUTH_REDIRECT_URI)
                 bootstrapAccount()
+                pendingAuthProvider = null
+                signedIn = true
+                loadProduct()
+            } catch (error: CancellationException) {
+                throw error
+            } catch (error: Throwable) {
+                authState = AuthUiState.Error(error.message ?: "Sign in could not be completed.")
             }
-                .onSuccess {
-                    pendingAuthProvider = null
-                    signedIn = true
-                    loadProduct()
-                }
-                .onFailure { authState = AuthUiState.Error(it.message ?: "Sign in could not be completed.") }
         } else if (signedIn && error == null) {
             loadSettings()
             snackbar.showSnackbar("Provider connection updated.")
         } else {
             authState = AuthUiState.Error(error ?: "Sign in was cancelled.")
         }
+        // Clearing the callback changes this LaunchedEffect's key. Do it only after all
+        // suspending callback work is complete so Compose cannot cancel the exchange midway.
+        onAuthCallbackConsumed()
     }
     LaunchedEffect(notificationDestination, signedIn) {
         val requested = notificationDestination ?: return@LaunchedEffect
