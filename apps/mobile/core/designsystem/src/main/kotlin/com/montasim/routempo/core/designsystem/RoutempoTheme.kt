@@ -2,6 +2,7 @@ package com.montasim.routempo.core.designsystem
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
@@ -245,7 +246,13 @@ fun RoutempoTheme(
             colorScheme = if (darkTheme) DarkColors else LightColors,
             typography = RoutempoTypography,
             shapes = RoutempoShapes,
-            content = content,
-        )
+        ) {
+            // MaterialTheme does not set a root LocalContentColor. Without this provider,
+            // uncolored Text inherits Compose's black default even when the dark palette is active.
+            CompositionLocalProvider(
+                LocalContentColor provides MaterialTheme.colorScheme.onBackground,
+                content = content,
+            )
+        }
     }
 }

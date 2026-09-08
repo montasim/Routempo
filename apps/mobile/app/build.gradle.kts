@@ -20,6 +20,21 @@ val releaseSigningValues = mapOf(
     "keyPassword" to providers.environmentVariable("ROUTEMPO_SIGNING_KEY_PASSWORD").orNull,
 )
 val hasReleaseSigning = releaseSigningValues.values.all { !it.isNullOrBlank() }
+val productionApiBaseUrl = "https://routempo.netlify.app/api/v1"
+val debugApiBaseUrl =
+    providers.gradleProperty("routempo.debugApiBaseUrl")
+        .orElse(providers.environmentVariable("ROUTEMPO_DEBUG_API_BASE_URL"))
+        .getOrElse(productionApiBaseUrl)
+require(
+    debugApiBaseUrl == productionApiBaseUrl ||
+        debugApiBaseUrl.startsWith("http://10.0.2.2:") ||
+        debugApiBaseUrl.startsWith("http://localhost:"),
+) {
+    "Debug API must use Routempo production HTTPS, emulator loopback, or localhost."
+}
+require(debugApiBaseUrl.endsWith("/api/v1")) {
+    "Debug API base URL must end with /api/v1."
+}
 
 android {
     namespace = "com.montasim.routempo"
@@ -33,7 +48,7 @@ android {
         versionName = routempoVersionName
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
-        buildConfigField("String", "API_BASE_URL", "\"https://routempo.netlify.app/api/v1\"")
+        buildConfigField("String", "API_BASE_URL", "\"$productionApiBaseUrl\"")
         manifestPlaceholders["authScheme"] = "routempo"
     }
 
@@ -41,7 +56,7 @@ android {
         debug {
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-debug"
-            buildConfigField("String", "API_BASE_URL", "\"http://10.0.2.2:3000/api/v1\"")
+            buildConfigField("String", "API_BASE_URL", "\"$debugApiBaseUrl\"")
         }
         release {
             isMinifyEnabled = true

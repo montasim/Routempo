@@ -45,13 +45,21 @@ Generate `ROUTEMPO_KEYSTORE_BASE64` from the binary upload keystore and keep the
 
 ## API and authentication
 
-- Debug API: `http://10.0.2.2:3000/api/v1` (Android Emulator to host machine)
+- Debug API: `https://routempo.netlify.app/api/v1` by default, so debug APK sign-in works without a local server
 - Release API: `https://routempo.netlify.app/api/v1`
 - Application ID: `com.montasim.routempo`
 - Debug application ID: `com.montasim.routempo.debug`
 - OAuth callback: `routempo://auth/callback`
 
 Provider consoles and the server allowlist must accept the web provider callback and Routempo's mobile redirect bridge. Signing keys and provider secrets do not belong in the repository.
+
+To develop against a server running on the emulator host, opt in explicitly:
+
+```powershell
+.\gradlew.bat assembleDebug -Proutempo.debugApiBaseUrl=http://10.0.2.2:3000/api/v1
+```
+
+The equivalent environment variable is `ROUTEMPO_DEBUG_API_BASE_URL`. Only the production HTTPS endpoint, Android emulator loopback, and localhost are accepted as debug overrides.
 
 ## Modules
 

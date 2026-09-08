@@ -148,7 +148,7 @@ $env:ANDROID_SDK_ROOT = "path-to-android-sdk"
 .\gradlew.bat testDebugUnitTest lintDebug assembleDebug
 ```
 
-The application ID is `com.montasim.routempo` (`.debug` is appended to debug builds). Debug builds call the local web server at `http://10.0.2.2:3000/api/v1`; release builds call the production v1 API. Android versions are managed independently in `apps/mobile/version.properties`, and signed APKs are distributed through GitHub Releases using tags such as `android-v1.0.0`. See the [mobile workspace guide](apps/mobile/README.md) for emulator, authentication callback, signing, artifact naming, and release instructions.
+The application ID is `com.montasim.routempo` (`.debug` is appended to debug builds). Debug and release builds call the production v1 API by default, while local Android development can explicitly override the debug endpoint. Android versions are managed independently in `apps/mobile/version.properties`, and signed APKs are distributed through GitHub Releases using tags such as `android-v1.0.0`. See the [mobile workspace guide](apps/mobile/README.md) for emulator, authentication callback, API overrides, signing, artifact naming, and release instructions.
 
 ## Configuration
 

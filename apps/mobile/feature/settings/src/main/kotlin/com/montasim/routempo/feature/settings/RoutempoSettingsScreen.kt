@@ -449,6 +449,7 @@ private fun ProviderLetter(provider: SettingsProvider) {
     Surface(
         modifier = Modifier.size(40.dp),
         color = MaterialTheme.routempoColors.soft,
+        contentColor = MaterialTheme.colorScheme.onSurface,
         shape = CircleShape,
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {

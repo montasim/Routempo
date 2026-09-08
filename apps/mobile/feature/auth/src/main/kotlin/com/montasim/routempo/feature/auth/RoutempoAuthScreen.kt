@@ -153,6 +153,7 @@ private fun SignInContent(
             Surface(
                 modifier = Modifier.fillMaxWidth().padding(top = RoutempoDimens.spacing24),
                 color = MaterialTheme.routempoColors.elevated,
+                contentColor = MaterialTheme.colorScheme.onSurface,
                 shape = MaterialTheme.shapes.medium,
                 tonalElevation = 1.dp,
             ) {
