@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="auth_brand_mark">Routempo</string>
+    <string name="auth_restoring_session">Restoring your Routempo session…</string>
+    <string name="auth_heading">Make the next useful action obvious</string>
+    <string name="auth_intro">Plan recurring routines, record what happened, and learn from your rhythm.</string>
+    <string name="auth_benefit_plan_title">Plan</string>
+    <string name="auth_benefit_plan_message">Schedule routines once or repeat them on your terms.</string>
+    <string name="auth_benefit_record_title">Record</string>
+    <string name="auth_benefit_record_message">Complete, skip, and correct outcomes without losing context.</string>
+    <string name="auth_benefit_learn_title">Learn</string>
+    <string name="auth_benefit_learn_message">Review progress across days, outcomes, and categories.</string>
+    <string name="auth_choose_account">Continue to your routines</string>
+    <string name="auth_continue_with">Continue with %1$s</string>
+    <string name="auth_signing_in_with">Signing in with %1$s…</string>
+    <string name="auth_integration_disclosure">Calendar and task access is optional and granted separately in Settings.</string>
+    <string name="auth_terms">Terms</string>
+    <string name="auth_privacy">Privacy</string>
+    <string name="auth_support">Support</string>
+    <string name="auth_error_title">We couldn’t sign you in</string>
+    <string name="auth_support_code">Support code: %1$s</string>
+    <string name="auth_try_again">Try again</string>
+    <string name="auth_back_to_sign_in">Back to sign in</string>
+</resources>

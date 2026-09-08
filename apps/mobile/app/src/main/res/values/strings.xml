@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Routempo</string>
+    <string name="notification_channel_name">Routine reminders</string>
+    <string name="notification_channel_description">Upcoming routines and weekly progress summaries</string>
+    <string name="notification_routine_message">Scheduled for %1$s</string>
+    <string name="notification_weekly_title">Your Routempo week</string>
+    <string name="notification_weekly_message">You completed %1$d of %2$d resolved routines last week.</string>
+</resources>

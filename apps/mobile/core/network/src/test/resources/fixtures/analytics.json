@@ -1,0 +1,42 @@
+{
+  "data": {
+    "analytics": {
+      "startDate": "2026-08-06",
+      "endDate": "2026-08-12",
+      "completionPercentage": 50,
+      "outcomes": {
+        "completed": 2,
+        "skipped": 1,
+        "missed": 0,
+        "unrecorded": 1,
+        "total": 4,
+        "completionPercentage": 50
+      },
+      "series": [{
+        "date": "2026-08-12",
+        "completed": 1,
+        "skipped": 0,
+        "missed": 0,
+        "unrecorded": 1,
+        "total": 2,
+        "completionPercentage": 50
+      }],
+      "categories": [{
+        "category": "Wellbeing",
+        "routineCount": 1,
+        "completed": 1,
+        "skipped": 0,
+        "missed": 0,
+        "unrecorded": 1,
+        "total": 2,
+        "completionPercentage": 50
+      }],
+      "generatedAt": "2026-08-12T12:00:00.000Z"
+    }
+  },
+  "meta": {
+    "requestId": "fixture-analytics",
+    "apiVersion": "v1",
+    "serverTime": "2026-08-12T12:00:00.000Z"
+  }
+}

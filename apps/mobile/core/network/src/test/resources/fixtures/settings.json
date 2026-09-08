@@ -1,0 +1,16 @@
+{
+  "data": {
+    "settings": {
+      "name": "Montasim Ahmed",
+      "timezone": "Asia/Dhaka",
+      "defaultReminderMinutes": 15,
+      "routineRemindersEnabled": true,
+      "weeklySummaryEnabled": false
+    }
+  },
+  "meta": {
+    "requestId": "fixture-settings",
+    "apiVersion": "v1",
+    "serverTime": "2026-08-12T12:00:00.000Z"
+  }
+}

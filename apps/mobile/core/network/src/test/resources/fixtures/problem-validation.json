@@ -1,0 +1,12 @@
+{
+  "type": "https://routempo.app/problems/validation_error",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "One or more fields are invalid",
+  "instance": "/api/v1/routines",
+  "code": "VALIDATION_ERROR",
+  "requestId": "fixture-problem",
+  "errors": [
+    { "path": "recurrenceRules.daysOfWeek", "message": "Weekly routines require at least one weekday" }
+  ]
+}
